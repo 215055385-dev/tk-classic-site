@@ -9,11 +9,21 @@ import { uiCopy } from "@/lib/localized-ui";
 import type { Lang } from "@/lib/site-data";
 
 export const runtime = "nodejs";
+const MAX_BODY_BYTES = 32_000;
 
 export async function POST(request: Request) {
+  const contentLength = Number(request.headers.get("content-length") ?? 0);
+  if (contentLength > MAX_BODY_BYTES) {
+    return NextResponse.json({ ok: false, message: "Request is too large." }, { status: 413 });
+  }
+
   let body: unknown;
   try {
-    body = await request.json();
+    const rawBody = await request.text();
+    if (rawBody.length > MAX_BODY_BYTES) {
+      return NextResponse.json({ ok: false, message: "Request is too large." }, { status: 413 });
+    }
+    body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json(
       { ok: false, message: "Invalid request body." },

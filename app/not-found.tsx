@@ -15,7 +15,7 @@ export default function NotFound() {
           <Link className="primary-action" href="/#products">
             View products
           </Link>
-          <a className="secondary-action" href={`mailto:${company.emailIris}`}>
+          <a className="secondary-action" href={`mailto:${company.emailBowie}`}>
             <Mail size={18} aria-hidden="true" />
             Contact sales
           </a>
@@ -24,4 +24,3 @@ export default function NotFound() {
     </main>
   );
 }
-

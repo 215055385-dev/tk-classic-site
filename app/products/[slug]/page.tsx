@@ -204,7 +204,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
             </MotionCta>
             <MotionCta
               className="secondary-action"
-              href={`https://wa.me/${company.whatsappIris.replace("+", "")}`}
+              href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`}
               target="_blank"
               rel="noreferrer"
             >
@@ -297,13 +297,13 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
             <p>{t.contactLead}</p>
           </div>
           <div className="contact-methods">
-            <a href={`https://wa.me/${company.whatsappLeo.replace("+", "")}`} target="_blank" rel="noreferrer">
-              <MessageCircle size={20} aria-hidden="true" />
-              <span>Leo: {company.whatsappLeo}</span>
-            </a>
-            <a href={`mailto:${company.emailIris}`}>
+            <a href={`mailto:${company.emailBowie}`}>
               <Mail size={20} aria-hidden="true" />
-              <span>{company.emailIris}</span>
+              <span>{company.emailBowie}</span>
+            </a>
+            <a href={`mailto:${company.emailLeo}`}>
+              <Mail size={20} aria-hidden="true" />
+              <span>{company.emailLeo}</span>
             </a>
             <a href={`tel:${company.phoneBowie}`}>
               <MessageCircle size={20} aria-hidden="true" />
@@ -358,7 +358,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       <div className="mobile-sticky-cta" aria-label="Mobile quick product inquiry">
         <a href="#product-inquiry">{t.hero.primaryCta}</a>
         <a
-          href={`https://wa.me/${company.whatsappIris.replace("+", "")}`}
+          href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`}
           target="_blank"
           rel="noreferrer"
         >

@@ -64,7 +64,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           <div className="section-heading align-left"><span>{t.nav.contact}</span><h2>{t.contactTitle}</h2><p>{t.contactLead}</p></div>
           <div className="contact-methods">
             <a href={`mailto:${company.emailBowie}`}><Mail size={20} aria-hidden="true" /><span>{company.emailBowie}</span></a>
-            <a href={`mailto:${company.emailRyan}`}><Mail size={20} aria-hidden="true" /><span>{company.emailRyan}</span></a>
+            <a href={`mailto:${company.emailLeo}`}><Mail size={20} aria-hidden="true" /><span>{company.emailLeo}</span></a>
             <a href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`} target="_blank" rel="noreferrer"><MessageCircle size={20} aria-hidden="true" /><span>WhatsApp {company.whatsappBowie}</span></a>
             <a href={`tel:${company.phoneBowie}`}><Phone size={20} aria-hidden="true" /><span>{company.phoneBowie}</span></a>
           </div>

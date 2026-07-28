@@ -508,10 +508,6 @@ export default async function Home({ searchParams }: HomeProps) {
             <p>{t.contactLead}</p>
           </div>
           <div className="contact-methods">
-            <a href={`https://wa.me/${company.whatsappIris.replace("+", "")}`} target="_blank" rel="noreferrer">
-              <MessageCircle size={20} aria-hidden="true" />
-              <span>Iris: {company.whatsappIris}</span>
-            </a>
             <a href={`tel:${company.phoneBowie}`}>
               <MessageCircle size={20} aria-hidden="true" />
               <span>Phone: {company.phoneBowie}</span>
