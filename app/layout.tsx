@@ -1,0 +1,86 @@
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { company } from "@/lib/site-data";
+import { VisitTracker } from "@/components/VisitTracker";
+import { SiteStructuredData } from "@/components/SiteStructuredData";
+import { LocaleDocumentSync } from "@/components/LocaleDocumentSync";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL(company.siteUrl),
+  title: {
+    default: "TK Classic | Portable Coffee Machine OEM & Private Label Supplier",
+    template: "%s | TK Classic",
+  },
+  description:
+    "Factory-direct portable espresso machines, frothers, warmers and accessories for European wholesalers, private label brands, and OEM/ODM programs.",
+  keywords: [
+    "portable coffee machine OEM",
+    "portable espresso machine wholesale",
+    "private label coffee machine",
+    "OEM ODM coffee maker supplier",
+    "portable coffee accessories",
+  ],
+  applicationName: "TK Classic",
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "TK Classic | Portable Coffee Machine OEM & Private Label Supplier",
+    description:
+      "Factory-direct portable espresso machines and coffee accessories for European wholesale and private label sourcing.",
+    url: "/",
+    type: "website",
+    siteName: "TK Classic",
+    images: [
+      {
+        url: "/products/dq-010/hero.jpg",
+        width: 1200,
+        height: 1200,
+        alt: "TK Classic DQ-010 portable coffee machine",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TK Classic | Portable Coffee Machine OEM & Private Label Supplier",
+    description:
+      "Factory-direct portable espresso machines and coffee accessories for European wholesale and private label sourcing.",
+    images: ["/products/dq-010/hero.jpg"],
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body><SiteStructuredData /><LocaleDocumentSync /><VisitTracker />{children}</body>
+    </html>
+  );
+}
