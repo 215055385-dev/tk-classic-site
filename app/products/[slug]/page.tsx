@@ -42,6 +42,8 @@ type ProductPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
+export const runtime = "edge";
+
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
   return languages.some((language) => language.code === code) ? (code as Lang) : "en";
@@ -49,10 +51,6 @@ function getLang(value: string | string[] | undefined): Lang {
 
 function langQuery(lang: Lang) {
   return lang === "en" ? "" : `?lang=${lang}`;
-}
-
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params, searchParams }: ProductPageProps) {
