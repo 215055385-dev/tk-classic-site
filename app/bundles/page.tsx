@@ -12,6 +12,8 @@ import { bundleOptionalNote } from "@/lib/translation-copy";
 
 type BundlesPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Portable Coffee Bundles | TK Classic",
   description: "Configure portable coffee machine bundles with accessories, packaging and private-label options.",

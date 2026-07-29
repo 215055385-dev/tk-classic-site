@@ -12,6 +12,8 @@ import { uiCopy } from "@/lib/localized-ui";
 
 type ResourcesPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "TK Classic Resources | Certifications and Buyer Guides",
   description: "Portable coffee machine certification files, buyer guides and sourcing FAQs for wholesale and private label programs.",

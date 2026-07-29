@@ -10,6 +10,7 @@ import { languageAlternates } from "@/lib/seo";
 import { uiCopy } from "@/lib/localized-ui";
 
 type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
+export const runtime = "edge";
 export const metadata: Metadata = { title: "TK Classic Factory | Portable Coffee OEM", description: "Factory capability, production support and compliance signals for TK Classic portable coffee programs.", keywords: ["portable coffee machine factory", "coffee machine OEM manufacturing", "portable espresso production", "Shenzhen OEM factory"], alternates: { canonical: "/factory", languages: languageAlternates("/factory") } };
 function getLang(value: string | string[] | undefined): Lang { const code = Array.isArray(value) ? value[0] : value; return languages.some((language) => language.code === code) ? (code as Lang) : "en"; }
 function queryFor(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }

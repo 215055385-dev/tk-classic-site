@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { copy, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates } from "@/lib/seo";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Coffee Machine Bundle Configurator | TK Classic",
   description: "Build a portable coffee machine retail or private-label bundle with optional accessories and packaging direction.",

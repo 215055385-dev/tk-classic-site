@@ -11,6 +11,8 @@ import { languageAlternates } from "@/lib/seo";
 
 type ContactPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Contact TK Classic | Portable Coffee OEM",
   description: "Contact TK Classic for wholesale pricing, private-label programs, accessory sets and OEM/ODM portable coffee projects.",

@@ -9,6 +9,7 @@ import { certifications, copy, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates } from "@/lib/seo";
 
 type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
+export const runtime = "edge";
 export const metadata: Metadata = { title: "Certifications | TK Classic Portable Coffee", description: "Compliance documents and certification files for TK Classic portable coffee products and wholesale programs.", keywords: ["portable coffee machine certifications", "CE RoHS coffee machine", "coffee machine compliance documents"], alternates: { canonical: "/certifications", languages: languageAlternates("/certifications") } };
 function getLang(value: string | string[] | undefined): Lang { const code = Array.isArray(value) ? value[0] : value; return languages.some((language) => language.code === code) ? (code as Lang) : "en"; }
 function queryFor(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }

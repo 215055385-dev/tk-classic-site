@@ -13,6 +13,8 @@ import { localizeFeatureLabel } from "@/lib/localized-ui";
 
 type ProductsPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Portable Coffee Machines | TK Classic Products",
   description: "Explore TK Classic portable espresso machines for wholesale, private label and OEM/ODM coffee programs.",

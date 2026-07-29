@@ -11,6 +11,8 @@ import { languageAlternates } from "@/lib/seo";
 
 type PrivacyPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "TK Classic Privacy Policy",
   description: "How TK Classic handles information submitted through the website inquiry form.",

@@ -16,6 +16,8 @@ type AccessoriesPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Coffee Accessories | TK Classic Portable Coffee OEM",
   description: "Optional capsule adapters, brewing components, cups and acrylic display accessories for TK Classic portable coffee systems and bundles.",

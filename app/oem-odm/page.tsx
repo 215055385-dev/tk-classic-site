@@ -10,6 +10,8 @@ import { languageAlternates } from "@/lib/seo";
 
 type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "OEM & ODM Portable Coffee Programs | TK Classic",
   description: "A dedicated OEM and ODM workflow for portable coffee machines, accessories, packaging and private-label programs.",

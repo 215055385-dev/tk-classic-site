@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { copy, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates } from "@/lib/seo";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Wholesale Coffee Bundle Savings Calculator | TK Classic",
   description: "Estimate portable coffee machine order value and compare how volume, accessories and packaging affect a buyer plan.",

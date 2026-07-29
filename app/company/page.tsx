@@ -14,6 +14,8 @@ type CompanyPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "TK Classic Company | OEM/ODM Portable Coffee",
   description: "Factory capabilities, OEM/ODM workflow, quality checkpoints and commercial support for portable coffee sourcing.",
