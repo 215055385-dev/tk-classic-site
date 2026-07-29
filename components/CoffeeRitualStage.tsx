@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Coffee } from "lucide-react";
 
 type CoffeeScene = {
@@ -33,6 +33,7 @@ type CoffeeRitualStageProps = {
 export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View model" }: CoffeeRitualStageProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const shouldReduceMotion = useReducedMotion();
   const activeScene = scenes[activeIndex] ?? scenes[0];
   const activeModel = activeScene?.model ?? model ?? "TK Classic";
@@ -52,6 +53,14 @@ export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View 
 
     return () => window.clearTimeout(timer);
   }, [activeIndex, isPaused, scenes.length, shouldReduceMotion]);
+
+  useEffect(() => {
+    tabRefs.current[activeIndex]?.scrollIntoView({
+      behavior: shouldReduceMotion ? "auto" : "smooth",
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [activeIndex, shouldReduceMotion]);
 
   if (!activeScene) {
     return null;
@@ -84,6 +93,9 @@ export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View 
               aria-selected={activeIndex === index}
               aria-controls={panelId}
               aria-label={`${scene.model ?? scene.label} ${scene.label}`}
+              ref={(element) => {
+                tabRefs.current[index] = element;
+              }}
               className={activeIndex === index ? "is-active" : undefined}
               onClick={() => setActiveIndex(index)}
             >

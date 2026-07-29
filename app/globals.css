@@ -7260,3 +7260,17 @@ address {
     display: block;
   }
 }
+
+/* Keep every model tab readable; the active tab is scrolled into view by the
+   carousel component when autoplay advances. */
+.home-shell .coffee-ritual-tabs {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  padding-right: 8px;
+  scroll-padding-inline: 8px;
+}
+
+.home-shell .coffee-ritual-tabs button {
+  flex: 0 0 auto;
+  max-width: none;
+}
