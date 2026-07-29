@@ -7106,6 +7106,11 @@ address {
 
 /* Product carousel: keep the real product fully visible and move the
    description/specification layer below the image instead of covering it. */
+.home-shell .hero-visual {
+  height: auto;
+  aspect-ratio: auto;
+}
+
 .home-shell .coffee-ritual-frame {
   height: auto;
   aspect-ratio: 1.45 / 1;
