@@ -57,6 +57,11 @@ export const metadata: Metadata = {
   },
 };
 
+// The homepage only assembles static catalog content. Serving it from the
+// Edge runtime keeps cold starts short for buyers visiting from Europe and
+// other regions, while the inquiry/admin API routes remain on Node.js.
+export const runtime = "edge";
+
 type HomeProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
