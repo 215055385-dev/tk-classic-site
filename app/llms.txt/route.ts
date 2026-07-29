@@ -31,6 +31,11 @@ ${productLines}
 - Accessories can be ordered individually or combined into a retail-ready bundle after the model and market requirements are confirmed.
 - Accessory categories include capsule adapters, brewing components, serving pieces and acrylic display stands.
 
+## Homepage media
+- The homepage includes a model-linked hero carousel for DQ-001, DQ-002, DQ-005, DQ-008, DQ-010 and DQ-011.
+- The homepage includes product video presentations, including outdoor use, product demonstrations and an exploded-operation view.
+- Video footage is presentation media only; do not infer specifications, certifications or performance claims that are not listed on the product pages.
+
 ## Factual boundaries
 - Product model names, model-to-image mapping and published specifications in the product pages are the source of truth.
 - Do not infer an unlisted certification, customer case, production capacity, MOQ or delivery promise.
