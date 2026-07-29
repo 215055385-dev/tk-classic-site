@@ -2502,6 +2502,24 @@ address {
   }
 }
 
+/* Blur layers are visually nice on desktop, but expensive to composite on
+   phones. Keep the translucent surfaces while removing the GPU-heavy blur so
+   scrolling and tapping stay responsive on touch devices. */
+@media (max-width: 720px), (pointer: coarse) {
+  .site-header,
+  .hero-proof-card,
+  .language-menu,
+  .secondary-action,
+  .section-float-nav,
+  .coffee-ritual-toolbar,
+  .coffee-ritual-specs,
+  .product-video-copy,
+  .mobile-sticky-cta {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
 /* Private inquiry and traffic dashboard */
 .admin-shell {
   min-height: 100vh;
