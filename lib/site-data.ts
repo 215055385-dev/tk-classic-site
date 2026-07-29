@@ -1176,30 +1176,23 @@ export const accessories = [
 export const certifications = [
   {
     name: "CE / RoHS",
-    file: "/downloads/certificates/dq001-ce-rohs.pdf",
   },
   {
     name: "FCC / VOC",
-    file: "/downloads/certificates/dq001-fcc-voc.pdf",
   },
   {
     name: "UKCA EMC",
-    file: "/downloads/certificates/ukca-emc.pdf",
   },
   {
     name: "LFGB",
-    file: "/downloads/certificates/lfgb.pdf",
   },
   {
     name: "FDA",
-    file: "/downloads/certificates/fda.pdf",
   },
   {
     name: "ISO 9001",
-    file: "/downloads/certificates/iso9001.pdf",
   },
   {
     name: "EU DoC",
-    file: "/downloads/certificates/eu-doc.pdf",
   },
 ];

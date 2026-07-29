@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, BookOpen, ChevronRight, Download, ShieldCheck } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronRight, ShieldCheck } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
@@ -9,6 +9,7 @@ import { commercialCopy } from "@/lib/support-page-data";
 import { copy, certifications, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates } from "@/lib/seo";
 import { uiCopy } from "@/lib/localized-ui";
+import { certificationRequestCopy } from "@/lib/certification-copy";
 
 type ResourcesPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
@@ -76,7 +77,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
       <RevealSection id="certifications" className="section cert-section">
         <div className="section-heading align-left"><span>{t.nav.certs}</span><h2>{t.sectionTitles.certs}</h2><p>{t.certs.join(" ")}</p></div>
         <div className="cert-grid">
-          {certifications.map((cert) => <a key={cert.name} href={cert.file}><ShieldCheck size={22} aria-hidden="true" /><span>{cert.name}</span><small><Download size={14} aria-hidden="true" />{t.labels.download}</small></a>)}
+          {certifications.map((cert) => <div key={cert.name}><ShieldCheck size={22} aria-hidden="true" /><span>{cert.name}</span><small>{certificationRequestCopy[lang]}</small></div>)}
         </div>
       </RevealSection>
 
