@@ -6943,9 +6943,11 @@ address {
 .home-shell .hero-title {
   max-width: 510px;
   margin-bottom: 22px;
+  font-family: "Baskerville", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-weight: 600;
   font-size: clamp(38px, 4.15vw, 58px);
   line-height: 1.04;
-  letter-spacing: -0.047em;
+  letter-spacing: -0.038em;
   text-wrap: balance;
 }
 
@@ -6982,6 +6984,10 @@ address {
     padding-top: 42px;
   }
 
+  .home-shell .hero-visual {
+    order: -1;
+  }
+
   .home-shell .hero-copy {
     padding-inline: 4px;
   }
@@ -6998,7 +7004,7 @@ address {
     margin-bottom: 16px;
     font-size: clamp(30px, 7.2vw, 38px);
     line-height: 1.08;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.028em;
     overflow-wrap: normal;
     word-break: normal;
     text-wrap: balance;
@@ -7014,5 +7020,32 @@ address {
     max-width: 480px;
     font-size: 12px;
     line-height: 1.42;
+  }
+
+  .home-shell .coffee-ritual-frame {
+    height: clamp(390px, 100vw, 500px);
+    border-radius: 18px;
+  }
+
+  .home-shell .coffee-ritual-media img.is-contain {
+    padding: 24px 22px 96px;
+  }
+
+  .home-shell .coffee-ritual-caption {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    padding: 10px 12px 11px;
+    background: rgba(28, 28, 28, 0.72);
+  }
+
+  .home-shell .coffee-ritual-caption > span:first-child,
+  .home-shell .coffee-ritual-caption p {
+    display: none;
+  }
+
+  .home-shell .coffee-ritual-caption strong {
+    max-width: calc(100% - 30px);
+    font-size: 18px;
   }
 }

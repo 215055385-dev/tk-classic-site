@@ -89,7 +89,7 @@ export default async function Home({ searchParams }: HomeProps) {
     label: localizeFeatureLabel(product.featureLabel, lang),
     src: `/hero-products/${product.model.toLowerCase()}.png`,
     href: `/products/${product.slug}${langQuery(lang)}`,
-    fit: "cover" as const,
+    fit: "contain" as const,
     stats: [
       { label: t.labels.pressure, value: product.spec.pressure },
       { label: t.labels.battery, value: product.spec.battery },
