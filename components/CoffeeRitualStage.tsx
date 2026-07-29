@@ -100,7 +100,7 @@ export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View 
         role="tabpanel"
         aria-labelledby={activeTabId}
         tabIndex={0}
-      >
+        >
         <AnimatePresence mode="wait">
           <motion.div
             key={activeScene.src}
@@ -123,6 +123,20 @@ export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View 
           </motion.div>
         </AnimatePresence>
         <div className="coffee-ritual-vignette" aria-hidden="true" />
+        {activeScene.href ? (
+          <Link
+            className="coffee-ritual-frame-link"
+            href={activeScene.href}
+            aria-label={`${activeModel}: ${ctaLabel}`}
+          />
+        ) : null}
+        <div className="coffee-ritual-model-badge" aria-label={`Model ${activeModel}`}>
+          <span>Model</span>
+          <strong>{activeModel}</strong>
+        </div>
+      </div>
+
+      <div className="coffee-ritual-details">
         <div className="coffee-ritual-caption">
           <span>{activeScene.label}</span>
           <strong>{activeScene.title}</strong>
