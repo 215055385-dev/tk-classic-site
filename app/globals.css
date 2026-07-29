@@ -6982,11 +6982,37 @@ address {
     padding-top: 42px;
   }
 
+  .home-shell .hero-copy {
+    padding-inline: 4px;
+  }
+
+  .home-shell .hero-eyebrow {
+    margin-bottom: 14px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+
   .home-shell .hero-title {
-    max-width: 14ch;
+    width: min(100%, 560px);
+    max-width: none;
     margin-bottom: 16px;
-    font-size: clamp(32px, 9vw, 44px);
-    line-height: 1.05;
-    letter-spacing: -0.042em;
+    font-size: clamp(30px, 7.2vw, 38px);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    overflow-wrap: normal;
+    word-break: normal;
+    text-wrap: balance;
+  }
+
+  .home-shell .hero-lead {
+    max-width: 520px;
+    font-size: 15px;
+    line-height: 1.48;
+  }
+
+  .home-shell .hero-support {
+    max-width: 480px;
+    font-size: 12px;
+    line-height: 1.42;
   }
 }
