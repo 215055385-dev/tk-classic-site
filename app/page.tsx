@@ -80,23 +80,21 @@ export default async function Home({ searchParams }: HomeProps) {
   );
   const featuredProduct = productLine.find((item) => item.model === "DQ-010") ?? productLine[0];
   const sceneCards = ui.scenes.cards.slice(0, 3);
-  const heroScenes = sceneCards.map((scene, index) => ({
-    title: scene[0],
-    summary: scene[1],
-    label: scene[2],
-    src: [
-      "/lifestyle/dq-010-camp.webp",
-      "/products/dq-010/stand.webp",
-      "/products/dq-010/white.jpg",
-    ][index] ?? "/lifestyle/dq-010-camp.webp",
-    fit: index === 0 ? ("cover" as const) : ("contain" as const),
-    alt: `${featuredProduct.model} portable coffee machine — ${scene[0]}`,
+  const heroScenes = productLine.map((product) => ({
+    model: product.model,
+    title: product.summary[lang],
+    summary: `${localizeFeatureLabel(product.featureLabel, lang)} / ${product.spec.pressure} / ${product.spec.cup}`,
+    label: localizeFeatureLabel(product.featureLabel, lang),
+    src: `/hero-products/${product.model.toLowerCase()}.png`,
+    href: `/products/${product.slug}${langQuery(lang)}`,
+    fit: "cover" as const,
+    stats: [
+      { label: t.labels.pressure, value: product.spec.pressure },
+      { label: t.labels.battery, value: product.spec.battery },
+      { label: t.labels.cup, value: product.spec.cup },
+    ],
+    alt: `${product.model} portable coffee machine`,
   }));
-  const heroStats = [
-    { label: t.labels.pressure, value: featuredProduct.spec.pressure },
-    { label: t.labels.battery, value: featuredProduct.spec.battery },
-    { label: t.labels.cup, value: featuredProduct.spec.cup },
-  ];
   const structuredData = [
     {
       "@context": "https://schema.org",
@@ -253,7 +251,7 @@ export default async function Home({ searchParams }: HomeProps) {
         </HeroCopyMotion>
 
         <HeroVisualMotion className="hero-visual" aria-label="TK Classic portable espresso product image">
-          <CoffeeRitualStage model={featuredProduct.model} scenes={heroScenes} stats={heroStats} />
+          <CoffeeRitualStage scenes={heroScenes} ctaLabel={t.labels.fullSpec} />
         </HeroVisualMotion>
         <a className="hero-scroll-cue" href="#features">
           <span>{homeUx.scrollCue}</span>

@@ -4743,6 +4743,7 @@ address {
   display: block;
   width: 100%;
   height: 100%;
+  user-select: none;
 }
 
 .coffee-ritual-media img.is-cover {
@@ -4856,6 +4857,33 @@ address {
   color: var(--figma-ink);
   font-size: 13px;
   letter-spacing: -0.02em;
+}
+
+.coffee-ritual-cta {
+  position: absolute;
+  top: 92px;
+  right: 18px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.84);
+  color: #ffffff;
+  padding: 0 13px 0 15px;
+  font-size: 11px;
+  font-weight: 760;
+  text-decoration: none;
+  backdrop-filter: blur(14px);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.coffee-ritual-cta:hover {
+  transform: translateY(-2px);
+  border-color: #ffffff;
+  background: #b65e3f;
 }
 
 .coffee-ritual-progress {
@@ -5009,6 +5037,11 @@ address {
 
   .coffee-ritual-specs strong {
     font-size: 12px;
+  }
+
+  .coffee-ritual-cta {
+    top: 82px;
+    right: 12px;
   }
 
   .coffee-ritual-caption {
