@@ -5,6 +5,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { copy, products, type Lang } from "@/lib/site-data";
 import { uiCopy } from "@/lib/localized-ui";
+import { inquiryCopy } from "@/lib/inquiry-copy";
 
 type InquiryFormProps = {
   lang: Lang;
@@ -25,6 +26,8 @@ const emailWarning: Record<Lang, string> = {
 export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessories = "" }: InquiryFormProps) {
   const t = copy[lang];
   const ui = uiCopy[lang];
+  const formCopy = inquiryCopy[lang];
+  void emailWarning;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [buyerCompany, setBuyerCompany] = useState("");
@@ -35,34 +38,44 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
   const [quantity, setQuantity] = useState("");
   const [branding, setBranding] = useState("");
   const [message, setMessage] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [verificationAnswer, setVerificationAnswer] = useState("");
+  const [challenge] = useState(() => ({
+    a: Math.floor(Math.random() * 4) + 2,
+    b: Math.floor(Math.random() * 5) + 1,
+  }));
+  const [startedAt] = useState(() => Date.now());
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [feedback, setFeedback] = useState("");
+
+  function handleFilesChange(nextFiles: FileList | null) {
+    const selected = Array.from(nextFiles ?? []);
+    if (selected.length > 3 || selected.some((file) => file.size > 5 * 1024 * 1024)) {
+      setStatus("error");
+      setFeedback(formCopy.attachmentHint);
+      setFiles([]);
+      return;
+    }
+    setStatus("idle");
+    setFeedback("");
+    setFiles(selected);
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("submitting");
     setFeedback("");
-    let emailSent = true;
 
     try {
+      const formData = new FormData(event.currentTarget);
+      formData.set("sourcePage", `${window.location.pathname}${window.location.search}`);
+      formData.set("referrer", document.referrer);
+      formData.set("startedAt", String(startedAt));
+      formData.set("challengeA", String(challenge.a));
+      formData.set("challengeB", String(challenge.b));
       const response = await fetch("/api/inquiries", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          company: buyerCompany,
-          phone,
-          country,
-          product,
-          accessories: accessorySelection,
-          quantity,
-          branding,
-          message,
-          lang,
-          source: typeof window === "undefined" ? "website" : window.location.href,
-          website: new FormData(event.currentTarget).get("website"),
-        }),
+        body: formData,
       });
 
       const result = await response.json().catch(() => null);
@@ -71,7 +84,9 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
         setFeedback(result?.message ?? ui.form.error);
         return;
       }
-      emailSent = result.emailSent !== false;
+      const successPath = lang === "en" ? "/contact/success" : `/${lang}/contact/success`;
+      window.location.assign(`${successPath}?product=${encodeURIComponent(product)}`);
+      return;
     } catch {
       setStatus("error");
       setFeedback(ui.form.error);
@@ -79,7 +94,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
     }
 
     setStatus("success");
-    setFeedback(emailSent ? ui.form.success : emailWarning[lang]);
+    setFeedback(ui.form.success);
     setName("");
     setEmail("");
     setBuyerCompany("");
@@ -89,10 +104,12 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
     setAccessorySelection("");
     setBranding("");
     setMessage("");
+    setFiles([]);
+    setVerificationAnswer("");
   }
 
   return (
-    <form className="inquiry-form" onSubmit={handleSubmit} aria-label={ui.form.ariaLabel}>
+    <form id="inquiry-form" className="inquiry-form" onSubmit={handleSubmit} aria-label={ui.form.ariaLabel}>
       <p className="form-helper span-2">
         {ui.form.helper}
       </p>
@@ -143,7 +160,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           type="tel"
           value={phone}
           onChange={(event) => setPhone(event.target.value)}
-          placeholder="+33 / +49 / +44 ..."
+          placeholder="+86 159 1400 4936"
           autoComplete="tel"
         />
       </label>
@@ -199,6 +216,19 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           placeholder={ui.form.brandingPlaceholder}
         />
       </label>
+      <label className="span-2 inquiry-file-field">
+        <span>{formCopy.attachments}</span>
+        <input
+          className="inquiry-file-input"
+          name="attachments"
+          type="file"
+          multiple
+          accept=".png,.jpg,.jpeg,.pdf,.doc,.docx,.zip"
+          onChange={(event) => handleFilesChange(event.target.files)}
+        />
+        <small>{formCopy.attachmentHint}</small>
+        {files.length > 0 ? <small className="inquiry-file-list">{files.map((file) => file.name).join(" · ")}</small> : null}
+      </label>
       <label className="span-2">
         <span>{t.form.message}</span>
         <textarea
@@ -209,6 +239,19 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           placeholder={ui.form.messagePlaceholder}
           required
         />
+      </label>
+      <label className="span-2 inquiry-verification-field">
+        <span>{formCopy.verification}</span>
+        <input
+          name="verificationAnswer"
+          inputMode="numeric"
+          value={verificationAnswer}
+          onChange={(event) => setVerificationAnswer(event.target.value)}
+          placeholder={`${challenge.a} + ${challenge.b} = ?`}
+          required
+          aria-describedby="inquiry-verification-hint"
+        />
+        <small id="inquiry-verification-hint">{formCopy.verificationHint}</small>
       </label>
       <button className="primary-action span-2" type="submit" disabled={status === "submitting"}>
         <Send size={18} aria-hidden="true" />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { company, copy, products, type Lang } from "@/lib/site-data";
 import { privacyCopy } from "@/lib/support-page-data";
 import { footerCopy } from "@/lib/translation-copy";
+import { phoneHref, whatsappHref } from "@/lib/contact";
 
 type SiteFooterProps = {
   lang: Lang;
@@ -49,12 +50,11 @@ export function SiteFooter({ lang }: SiteFooterProps) {
         <Link href={`/contact${query}`}>{t.nav.contact}</Link>
         <Link href={`/resources${query}`}>{t.nav.blog}</Link>
         <Link href={`/privacy${query}`}>{privacyCopy[lang].navLabel}</Link>
-        <a href={`tel:${company.phoneBowie}`}>{footer.phoneLabel}: {company.phoneBowie}</a>
-        <a href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`} target="_blank" rel="noreferrer">
+        <a href={phoneHref(company.phoneBowie)}>{footer.phoneLabel}: {company.phoneBowie}</a>
+        <a href={whatsappHref()} target="_blank" rel="noreferrer">
           {footer.whatsappLabel} Bowie
         </a>
-        <a href={`mailto:${company.emailBowie}`}>{company.emailBowie}</a>
-        <a href={`mailto:${company.emailLeo}`}>{company.emailLeo}</a>
+        <Link href={`/contact${query}`}>Contact sales team</Link>
         <a href={company.brochure}>{t.hero.tertiaryCta}</a>
       </nav>
 

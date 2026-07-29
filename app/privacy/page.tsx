@@ -6,7 +6,7 @@ import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { RevealArticle } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { privacyCopy } from "@/lib/support-page-data";
-import { company, languages, type Lang } from "@/lib/site-data";
+import { languages, type Lang } from "@/lib/site-data";
 import { languageAlternates } from "@/lib/seo";
 
 type PrivacyPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
@@ -57,7 +57,7 @@ export default async function PrivacyPage({ searchParams }: PrivacyPageProps) {
 
       <section className="section policy-grid">
         {privacy.sections.map((section) => <RevealArticle className="policy-card" key={section.title}><h2>{section.title}</h2><p>{section.body}</p></RevealArticle>)}
-        <div className="policy-contact"><Mail size={19} aria-hidden="true" /><span>{company.emailBowie}</span></div>
+        <Link className="policy-contact" href={`/contact${query}#inquiry-form`}><Mail size={19} aria-hidden="true" /><span>Contact TK Classic through the secure inquiry form</span></Link>
       </section>
 
       <SiteFooter lang={lang} />

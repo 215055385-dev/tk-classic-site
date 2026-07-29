@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { bundleCopy } from "@/lib/bundle-data";
 import { company, copy, languages, products, type Lang } from "@/lib/site-data";
 import { languageAlternates } from "@/lib/seo";
+import { phoneHref, whatsappHref } from "@/lib/contact";
 
 type ContactPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
@@ -65,10 +66,9 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         <div className="contact-page-details">
           <div className="section-heading align-left"><span>{t.nav.contact}</span><h2>{t.contactTitle}</h2><p>{t.contactLead}</p></div>
           <div className="contact-methods">
-            <a href={`mailto:${company.emailBowie}`}><Mail size={20} aria-hidden="true" /><span>{company.emailBowie}</span></a>
-            <a href={`mailto:${company.emailLeo}`}><Mail size={20} aria-hidden="true" /><span>{company.emailLeo}</span></a>
-            <a href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`} target="_blank" rel="noreferrer"><MessageCircle size={20} aria-hidden="true" /><span>WhatsApp {company.whatsappBowie}</span></a>
-            <a href={`tel:${company.phoneBowie}`}><Phone size={20} aria-hidden="true" /><span>{company.phoneBowie}</span></a>
+            <Link href="#inquiry-form"><Mail size={20} aria-hidden="true" /><span>Send a secure inquiry</span></Link>
+            <a href={whatsappHref(selectedProduct)} target="_blank" rel="noreferrer"><MessageCircle size={20} aria-hidden="true" /><span>WhatsApp — {selectedProduct}</span></a>
+            <a href={phoneHref(company.phoneBowie)}><Phone size={20} aria-hidden="true" /><span>{company.phoneBowie}</span></a>
           </div>
         </div>
         <InquiryForm lang={lang} selectedProduct={selectedProduct} selectedAccessories={selectedAccessories} />

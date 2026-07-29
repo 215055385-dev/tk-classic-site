@@ -45,6 +45,7 @@ import { CoffeeRitualStage } from "@/components/CoffeeRitualStage";
 import { ProductVideoShowcase, type ProductVideo } from "@/components/ProductVideoShowcase";
 import { MobileStickyCta } from "@/components/MobileStickyCta";
 import { languageAlternates } from "@/lib/seo";
+import { phoneHref, whatsappHref } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Portable Coffee Machine OEM & Private Label Supplier",
@@ -272,7 +273,7 @@ export default async function Home({ searchParams }: HomeProps) {
             </MotionCta>
             <MotionCta
               className="secondary-action"
-              href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`}
+              href={whatsappHref()}
               target="_blank"
               rel="noreferrer"
             >
@@ -576,22 +577,18 @@ export default async function Home({ searchParams }: HomeProps) {
             <p>{t.contactLead}</p>
           </div>
           <div className="contact-methods">
-            <a href={`tel:${company.phoneBowie}`}>
+            <a href={phoneHref(company.phoneBowie)}>
               <MessageCircle size={20} aria-hidden="true" />
               <span>Phone: {company.phoneBowie}</span>
             </a>
-            <a href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`} target="_blank" rel="noreferrer">
+            <a href={whatsappHref("DQ-001")} target="_blank" rel="noreferrer">
               <MessageCircle size={20} aria-hidden="true" />
-              <span>WhatsApp Bowie: {company.whatsappBowie}</span>
+              <span>WhatsApp — DQ-001</span>
             </a>
-            <a href={`mailto:${company.emailBowie}`}>
+            <Link href="#inquiry-form">
               <Mail size={20} aria-hidden="true" />
-              <span>{company.emailBowie}</span>
-            </a>
-            <a href={`mailto:${company.emailLeo}`}>
-              <Mail size={20} aria-hidden="true" />
-              <span>{company.emailLeo}</span>
-            </a>
+              <span>Send a secure inquiry</span>
+            </Link>
           </div>
           <address>
             <Building2 size={19} aria-hidden="true" />
@@ -605,7 +602,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
       <MobileStickyCta
         primaryLabel={t.hero.primaryCta}
-        whatsappHref={`https://wa.me/${company.whatsappBowie.replace("+", "")}`}
+        whatsappHref={whatsappHref("DQ-001")}
       />
 
       <SiteFooter lang={lang} />

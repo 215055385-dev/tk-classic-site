@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
-import { company } from "@/lib/site-data";
 
 export default function NotFound() {
   return (
@@ -15,10 +14,10 @@ export default function NotFound() {
           <Link className="primary-action" href="/#products">
             View products
           </Link>
-          <a className="secondary-action" href={`mailto:${company.emailBowie}`}>
+          <Link className="secondary-action" href="/contact#inquiry-form">
             <Mail size={18} aria-hidden="true" />
             Contact sales
-          </a>
+          </Link>
         </div>
       </section>
     </main>

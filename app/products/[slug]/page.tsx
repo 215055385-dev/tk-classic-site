@@ -36,6 +36,7 @@ import { ProductPriceTag } from "@/components/ProductPriceTag";
 import { ProductAccessorySelector } from "@/components/ProductAccessorySelector";
 import { company, copy, languages, products, type Lang } from "@/lib/site-data";
 import { languageAlternates } from "@/lib/seo";
+import { phoneHref, whatsappHref } from "@/lib/contact";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -202,7 +203,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
             </MotionCta>
             <MotionCta
               className="secondary-action"
-              href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`}
+              href={whatsappHref(product.model)}
               target="_blank"
               rel="noreferrer"
             >
@@ -295,25 +296,17 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
             <p>{t.contactLead}</p>
           </div>
           <div className="contact-methods">
-            <a href={`mailto:${company.emailBowie}`}>
+            <Link href="#inquiry-form">
               <Mail size={20} aria-hidden="true" />
-              <span>{company.emailBowie}</span>
-            </a>
-            <a href={`mailto:${company.emailLeo}`}>
-              <Mail size={20} aria-hidden="true" />
-              <span>{company.emailLeo}</span>
-            </a>
-            <a href={`tel:${company.phoneBowie}`}>
+              <span>Send a secure inquiry</span>
+            </Link>
+            <a href={phoneHref(company.phoneBowie)}>
               <MessageCircle size={20} aria-hidden="true" />
               <span>Phone: {company.phoneBowie}</span>
             </a>
-            <a href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`} target="_blank" rel="noreferrer">
+            <a href={whatsappHref(product.model)} target="_blank" rel="noreferrer">
               <MessageCircle size={20} aria-hidden="true" />
-              <span>WhatsApp Bowie: {company.whatsappBowie}</span>
-            </a>
-            <a href={`mailto:${company.emailBowie}`}>
-              <Mail size={20} aria-hidden="true" />
-              <span>{company.emailBowie}</span>
+              <span>WhatsApp — {product.model}</span>
             </a>
             <a href="/downloads/product-brochure.pdf">
               <ShieldCheck size={20} aria-hidden="true" />
@@ -356,7 +349,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       <div className="mobile-sticky-cta" aria-label="Mobile quick product inquiry">
         <a href="#product-inquiry">{t.hero.primaryCta}</a>
         <a
-          href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`}
+          href={whatsappHref(product.model)}
           target="_blank"
           rel="noreferrer"
         >

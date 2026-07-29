@@ -18,6 +18,9 @@ export type AdminInquiry = {
   message: string;
   lang: string;
   source: string;
+  sourcePage: string;
+  referrer: string;
+  attachmentCount: number;
   status: InquiryStatus;
   adminNote: string;
 };
@@ -61,6 +64,9 @@ async function ensureAdminSchema() {
     )
   `;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS accessories text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS source_page text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS referrer text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS attachments jsonb`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'new'`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS admin_note text`;
   await sql`
@@ -81,6 +87,19 @@ function toNumber(value: unknown) {
   return Number(value ?? 0);
 }
 
+function countAttachments(value: unknown) {
+  if (Array.isArray(value)) return value.length;
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed.length : 0;
+    } catch {
+      return 0;
+    }
+  }
+  return 0;
+}
+
 export async function listAdminData(filters: {
   status?: string;
   product?: string;
@@ -93,7 +112,7 @@ export async function listAdminData(filters: {
   const [inquiryRows, summaryRows, productRows, pathRows, referrerRows, languageRows, dailyVisitRows] = await Promise.all([
     sql`
       SELECT id, created_at, name, email, company, phone, country, product, accessories,
-        quantity, branding, message, lang, source, status, admin_note
+        quantity, branding, message, lang, source, source_page, referrer, attachments, status, admin_note
       FROM inquiries
       ORDER BY created_at DESC
       LIMIT 500
@@ -131,6 +150,9 @@ export async function listAdminData(filters: {
       message: String(row.message ?? ""),
       lang: String(row.lang ?? "en"),
       source: String(row.source ?? "website"),
+      sourcePage: String(row.source_page ?? ""),
+      referrer: String(row.referrer ?? ""),
+      attachmentCount: countAttachments(row.attachments),
       status: inquiryStatuses.includes(String(row.status) as InquiryStatus) ? String(row.status) as InquiryStatus : "new",
       adminNote: String(row.admin_note ?? ""),
     }))

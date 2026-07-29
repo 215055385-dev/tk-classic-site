@@ -7,8 +7,9 @@ import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { uiCopy } from "@/lib/localized-ui";
 import { commercialCopy } from "@/lib/support-page-data";
-import { company, copy, languages, type Lang } from "@/lib/site-data";
+import { copy, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates } from "@/lib/seo";
+import { whatsappHref } from "@/lib/contact";
 
 type CompanyPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -136,8 +137,8 @@ export default async function CompanyPage({ searchParams }: CompanyPageProps) {
           {support.proofItems.map((item) => <article key={item} className="proof-card"><Building2 size={21} aria-hidden="true" /><p>{item}</p></article>)}
         </div>
         <div className="contact-methods company-contact-methods">
-          <a href={`mailto:${company.emailBowie}`}><Mail size={19} aria-hidden="true" /><span>{company.emailBowie}</span></a>
-          <a href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`} target="_blank" rel="noreferrer"><MessageCircle size={19} aria-hidden="true" /><span>{company.whatsappBowie}</span></a>
+          <Link href={`/contact${langQuery(lang)}#inquiry-form`}><Mail size={19} aria-hidden="true" /><span>Contact sales team</span></Link>
+          <a href={whatsappHref()} target="_blank" rel="noreferrer"><MessageCircle size={19} aria-hidden="true" /><span>WhatsApp sales</span></a>
         </div>
       </section>
 
