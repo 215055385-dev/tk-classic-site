@@ -31,6 +31,7 @@ import {
 import {
   company,
   copy,
+  certifications,
   languages,
   products,
   type Lang,
@@ -41,6 +42,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ProductPriceTag } from "@/components/ProductPriceTag";
 import { bundleCopy } from "@/lib/bundle-data";
 import { CoffeeRitualStage } from "@/components/CoffeeRitualStage";
+import { ProductVideoShowcase, type ProductVideo } from "@/components/ProductVideoShowcase";
 import { languageAlternates } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -95,6 +97,50 @@ export default async function Home({ searchParams }: HomeProps) {
     ],
     alt: `${product.model} portable coffee machine`,
   }));
+  const videoScenes: ProductVideo[] = [
+    {
+      src: "/videos/outdoor-scene.mp4",
+      poster: "/hero-products/dq-001.png",
+      label: sceneCards[0]?.[2] ?? "Outdoor scene",
+      title: sceneCards[0]?.[0] ?? "Coffee wherever you go",
+      summary: sceneCards[0]?.[1] ?? "Show the product in a real outdoor setting.",
+    },
+    {
+      src: "/videos/product-01.mp4",
+      poster: "/hero-products/dq-002.png",
+      label: sceneCards[1]?.[2] ?? "Product detail",
+      title: sceneCards[1]?.[0] ?? "Portable by design",
+      summary: sceneCards[1]?.[1] ?? "A closer look at the portable coffee system.",
+    },
+    {
+      src: "/videos/product-02.mp4",
+      poster: "/hero-products/dq-005.png",
+      label: sceneCards[2]?.[2] ?? "Brew routine",
+      title: sceneCards[2]?.[0] ?? "Built for daily rituals",
+      summary: sceneCards[2]?.[1] ?? "A visual product moment for buyer presentations.",
+    },
+    {
+      src: "/videos/product-03.mp4",
+      poster: "/hero-products/dq-008.png",
+      label: "Product film",
+      title: productLine[0]?.summary[lang] ?? "Portable espresso system",
+      summary: productLine[0]?.featureLabel ?? "Factory-direct portable coffee solutions.",
+    },
+    {
+      src: "/videos/je009.mp4",
+      poster: "/hero-products/dq-010.png",
+      label: "JE009",
+      title: "Product demonstration",
+      summary: "A dedicated product film for wholesale and private label conversations.",
+    },
+    {
+      src: "/videos/exploded-operation.mp4",
+      poster: "/hero-products/dq-011.png",
+      label: "Assembly view",
+      title: "See how the system works",
+      summary: "A closer operational view for sourcing and product evaluation.",
+    },
+  ];
   const structuredData = [
     {
       "@context": "https://schema.org",
@@ -187,7 +233,6 @@ export default async function Home({ searchParams }: HomeProps) {
           <Link href={`/accessories${langQuery(lang)}`}>{t.sectionTitles.accessories}</Link>
           <Link href={`/oem-odm${langQuery(lang)}`}>{t.nav.oem}</Link>
           <Link href={`/factory${langQuery(lang)}`}>{t.nav.factory}</Link>
-          <Link href={`/certifications${langQuery(lang)}`}>{t.nav.certs}</Link>
           <Link href={`/contact${langQuery(lang)}`}>{t.nav.contact}</Link>
         </nav>
         <LanguageSwitcher
@@ -202,7 +247,6 @@ export default async function Home({ searchParams }: HomeProps) {
         <Link href={`/accessories${langQuery(lang)}`}>{t.sectionTitles.accessories}</Link>
         <Link href={`/oem-odm${langQuery(lang)}`}>{t.nav.oem}</Link>
         <Link href={`/factory${langQuery(lang)}`}>{t.nav.factory}</Link>
-        <Link href={`/certifications${langQuery(lang)}`}>{t.nav.certs}</Link>
         <Link href={`/contact${langQuery(lang)}`}>{t.nav.contact}</Link>
       </nav>
 
@@ -338,12 +382,38 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
       </section>
 
+      <RevealSection className="section product-video-section" id="videos" aria-label="Product videos">
+        <div className="section-heading">
+          <span>{t.nav.products}</span>
+          <h2>{ui.scenes.title}</h2>
+          <p>{ui.scenes.lead}</p>
+        </div>
+        <ProductVideoShowcase videos={videoScenes} />
+      </RevealSection>
+
       <section className="proof-band" aria-label="TK Classic proof points">
         <div><strong>15+</strong><span>{ui.proof.years}</span></div>
         <div><strong>50+</strong><span>{ui.proof.markets}</span></div>
         <div><strong>25 bar</strong><span>{ui.proof.extraction}</span></div>
         <div><strong>CE / RoHS</strong><span>{ui.proof.compliance}</span></div>
       </section>
+
+      <RevealSection className="section certification-trust-section" id="certifications" aria-label={t.sectionTitles.certs}>
+        <div className="section-heading">
+          <span>{t.nav.certs}</span>
+          <h2>{t.sectionTitles.certs}</h2>
+          <p>{t.certs[0]}</p>
+        </div>
+        <div className="certification-trust-grid">
+          {certifications.map((certification) => (
+            <div className="certification-trust-item" key={certification.name}>
+              <span className="certification-trust-mark"><ShieldCheck size={18} aria-hidden="true" /></span>
+              <strong>{certification.name}</strong>
+              <small>{ui.proof.compliance}</small>
+            </div>
+          ))}
+        </div>
+      </RevealSection>
 
       <section id="bundles" className="section bundle-section" aria-label={bundles.eyebrow}>
         <div className="section-heading">
@@ -481,12 +551,6 @@ export default async function Home({ searchParams }: HomeProps) {
             <span>{t.nav.factory}</span>
             <h3>{t.sectionTitles.factory}</h3>
             <p>{t.factory[0]}</p>
-            <ChevronRight size={19} aria-hidden="true" />
-          </Link>
-          <Link className="home-hub-card" href={`/certifications${langQuery(lang)}`}>
-            <span>{t.nav.certs}</span>
-            <h3>{t.sectionTitles.certs}</h3>
-            <p>{t.certs[0]}</p>
             <ChevronRight size={19} aria-hidden="true" />
           </Link>
           <Link className="home-hub-card" href={`/resources${langQuery(lang)}#faq`}>
