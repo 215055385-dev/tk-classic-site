@@ -1,0 +1,52 @@
+/* Homepage carousel tuning: the source image remains unobstructed and all
+   model information sits in a predictable block below it. */
+.home-shell .coffee-ritual-frame {
+  aspect-ratio: 1.5 / 1;
+  min-height: 0;
+}
+
+.home-shell .coffee-ritual-media img.is-contain {
+  padding: clamp(14px, 3vw, 38px);
+}
+
+.home-shell .coffee-ritual-details {
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 0.72fr);
+  align-items: stretch;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-caption {
+  min-height: 108px;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-specs {
+  min-width: 0;
+}
+
+.home-shell .coffee-ritual-tabs {
+  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 18px), transparent 100%);
+}
+
+@media (max-width: 720px) {
+  .home-shell .coffee-ritual-frame {
+    aspect-ratio: 1.08 / 1;
+    border-radius: 16px;
+  }
+
+  .home-shell .coffee-ritual-media img.is-contain {
+    padding: 12px;
+  }
+
+  .home-shell .coffee-ritual-details {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .home-shell .coffee-ritual-details .coffee-ritual-caption {
+    min-height: 0;
+  }
+
+  .home-shell .coffee-ritual-tabs {
+    max-width: 100%;
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 14px), transparent 100%);
+  }
+}

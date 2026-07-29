@@ -1,16 +1,12 @@
 import type { MetadataRoute } from "next";
-import { company, products } from "@/lib/site-data";
+import { company, products, languages } from "@/lib/site-data";
+import { localizedUrl } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const localized = (path: string) => ({
     languages: {
-      ...Object.fromEntries(
-        ["en", "es", "pt", "fr", "ar", "zh", "ru"].map((lang) => [
-          lang,
-          `${company.siteUrl}${path}${lang === "en" ? "" : `?lang=${lang}`}`,
-        ]),
-      ),
-      "x-default": `${company.siteUrl}${path}`,
+      ...Object.fromEntries(languages.map((language) => [language.code, localizedUrl(path, language.code)])),
+      "x-default": localizedUrl(path, "en"),
     },
   });
 

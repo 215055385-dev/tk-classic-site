@@ -4,7 +4,10 @@ import { company } from "@/lib/site-data";
 import { VisitTracker } from "@/components/VisitTracker";
 import { SiteStructuredData } from "@/components/SiteStructuredData";
 import { LocaleDocumentSync } from "@/components/LocaleDocumentSync";
+import { MotionProvider } from "@/components/MotionProvider";
 import "./globals.css";
+import "./styles/performance.css";
+import "./styles/home-carousel.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,7 +55,7 @@ export const metadata: Metadata = {
     siteName: "TK Classic",
     images: [
       {
-        url: "/products/dq-010/hero.jpg",
+        url: "/optimized/products/dq-010-stand.webp",
         width: 1200,
         height: 1200,
         alt: "TK Classic DQ-010 portable coffee machine",
@@ -64,7 +67,7 @@ export const metadata: Metadata = {
     title: "TK Classic | Portable Coffee Machine OEM & Private Label Supplier",
     description:
       "Factory-direct portable espresso machines and coffee accessories for European wholesale and private label sourcing.",
-    images: ["/products/dq-010/hero.jpg"],
+    images: ["/optimized/products/dq-010-stand.webp"],
   },
 };
 
@@ -80,7 +83,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body><SiteStructuredData /><LocaleDocumentSync /><VisitTracker />{children}</body>
+      <body><MotionProvider><SiteStructuredData /><LocaleDocumentSync /><VisitTracker />{children}</MotionProvider></body>
     </html>
   );
 }

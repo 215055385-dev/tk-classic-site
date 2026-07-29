@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion, type HTMLMotionProps } from "framer-motion";
+import { m, useReducedMotion, type HTMLMotionProps } from "framer-motion";
 import type { ReactNode } from "react";
 
 type MotionProps<T extends keyof HTMLElementTagNameMap> = HTMLMotionProps<T> & {
@@ -21,7 +21,7 @@ export function HeroCopyMotion({ children, className }: MotionProps<"div">) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.div
+    <m.div
       className={className}
       initial={shouldReduceMotion ? false : "hidden"}
       animate="show"
@@ -35,7 +35,7 @@ export function HeroCopyMotion({ children, className }: MotionProps<"div">) {
       }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -43,7 +43,7 @@ export function HeroTitleMotion({ children, className }: MotionProps<"h1">) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.h1
+    <m.h1
       className={className}
       variants={{
         hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 28 },
@@ -51,7 +51,7 @@ export function HeroTitleMotion({ children, className }: MotionProps<"h1">) {
       }}
     >
       {children}
-    </motion.h1>
+    </m.h1>
   );
 }
 
@@ -59,7 +59,7 @@ export function HeroTextMotion({ children, className }: MotionProps<"p">) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.p
+    <m.p
       className={className}
       variants={{
         hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
@@ -67,7 +67,7 @@ export function HeroTextMotion({ children, className }: MotionProps<"p">) {
       }}
     >
       {children}
-    </motion.p>
+    </m.p>
   );
 }
 
@@ -75,7 +75,7 @@ export function HeroActionsMotion({ children, className }: MotionProps<"div">) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.div
+    <m.div
       className={className}
       variants={{
         hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 16 },
@@ -83,7 +83,7 @@ export function HeroActionsMotion({ children, className }: MotionProps<"div">) {
       }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -95,7 +95,7 @@ export function HeroVisualMotion({
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.div
+    <m.div
       className={className}
       initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.94, y: 28 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -103,7 +103,7 @@ export function HeroVisualMotion({
       {...props}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -111,14 +111,14 @@ export function MotionCta({ children, ...props }: MotionProps<"a">) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.a
+    <m.a
       whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.025 }}
       whileTap={shouldReduceMotion ? undefined : { scale: 0.975 }}
       transition={{ duration: 0.18, ease: softEase }}
       {...props}
     >
       {children}
-    </motion.a>
+    </m.a>
   );
 }
 
@@ -126,7 +126,7 @@ export function RevealSection({ children, className, ...props }: MotionProps<"se
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.section
+    <m.section
       className={className}
       initial={shouldReduceMotion ? false : { opacity: 0, y: 34 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -135,7 +135,7 @@ export function RevealSection({ children, className, ...props }: MotionProps<"se
       {...props}
     >
       {children}
-    </motion.section>
+    </m.section>
   );
 }
 
@@ -143,7 +143,7 @@ export function RevealArticle({ children, className, ...props }: MotionProps<"ar
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.article
+    <m.article
       className={className}
       initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -154,6 +154,6 @@ export function RevealArticle({ children, className, ...props }: MotionProps<"ar
       {...props}
     >
       {children}
-    </motion.article>
+    </m.article>
   );
 }

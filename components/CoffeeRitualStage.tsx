@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Coffee } from "lucide-react";
 
@@ -97,6 +97,20 @@ export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View 
                 tabRefs.current[index] = element;
               }}
               className={activeIndex === index ? "is-active" : undefined}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+                  event.preventDefault();
+                  const nextIndex = (index + 1) % scenes.length;
+                  setActiveIndex(nextIndex);
+                  tabRefs.current[nextIndex]?.focus();
+                }
+                if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+                  event.preventDefault();
+                  const nextIndex = (index - 1 + scenes.length) % scenes.length;
+                  setActiveIndex(nextIndex);
+                  tabRefs.current[nextIndex]?.focus();
+                }
+              }}
               onClick={() => setActiveIndex(index)}
             >
               <span>0{index + 1}</span>
@@ -114,7 +128,7 @@ export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View 
         tabIndex={0}
         >
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeScene.src}
             className="coffee-ritual-media"
             initial={shouldReduceMotion ? false : { opacity: 0, scale: 1.035 }}
@@ -128,11 +142,12 @@ export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View 
               fill
               className={activeScene.fit === "contain" ? "is-contain" : "is-cover"}
               draggable={false}
-              sizes="(max-width: 720px) 100vw, (max-width: 1100px) 86vw, 980px"
-              quality={80}
+              sizes="(max-width: 720px) 94vw, (max-width: 1040px) 92vw, 980px"
+              quality={72}
               priority={activeIndex === 0}
+              loading={activeIndex === 0 ? "eager" : "lazy"}
             />
-          </motion.div>
+          </m.div>
         </AnimatePresence>
         <div className="coffee-ritual-vignette" aria-hidden="true" />
         {activeScene.href ? (

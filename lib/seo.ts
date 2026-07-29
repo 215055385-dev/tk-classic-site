@@ -1,8 +1,9 @@
 import { company, languages, type Lang } from "@/lib/site-data";
 
 export function localizedUrl(path: string, lang: Lang): string {
-  const query = lang === "en" ? "" : `?lang=${lang}`;
-  return `${company.siteUrl}${path}${query}`;
+  const normalizedPath = path === "/" ? "" : path;
+  const prefix = lang === "en" ? "" : `/${lang}`;
+  return `${company.siteUrl}${prefix}${normalizedPath}`;
 }
 
 export function languageAlternates(path: string): Record<string, string> {

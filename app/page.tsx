@@ -93,7 +93,7 @@ export default async function Home({ searchParams }: HomeProps) {
     title: product.summary[lang],
     summary: `${localizeFeatureLabel(product.featureLabel, lang)} / ${product.spec.pressure} / ${product.spec.cup}`,
     label: localizeFeatureLabel(product.featureLabel, lang),
-    src: `/hero-products/${product.model.toLowerCase()}.png`,
+    src: `/optimized/hero-products/${product.model.toLowerCase()}.webp`,
     href: `/products/${product.slug}${langQuery(lang)}`,
     fit: "contain" as const,
     stats: [
@@ -106,42 +106,42 @@ export default async function Home({ searchParams }: HomeProps) {
   const videoScenes: ProductVideo[] = [
     {
       src: "/videos/outdoor-scene.mp4",
-      poster: "/hero-products/dq-001.png",
+      poster: "/optimized/hero-products/dq-001.webp",
       label: sceneCards[0]?.[2] ?? "Outdoor scene",
       title: sceneCards[0]?.[0] ?? "Coffee wherever you go",
       summary: sceneCards[0]?.[1] ?? "Show the product in a real outdoor setting.",
     },
     {
       src: "/videos/product-01.mp4",
-      poster: "/hero-products/dq-002.png",
+      poster: "/optimized/hero-products/dq-002.webp",
       label: sceneCards[1]?.[2] ?? "Product detail",
       title: sceneCards[1]?.[0] ?? "Portable by design",
       summary: sceneCards[1]?.[1] ?? "A closer look at the portable coffee system.",
     },
     {
       src: "/videos/product-02.mp4",
-      poster: "/hero-products/dq-005.png",
+      poster: "/optimized/hero-products/dq-005.webp",
       label: sceneCards[2]?.[2] ?? "Brew routine",
       title: sceneCards[2]?.[0] ?? "Built for daily rituals",
       summary: sceneCards[2]?.[1] ?? "A visual product moment for buyer presentations.",
     },
     {
       src: "/videos/product-03.mp4",
-      poster: "/hero-products/dq-008.png",
+      poster: "/optimized/hero-products/dq-008.webp",
       label: "Product film",
       title: productLine[0]?.summary[lang] ?? "Portable espresso system",
       summary: productLine[0]?.featureLabel ?? "Factory-direct portable coffee solutions.",
     },
     {
       src: "/videos/je009.mp4",
-      poster: "/hero-products/dq-010.png",
+      poster: "/optimized/hero-products/dq-010.webp",
       label: "JE009",
       title: "Product demonstration",
       summary: "A dedicated product film for wholesale and private label conversations.",
     },
     {
       src: "/videos/exploded-operation.mp4",
-      poster: "/hero-products/dq-011.png",
+      poster: "/optimized/hero-products/dq-011.webp",
       label: "Assembly view",
       title: "See how the system works",
       summary: "A closer operational view for sourcing and product evaluation.",
@@ -341,7 +341,7 @@ export default async function Home({ searchParams }: HomeProps) {
         <div className="showcase-panel">
           <div className="showcase-image-shell">
             <Image
-              src="/products/dq-010/stand.webp"
+              src="/optimized/products/dq-010-stand.webp"
               alt="DQ-010 portable espresso machine with cup stand"
               width={2048}
               height={2048}

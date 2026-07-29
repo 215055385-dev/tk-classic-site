@@ -3228,15 +3228,15 @@ address {
 
 .home-shell .lifestyle-card-1 {
   grid-row: span 2;
-  background-image: url("/lifestyle/dolce-vita.jpg");
+  background-image: url("/optimized/lifestyle/dolce-vita.webp");
 }
 
 .home-shell .lifestyle-card-2 {
-  background-image: url("/lifestyle/istanbul-moments.jpg");
+  background-image: url("/optimized/lifestyle/istanbul-moments.webp");
 }
 
 .home-shell .lifestyle-card-3 {
-  background-image: url("/products/dq-011/hero.jpg");
+  background-image: url("/optimized/products/dq-011-hero.webp");
 }
 
 .home-shell .lifestyle-card-content {

@@ -72,8 +72,9 @@ export function ProductVideoShowcase({ videos }: ProductVideoShowcaseProps) {
             className="product-video-player"
             controls
             playsInline
-            preload="metadata"
+            preload="none"
             poster={activeVideo.poster}
+            aria-label={`${activeVideo.label} product video`}
           >
             <source src={activeVideo.src} type="video/mp4" />
             Your browser does not support the video tag.
