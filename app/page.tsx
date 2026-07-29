@@ -43,6 +43,7 @@ import { ProductPriceTag } from "@/components/ProductPriceTag";
 import { bundleCopy } from "@/lib/bundle-data";
 import { CoffeeRitualStage } from "@/components/CoffeeRitualStage";
 import { ProductVideoShowcase, type ProductVideo } from "@/components/ProductVideoShowcase";
+import { MobileStickyCta } from "@/components/MobileStickyCta";
 import { languageAlternates } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -597,16 +598,10 @@ export default async function Home({ searchParams }: HomeProps) {
         <InquiryForm lang={lang} selectedProduct="DQ-001" />
       </section>
 
-      <div className="mobile-sticky-cta" aria-label="Mobile quick contact">
-        <a href="#contact">{t.hero.primaryCta}</a>
-        <a
-          href={`https://wa.me/${company.whatsappBowie.replace("+", "")}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          WhatsApp
-        </a>
-      </div>
+      <MobileStickyCta
+        primaryLabel={t.hero.primaryCta}
+        whatsappHref={`https://wa.me/${company.whatsappBowie.replace("+", "")}`}
+      />
 
       <SiteFooter lang={lang} />
     </main>

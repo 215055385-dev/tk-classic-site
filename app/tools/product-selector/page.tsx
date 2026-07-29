@@ -1,8 +1,17 @@
 import { InteractiveBuyingTools } from "@/components/InteractiveBuyingTools";
 import { ToolPageShell } from "@/components/ToolPageShell";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { copy, languages, type Lang } from "@/lib/site-data";
 import { getInteractiveProducts } from "@/lib/tool-products";
+import { languageAlternates } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "Portable Coffee Machine Product Selector | TK Classic",
+  description: "Match a portable coffee machine model to your market, quantity, destination and private-label direction.",
+  keywords: ["portable coffee machine selector", "portable espresso machine wholesale", "private label coffee machine"],
+  alternates: { canonical: "/tools/product-selector", languages: languageAlternates("/tools/product-selector") },
+};
 
 type Props = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;

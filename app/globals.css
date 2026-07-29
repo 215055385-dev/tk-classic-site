@@ -4911,6 +4911,42 @@ address {
   gap: 14px;
 }
 
+.product-video-placeholder {
+  position: relative;
+  display: grid;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  place-items: end start;
+  border-radius: 12px;
+  background: #2b211b;
+}
+
+.product-video-placeholder img {
+  z-index: 0;
+  object-fit: cover;
+  opacity: 0.82;
+}
+
+.product-video-placeholder::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: "";
+  background: linear-gradient(180deg, rgba(43, 33, 27, 0.04), rgba(43, 33, 27, 0.74));
+}
+
+.product-video-placeholder span {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 16px 16px;
+  color: #fffaf2;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .product-video-tabs {
   display: flex;
   gap: 6px;
