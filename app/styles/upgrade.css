@@ -1488,3 +1488,335 @@ html {
     color: var(--lava-cocoa);
   }
 }
+
+/* -------------------------------------------------------------------------
+ * Homepage layout refinement: horizontal hero headline, persistent navigation,
+ * compact product facts and a focused two-video DQ-010 demonstration area.
+ * ---------------------------------------------------------------------- */
+
+.home-shell .site-header,
+.inner-page .detail-header,
+.tool-page-shell .tool-page-header {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  z-index: 120;
+  margin-top: 0;
+  transform: translateX(-50%);
+}
+
+.home-shell {
+  overflow: visible;
+}
+
+.home-shell,
+.inner-page,
+.tool-page-shell {
+  padding-top: 78px;
+}
+
+.home-shell .hero-section {
+  grid-template-areas:
+    "heading heading"
+    "body visual";
+  grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+  grid-template-rows: auto auto;
+  align-items: start;
+  row-gap: clamp(28px, 3.5vw, 48px);
+}
+
+.home-shell .hero-heading {
+  grid-area: heading;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.home-shell .hero-heading .hero-eyebrow {
+  margin-bottom: 14px;
+}
+
+.home-shell .hero-heading .hero-title {
+  width: min(100%, 23ch);
+  max-width: none;
+  margin: 0;
+  font-size: clamp(40px, 4.25vw, 58px);
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.home-shell .hero-body {
+  grid-area: body;
+  align-self: center;
+  width: 100%;
+  max-width: 480px;
+  margin: 0;
+}
+
+.home-shell .hero-visual {
+  grid-area: visual;
+  align-self: start;
+}
+
+.home-shell .coffee-ritual-details {
+  grid-template-columns: minmax(0, 1.35fr) minmax(250px, 0.9fr) auto;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-caption {
+  min-height: 0;
+  border-radius: 13px;
+  padding: 13px 14px;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-caption strong {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 5px;
+  font-size: clamp(18px, 1.55vw, 23px);
+  line-height: 1.06;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-caption p {
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-specs {
+  min-width: 0;
+  border-radius: 13px;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-specs div {
+  padding: 11px 10px;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-specs span {
+  font-size: 8px;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-specs strong {
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.home-shell .coffee-ritual-details .coffee-ritual-cta {
+  position: relative;
+  top: auto;
+  right: auto;
+  grid-column: auto;
+  align-self: stretch;
+  justify-self: stretch;
+  min-width: 96px;
+  border-radius: 13px;
+  padding: 12px;
+  text-align: center;
+}
+
+.home-shell .product-video-section {
+  padding-top: clamp(52px, 6vw, 82px);
+}
+
+.home-shell .product-video-section .section-heading {
+  max-width: 760px;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+}
+
+.home-shell .product-video-section .section-heading h2,
+.home-shell .product-video-section .section-heading p {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.product-video-showcase {
+  display: block;
+}
+
+.product-video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.product-video-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(86, 48, 31, 0.18);
+  border-radius: 20px;
+  background: var(--lava-warm-white);
+  box-shadow: 0 20px 55px rgba(50, 27, 18, 0.1);
+}
+
+.product-video-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--lava-charcoal);
+}
+
+.product-video-media .product-video-player,
+.product-video-media .product-video-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border-radius: 0;
+  object-fit: cover;
+}
+
+.product-video-card .product-video-copy {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  justify-content: initial;
+  min-height: 190px;
+  padding: 22px 24px 24px;
+  color: var(--lava-espresso);
+}
+
+.product-video-card .product-video-kicker {
+  color: var(--lava-cocoa);
+}
+
+.product-video-card .product-video-kicker svg {
+  color: var(--lava-cocoa);
+}
+
+.product-video-index {
+  grid-column: 2;
+  grid-row: 1;
+  color: rgba(86, 48, 31, 0.38);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.product-video-card .product-video-copy h3 {
+  grid-column: 1 / -1;
+  max-width: none;
+  margin: 14px 0 0;
+  color: var(--lava-espresso);
+  font-size: clamp(24px, 2.5vw, 34px);
+  line-height: 1;
+}
+
+.product-video-card .product-video-copy p {
+  grid-column: 1 / -1;
+  max-width: 560px;
+  margin: 11px 0 0;
+  color: #725d51;
+}
+
+.product-video-card .product-video-note {
+  grid-column: 1 / -1;
+  margin-top: 18px;
+  color: rgba(86, 48, 31, 0.52);
+}
+
+@media (max-width: 1040px) {
+  .home-shell .hero-section {
+    grid-template-areas:
+      "heading"
+      "body"
+      "visual";
+    grid-template-columns: 1fr;
+    row-gap: 24px;
+    text-align: left;
+  }
+
+  .home-shell .hero-heading,
+  .home-shell .hero-body,
+  .home-shell .hero-heading .hero-title,
+  .home-shell .hero-body .hero-lead,
+  .home-shell .hero-body .hero-support {
+    max-width: none;
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  .home-shell .hero-heading .hero-eyebrow,
+  .home-shell .hero-body .hero-actions,
+  .home-shell .hero-body .hero-stat-row {
+    justify-content: flex-start;
+  }
+
+  .home-shell .hero-body {
+    align-self: start;
+    max-width: 720px;
+  }
+
+  .home-shell .coffee-ritual-details {
+    grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.9fr) auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .home-shell .site-header,
+  .inner-page .detail-header,
+  .tool-page-shell .tool-page-header {
+    top: max(6px, env(safe-area-inset-top));
+    left: 50%;
+    z-index: 120;
+    transform: translateX(-50%);
+  }
+
+  .home-shell,
+  .inner-page,
+  .tool-page-shell {
+    padding-top: 70px;
+  }
+
+  .home-shell .hero-section {
+    grid-template-areas:
+      "heading"
+      "body"
+      "visual";
+    gap: 20px;
+    padding-top: 54px;
+  }
+
+  .home-shell .hero-heading .hero-title {
+    width: 100%;
+    max-width: none;
+    font-size: clamp(28px, 7.7vw, 35px);
+    line-height: 1.03;
+    letter-spacing: -0.045em;
+  }
+
+  .home-shell .hero-body {
+    max-width: none;
+  }
+
+  .home-shell .coffee-ritual-details {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .home-shell .coffee-ritual-details .coffee-ritual-cta {
+    grid-column: 1;
+    min-height: 44px;
+  }
+
+  .product-video-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .product-video-card {
+    border-radius: 16px;
+  }
+
+  .product-video-card .product-video-copy {
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .product-video-card .product-video-copy h3 {
+    font-size: 25px;
+  }
+}

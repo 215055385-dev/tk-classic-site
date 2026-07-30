@@ -112,7 +112,6 @@ export default async function Home({ searchParams }: HomeProps) {
   const productLine = products.filter((item) =>
     ["DQ-001", "DQ-002", "DQ-005", "DQ-008", "DQ-010", "DQ-011"].includes(item.model),
   );
-  const sceneCards = ui.scenes.cards.slice(0, 3);
   const videoUi = {
     en: { load: "Scroll to load video", sound: "Sound is off until you choose to play it." },
     es: { load: "Desplázate para cargar el vídeo", sound: "El sonido permanece apagado hasta que reproduzcas el vídeo." },
@@ -121,6 +120,78 @@ export default async function Home({ searchParams }: HomeProps) {
     ar: { load: "مرّر لتحميل الفيديو", sound: "يبقى الصوت متوقفاً حتى تختار التشغيل." },
     zh: { load: "滚动后加载视频", sound: "点击播放前默认静音。" },
     ru: { load: "Прокрутите, чтобы загрузить видео", sound: "Звук выключен до начала воспроизведения." },
+  }[lang];
+  const videoSectionCopy = {
+    en: {
+      eyebrow: "DQ-010 operation",
+      title: "See DQ-010 in operation.",
+      lead: "Two focused demonstrations show setup, adapter options and the brewing workflow.",
+      cards: ["Adapter setup", "Brewing workflow"],
+      summaries: [
+        "See how the compatible adapters are installed before brewing.",
+        "Follow the machine assembly and operating sequence from setup to extraction.",
+      ],
+    },
+    es: {
+      eyebrow: "Funcionamiento del DQ-010",
+      title: "Vea el DQ-010 en funcionamiento.",
+      lead: "Dos demostraciones muestran la preparación, los adaptadores y el proceso de extracción.",
+      cards: ["Preparación de adaptadores", "Proceso de extracción"],
+      summaries: [
+        "Vea cómo se instalan los adaptadores compatibles antes de preparar el café.",
+        "Siga el montaje y la secuencia de uso desde la preparación hasta la extracción.",
+      ],
+    },
+    pt: {
+      eyebrow: "Operação do DQ-010",
+      title: "Veja o DQ-010 em funcionamento.",
+      lead: "Duas demonstrações mostram a preparação, os adaptadores e o processo de extração.",
+      cards: ["Preparação dos adaptadores", "Processo de extração"],
+      summaries: [
+        "Veja como instalar os adaptadores compatíveis antes do preparo.",
+        "Acompanhe a montagem e a operação, da preparação à extração.",
+      ],
+    },
+    fr: {
+      eyebrow: "Utilisation du DQ-010",
+      title: "Découvrez le DQ-010 en fonctionnement.",
+      lead: "Deux démonstrations présentent la mise en place, les adaptateurs et le processus d’extraction.",
+      cards: ["Mise en place des adaptateurs", "Processus d’extraction"],
+      summaries: [
+        "Découvrez comment installer les adaptateurs compatibles avant la préparation.",
+        "Suivez l’assemblage et l’utilisation, de la mise en place à l’extraction.",
+      ],
+    },
+    ar: {
+      eyebrow: "تشغيل DQ-010",
+      title: "شاهد DQ-010 أثناء التشغيل.",
+      lead: "يعرض مقطعان توضيحيان الإعداد والمحوّلات وخطوات تحضير القهوة.",
+      cards: ["إعداد المحوّلات", "خطوات تحضير القهوة"],
+      summaries: [
+        "تعرّف على طريقة تركيب المحوّلات المتوافقة قبل التحضير.",
+        "تابع تجميع الجهاز وتسلسل التشغيل من الإعداد حتى الاستخلاص.",
+      ],
+    },
+    zh: {
+      eyebrow: "DQ-010 操作演示",
+      title: "查看 DQ-010 的实际操作。",
+      lead: "两段演示集中展示安装、适配器和咖啡萃取流程。",
+      cards: ["适配器安装", "咖啡萃取流程"],
+      summaries: [
+        "查看冲煮前如何安装兼容的咖啡适配器。",
+        "了解从机器组装、设置到咖啡萃取的完整操作顺序。",
+      ],
+    },
+    ru: {
+      eyebrow: "Работа DQ-010",
+      title: "Посмотрите DQ-010 в работе.",
+      lead: "Два демонстрационных видео показывают настройку, адаптеры и процесс приготовления кофе.",
+      cards: ["Установка адаптеров", "Процесс приготовления"],
+      summaries: [
+        "Посмотрите, как установить совместимые адаптеры перед приготовлением.",
+        "Проследите сборку и порядок работы от настройки до экстракции.",
+      ],
+    },
   }[lang];
   const heroScenes = productLine.map((product) => ({
     model: product.model,
@@ -139,46 +210,18 @@ export default async function Home({ searchParams }: HomeProps) {
   }));
   const videoScenes: ProductVideo[] = [
     {
-      src: "/videos/outdoor-scene.mp4",
-      poster: "/optimized/hero-products/dq-001.webp",
-      label: sceneCards[0]?.[2] ?? "Outdoor scene",
-      title: sceneCards[0]?.[0] ?? "Coffee wherever you go",
-      summary: sceneCards[0]?.[1] ?? "Show the product in a real outdoor setting.",
+      src: "/videos/product-02.mp4",
+      poster: "/optimized/video-posters/dq-010-adapter.webp",
+      label: "DQ-010 · 01",
+      title: videoSectionCopy.cards[0],
+      summary: videoSectionCopy.summaries[0],
     },
     {
       src: "/videos/product-01.mp4",
-      poster: "/optimized/hero-products/dq-002.webp",
-      label: sceneCards[1]?.[2] ?? "Product detail",
-      title: sceneCards[1]?.[0] ?? "Portable by design",
-      summary: sceneCards[1]?.[1] ?? "A closer look at the portable coffee system.",
-    },
-    {
-      src: "/videos/product-02.mp4",
-      poster: "/optimized/hero-products/dq-005.webp",
-      label: sceneCards[2]?.[2] ?? "Brew routine",
-      title: sceneCards[2]?.[0] ?? "Built for daily rituals",
-      summary: sceneCards[2]?.[1] ?? "A visual product moment for buyer presentations.",
-    },
-    {
-      src: "/videos/product-03.mp4",
-      poster: "/optimized/hero-products/dq-008.webp",
-      label: "Product film",
-      title: productLine[0]?.summary[lang] ?? "Portable espresso system",
-      summary: productLine[0]?.featureLabel ?? "Factory-direct portable coffee solutions.",
-    },
-    {
-      src: "/videos/je009.mp4",
-      poster: "/optimized/hero-products/dq-010.webp",
-      label: "JE009",
-      title: "Product demonstration",
-      summary: "A dedicated product film for wholesale and private label conversations.",
-    },
-    {
-      src: "/videos/exploded-operation.mp4",
-      poster: "/optimized/hero-products/dq-011.webp",
-      label: "Assembly view",
-      title: "See how the system works",
-      summary: "A closer operational view for sourcing and product evaluation.",
+      poster: "/optimized/video-posters/dq-010-brewing.webp",
+      label: "DQ-010 · 02",
+      title: videoSectionCopy.cards[1],
+      summary: videoSectionCopy.summaries[1],
     },
   ];
   const structuredData = [
@@ -292,12 +335,14 @@ export default async function Home({ searchParams }: HomeProps) {
       </nav>
 
       <section id="home" className="hero-section dark-hero">
-        <HeroCopyMotion className="hero-copy">
+        <HeroCopyMotion className="hero-copy hero-heading">
           <p className="eyebrow hero-eyebrow">
             <Sparkles size={17} aria-hidden="true" />
             {t.hero.eyebrow}
           </p>
           <HeroTitleMotion className="hero-title">{t.hero.title}</HeroTitleMotion>
+        </HeroCopyMotion>
+        <HeroCopyMotion className="hero-copy hero-body">
           <HeroTextMotion className="hero-lead">{t.hero.lead}</HeroTextMotion>
           <HeroTextMotion className="hero-support">{t.hero.support}</HeroTextMotion>
           <HeroActionsMotion className="hero-actions">
@@ -369,9 +414,9 @@ export default async function Home({ searchParams }: HomeProps) {
 
       <RevealSection className="section product-video-section" id="videos" aria-label="Product videos">
         <div className="section-heading">
-          <span>{t.nav.products}</span>
-          <h2>{ui.scenes.title}</h2>
-          <p>{ui.scenes.lead}</p>
+          <span>{videoSectionCopy.eyebrow}</span>
+          <h2>{videoSectionCopy.title}</h2>
+          <p>{videoSectionCopy.lead}</p>
         </div>
         <ProductVideoShowcase videos={videoScenes} loadLabel={videoUi.load} soundNote={videoUi.sound} />
       </RevealSection>
