@@ -670,10 +670,10 @@ address {
   object-fit: cover;
 }
 
-/* Product photos are supplied as complete square compositions. Containment
-   keeps the machine, stand and cup visible instead of cropping the edges. */
+/* The model hero compositions are wide. Containment keeps the complete
+   product scene and embedded model copy visible at every breakpoint. */
 .product-hero-image img {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 2.13 / 1;
   object-fit: contain;
   background: #f7f4ef;
 }
@@ -2123,6 +2123,17 @@ address {
   object-fit: cover;
   background: #eee5d7;
   box-shadow: var(--shadow-card);
+}
+
+/* The supplied model hero images are wide compositions (not square product
+   shots). Let the first gallery item span the section and preserve every
+   label/product edge; the square 1/2 scene images remain in the two-column
+   gallery below it. */
+.gallery-grid img:first-child {
+  grid-column: 1 / -1;
+  aspect-ratio: 2.13 / 1;
+  object-fit: contain;
+  background: #f7f4ef;
 }
 
 .not-found-page {
@@ -7268,6 +7279,10 @@ address {
   justify-content: flex-start;
   padding-right: 8px;
   scroll-padding-inline: 8px;
+  flex-wrap: wrap;
+  overflow: visible;
+  row-gap: 4px;
+  mask-image: none;
 }
 
 .home-shell .coffee-ritual-tabs button {
