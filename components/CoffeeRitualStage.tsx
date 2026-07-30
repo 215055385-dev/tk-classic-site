@@ -54,14 +54,6 @@ export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View 
     return () => window.clearTimeout(timer);
   }, [activeIndex, isPaused, scenes.length, shouldReduceMotion]);
 
-  useEffect(() => {
-    tabRefs.current[activeIndex]?.scrollIntoView({
-      behavior: shouldReduceMotion ? "auto" : "smooth",
-      block: "nearest",
-      inline: "nearest",
-    });
-  }, [activeIndex, shouldReduceMotion]);
-
   if (!activeScene) {
     return null;
   }
