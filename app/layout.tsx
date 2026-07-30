@@ -9,6 +9,7 @@ import "./globals.css";
 import "./styles/performance.css";
 import "./styles/home-carousel.css";
 import "./styles/inquiry.css";
+import "./styles/upgrade.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

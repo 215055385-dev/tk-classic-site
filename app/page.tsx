@@ -44,19 +44,8 @@ import { bundleCopy } from "@/lib/bundle-data";
 import { CoffeeRitualStage } from "@/components/CoffeeRitualStage";
 import { ProductVideoShowcase, type ProductVideo } from "@/components/ProductVideoShowcase";
 import { MobileStickyCta } from "@/components/MobileStickyCta";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { phoneHref, whatsappHref } from "@/lib/contact";
-
-export const metadata: Metadata = {
-  title: "Portable Coffee Machine OEM & Private Label Supplier",
-  description:
-    "Factory-direct portable espresso machines, accessories and OEM/ODM programs for European wholesalers, cross-border brands and gift buyers.",
-  keywords: ["portable coffee machine OEM", "portable espresso machine wholesale", "private label coffee machine", "OEM ODM coffee maker supplier", "coffee machine accessories"],
-  alternates: {
-    canonical: "/",
-    languages: languageAlternates("/"),
-  },
-};
 
 // The homepage only assembles static catalog content. Serving it from the
 // Edge runtime keeps cold starts short for buyers visiting from Europe and
@@ -76,6 +65,42 @@ function langQuery(lang: Lang) {
   return lang === "en" ? "" : `?lang=${lang}`;
 }
 
+export async function generateMetadata({ searchParams }: HomeProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = getLang(params?.lang);
+  const t = copy[lang];
+
+  return {
+    title: { absolute: t.title },
+    description: t.description,
+    keywords: [
+      "portable coffee machine OEM",
+      "portable espresso machine wholesale",
+      "private label coffee machine",
+      "OEM ODM coffee maker supplier",
+      "coffee machine accessories",
+    ],
+    alternates: {
+      canonical: localizedUrl("/", lang),
+      languages: languageAlternates("/"),
+    },
+    openGraph: {
+      title: t.title,
+      description: t.description,
+      url: localizedUrl("/", lang),
+      type: "website",
+      siteName: company.brand,
+      locale: lang,
+      images: [{
+        url: "/optimized/hero-products/dq-001.webp",
+        width: 1600,
+        height: 750,
+        alt: "TK Classic DQ-001 portable espresso machine range",
+      }],
+    },
+  };
+}
+
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
   const lang = getLang(params?.lang);
@@ -87,8 +112,16 @@ export default async function Home({ searchParams }: HomeProps) {
   const productLine = products.filter((item) =>
     ["DQ-001", "DQ-002", "DQ-005", "DQ-008", "DQ-010", "DQ-011"].includes(item.model),
   );
-  const featuredProduct = productLine.find((item) => item.model === "DQ-010") ?? productLine[0];
   const sceneCards = ui.scenes.cards.slice(0, 3);
+  const videoUi = {
+    en: { load: "Scroll to load video", sound: "Sound is off until you choose to play it." },
+    es: { load: "Desplázate para cargar el vídeo", sound: "El sonido permanece apagado hasta que reproduzcas el vídeo." },
+    pt: { load: "Desloque para carregar o vídeo", sound: "O som fica desligado até iniciar o vídeo." },
+    fr: { load: "Faites défiler pour charger la vidéo", sound: "Le son reste coupé jusqu’à la lecture." },
+    ar: { load: "مرّر لتحميل الفيديو", sound: "يبقى الصوت متوقفاً حتى تختار التشغيل." },
+    zh: { load: "滚动后加载视频", sound: "点击播放前默认静音。" },
+    ru: { load: "Прокрутите, чтобы загрузить видео", sound: "Звук выключен до начала воспроизведения." },
+  }[lang];
   const heroScenes = productLine.map((product) => ({
     model: product.model,
     title: product.summary[lang],
@@ -152,6 +185,7 @@ export default async function Home({ searchParams }: HomeProps) {
     {
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": `${company.siteUrl}#organization`,
       name: company.legalName,
       alternateName: company.brand,
       url: company.siteUrl,
@@ -333,69 +367,13 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
       </section>
 
-      <RevealSection className="section product-showcase-section" id="showcase" aria-label={t.sectionTitles.products}>
-        <div className="section-heading">
-          <span>{t.sectionTitles.products}</span>
-          <h2>{featuredProduct.model} / {homeUx.showcaseHeading}</h2>
-          <p>{featuredProduct.summary[lang]}</p>
-        </div>
-        <div className="showcase-panel">
-          <div className="showcase-image-shell">
-            <Image
-              src="/optimized/products/dq-010-stand.webp"
-              alt="DQ-010 portable espresso machine with cup stand"
-              width={2048}
-              height={2048}
-              sizes="(max-width: 720px) 100vw, 55vw"
-              quality={80}
-            />
-            <span className="showcase-orbit">DQ-010 / 01</span>
-          </div>
-          <div className="showcase-details">
-            <p className="card-label">{localizeFeatureLabel(featuredProduct.featureLabel, lang)}</p>
-            <h3>{featuredProduct.summary[lang]}</h3>
-            <ProductPriceTag lang={lang} price={featuredProduct.price} />
-            <div className="spec-grid">
-              <div><span>{t.labels.pressure}</span><strong>{featuredProduct.spec.pressure}</strong></div>
-              <div><span>{t.labels.battery}</span><strong>{featuredProduct.spec.battery}</strong></div>
-              <div><span>{t.labels.material}</span><strong>{featuredProduct.spec.material}</strong></div>
-              <div><span>{t.labels.cup}</span><strong>{featuredProduct.spec.cup}</strong></div>
-            </div>
-            <Link className="primary-action" href={`/products/${featuredProduct.slug}${langQuery(lang)}`}>
-              {t.labels.fullSpec}
-              <ChevronRight size={17} aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </RevealSection>
-
-      <section className="section lifestyle-section" aria-label={ui.scenes.eyebrow}>
-        <div className="section-heading">
-          <span>{ui.scenes.eyebrow}</span>
-          <h2>{ui.scenes.title}</h2>
-          <p>{ui.scenes.lead}</p>
-        </div>
-        <div className="lifestyle-grid">
-          {sceneCards.map(([title, summary, label], index) => (
-            <RevealArticle className={`lifestyle-card lifestyle-card-${index + 1}`} key={title} aria-label={title}>
-              <div className="lifestyle-card-content">
-                <span>0{index + 1}</span>
-                <strong>{title}</strong>
-                <p>{summary}</p>
-                <small>{label}</small>
-              </div>
-            </RevealArticle>
-          ))}
-        </div>
-      </section>
-
       <RevealSection className="section product-video-section" id="videos" aria-label="Product videos">
         <div className="section-heading">
           <span>{t.nav.products}</span>
           <h2>{ui.scenes.title}</h2>
           <p>{ui.scenes.lead}</p>
         </div>
-        <ProductVideoShowcase videos={videoScenes} />
+        <ProductVideoShowcase videos={videoScenes} loadLabel={videoUi.load} soundNote={videoUi.sound} />
       </RevealSection>
 
       <section className="proof-band" aria-label="TK Classic proof points">
@@ -579,15 +557,15 @@ export default async function Home({ searchParams }: HomeProps) {
           <div className="contact-methods">
             <a href={phoneHref(company.phoneBowie)}>
               <MessageCircle size={20} aria-hidden="true" />
-              <span>Phone: {company.phoneBowie}</span>
+              <span>{ui.form.phone}: {company.phoneBowie}</span>
             </a>
             <a href={whatsappHref("DQ-001")} target="_blank" rel="noreferrer">
               <MessageCircle size={20} aria-hidden="true" />
-              <span>WhatsApp — DQ-001</span>
+              <span>{t.form.whatsapp} — DQ-001</span>
             </a>
             <Link href="#inquiry-form">
               <Mail size={20} aria-hidden="true" />
-              <span>Send a secure inquiry</span>
+              <span>{t.form.emailUs}</span>
             </Link>
           </div>
           <address>

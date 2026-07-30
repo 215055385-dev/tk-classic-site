@@ -7,19 +7,12 @@ import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { bundleCopy } from "@/lib/bundle-data";
 import { copy, languages, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { bundleOptionalNote } from "@/lib/translation-copy";
 
 type BundlesPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
 export const runtime = "edge";
-
-export const metadata: Metadata = {
-  title: "Portable Coffee Bundles | TK Classic",
-  description: "Configure portable coffee machine bundles with accessories, packaging and private-label options.",
-  keywords: ["portable coffee machine bundle", "coffee gift set wholesale", "private label coffee bundle", "OEM coffee gift set"],
-  alternates: { canonical: "/bundles", languages: languageAlternates("/bundles") },
-};
 
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
@@ -27,6 +20,18 @@ function getLang(value: string | string[] | undefined): Lang {
 }
 
 function langQuery(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }
+
+export async function generateMetadata({ searchParams }: BundlesPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = getLang(params?.lang);
+  const bundles = bundleCopy[lang];
+  return {
+    title: { absolute: `${bundles.title} | TK Classic` },
+    description: bundles.lead,
+    keywords: ["portable coffee machine bundle", "coffee gift set wholesale", "private label coffee bundle", "OEM coffee gift set"],
+    alternates: { canonical: localizedUrl("/bundles", lang), languages: languageAlternates("/bundles") },
+  };
+}
 
 export default async function BundlesPage({ searchParams }: BundlesPageProps) {
   const params = await searchParams;

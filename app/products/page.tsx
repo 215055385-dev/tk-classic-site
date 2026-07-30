@@ -8,19 +8,12 @@ import { ProductPriceTag } from "@/components/ProductPriceTag";
 import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { company, copy, languages, products, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { localizeFeatureLabel } from "@/lib/localized-ui";
 
 type ProductsPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
 export const runtime = "edge";
-
-export const metadata: Metadata = {
-  title: "Portable Coffee Machines | TK Classic Products",
-  description: "Explore TK Classic portable espresso machines for wholesale, private label and OEM/ODM coffee programs.",
-  keywords: ["portable espresso machine wholesale", "portable coffee machine models", "coffee machine OEM range", "private label espresso machine"],
-  alternates: { canonical: "/products", languages: languageAlternates("/products") },
-};
 
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
@@ -28,6 +21,29 @@ function getLang(value: string | string[] | undefined): Lang {
 }
 
 function langQuery(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }
+
+export async function generateMetadata({ searchParams }: ProductsPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = getLang(params?.lang);
+  const t = copy[lang];
+  const title = `${t.sectionTitles.products} | ${company.brand}`;
+
+  return {
+    title: { absolute: title },
+    description: t.description,
+    keywords: ["portable espresso machine wholesale", "portable coffee machine models", "coffee machine OEM range", "private label espresso machine"],
+    alternates: {
+      canonical: localizedUrl("/products", lang),
+      languages: languageAlternates("/products"),
+    },
+    openGraph: {
+      title,
+      description: t.description,
+      url: localizedUrl("/products", lang),
+      images: [{ url: products[0].hero, alt: `${products[0].model} portable coffee machine` }],
+    },
+  };
+}
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams;

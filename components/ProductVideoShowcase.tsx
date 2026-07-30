@@ -14,9 +14,15 @@ export type ProductVideo = {
 
 type ProductVideoShowcaseProps = {
   videos: ProductVideo[];
+  loadLabel?: string;
+  soundNote?: string;
 };
 
-export function ProductVideoShowcase({ videos }: ProductVideoShowcaseProps) {
+export function ProductVideoShowcase({
+  videos,
+  loadLabel = "Scroll to load video",
+  soundNote = "Sound is off until you choose to play it.",
+}: ProductVideoShowcaseProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [shouldLoad, setShouldLoad] = useState(false);
   const showcaseRef = useRef<HTMLDivElement>(null);
@@ -82,14 +88,14 @@ export function ProductVideoShowcase({ videos }: ProductVideoShowcaseProps) {
         ) : (
           <div className="product-video-placeholder" aria-label="Product video preview">
             <Image src={activeVideo.poster} alt="" fill sizes="(max-width: 720px) 100vw, 56vw" />
-            <span><Play size={16} aria-hidden="true" /> Scroll to load video</span>
+            <span><Play size={16} aria-hidden="true" /> {loadLabel}</span>
           </div>
         )}
         <div className="product-video-copy">
           <span className="product-video-kicker"><Play size={13} fill="currentColor" aria-hidden="true" /> {activeVideo.label}</span>
           <h3>{activeVideo.title}</h3>
           <p>{activeVideo.summary}</p>
-          <span className="product-video-note"><Volume2 size={14} aria-hidden="true" /> Sound is off until you choose to play it.</span>
+          <span className="product-video-note"><Volume2 size={14} aria-hidden="true" /> {soundNote}</span>
         </div>
       </div>
     </div>

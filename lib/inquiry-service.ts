@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import { uiCopy } from "@/lib/localized-ui";
-import type { Lang } from "@/lib/site-data";
+import { company, type Lang } from "@/lib/site-data";
 import { getDatabase } from "@/lib/database";
 
 export type InquiryAttachmentMeta = {
@@ -168,14 +168,15 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
 }
 
 function salesRecipients() {
-  return (process.env.INQUIRY_TO_EMAILS ?? "ryan@tkclassic.com,fyhi7576@outlook.com")
+  const configured = process.env.INQUIRY_TO_EMAILS?.trim();
+  return (configured || `${company.emailBowie},${company.emailLeo}`)
     .split(",")
     .map((email) => email.trim())
     .filter(Boolean);
 }
 
 function sender() {
-  return process.env.INQUIRY_FROM_EMAIL ?? "TK Classic Website <onboarding@resend.dev>";
+  return process.env.INQUIRY_FROM_EMAIL?.trim() || "TK Classic Website <onboarding@resend.dev>";
 }
 
 export async function sendInquiryEmail(inquiry: SavedInquiry) {

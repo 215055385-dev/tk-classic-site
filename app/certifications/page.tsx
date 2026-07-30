@@ -6,14 +6,17 @@ import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { certifications, copy, languages, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { certificationRequestCopy } from "@/lib/certification-copy";
 
 type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 export const runtime = "edge";
-export const metadata: Metadata = { title: "Certifications | TK Classic Portable Coffee", description: "Compliance documents and certification files for TK Classic portable coffee products and wholesale programs.", keywords: ["portable coffee machine certifications", "CE RoHS coffee machine", "coffee machine compliance documents"], alternates: { canonical: "/certifications", languages: languageAlternates("/certifications") } };
 function getLang(value: string | string[] | undefined): Lang { const code = Array.isArray(value) ? value[0] : value; return languages.some((language) => language.code === code) ? (code as Lang) : "en"; }
 function queryFor(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams; const lang = getLang(params?.lang); const t = copy[lang];
+  return { title: { absolute: `${t.sectionTitles.certs} | TK Classic` }, description: t.certs.join(" "), keywords: ["portable coffee machine certifications", "CE RoHS coffee machine", "coffee machine compliance documents"], alternates: { canonical: localizedUrl("/certifications", lang), languages: languageAlternates("/certifications") } };
+}
 
 export default async function CertificationsPage({ searchParams }: PageProps) {
   const params = await searchParams; const lang = getLang(params?.lang); const query = queryFor(lang); const t = copy[lang]; const dir = languages.find((language) => language.code === lang)?.dir ?? "ltr";

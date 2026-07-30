@@ -6,18 +6,11 @@ import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { copy, languages, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 
 type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
 export const runtime = "edge";
-
-export const metadata: Metadata = {
-  title: "OEM & ODM Portable Coffee Programs | TK Classic",
-  description: "A dedicated OEM and ODM workflow for portable coffee machines, accessories, packaging and private-label programs.",
-  keywords: ["portable coffee machine OEM", "portable espresso ODM", "private label coffee machine", "custom coffee machine packaging"],
-  alternates: { canonical: "/oem-odm", languages: languageAlternates("/oem-odm") },
-};
 
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
@@ -25,6 +18,18 @@ function getLang(value: string | string[] | undefined): Lang {
 }
 
 function queryFor(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }
+
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = getLang(params?.lang);
+  const t = copy[lang];
+  return {
+    title: { absolute: `${t.sectionTitles.oem} | TK Classic` },
+    description: t.oem.join(" "),
+    keywords: ["portable coffee machine OEM", "portable espresso ODM", "private label coffee machine", "custom coffee machine packaging"],
+    alternates: { canonical: localizedUrl("/oem-odm", lang), languages: languageAlternates("/oem-odm") },
+  };
+}
 
 export default async function OemOdmPage({ searchParams }: PageProps) {
   const params = await searchParams;

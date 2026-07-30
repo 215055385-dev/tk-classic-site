@@ -7,7 +7,7 @@ import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { commercialCopy } from "@/lib/support-page-data";
 import { copy, certifications, languages, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { uiCopy } from "@/lib/localized-ui";
 import { certificationRequestCopy } from "@/lib/certification-copy";
 
@@ -15,19 +15,24 @@ type ResourcesPageProps = { searchParams?: Promise<Record<string, string | strin
 
 export const runtime = "edge";
 
-export const metadata: Metadata = {
-  title: "TK Classic Resources | Certifications and Buyer Guides",
-  description: "Portable coffee machine certification files, buyer guides and sourcing FAQs for wholesale and private label programs.",
-  keywords: ["portable coffee machine FAQ", "coffee machine certification documents", "OEM coffee buyer guide", "coffee machine sourcing Europe"],
-  alternates: { canonical: "/resources", languages: languageAlternates("/resources") },
-};
-
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
   return languages.some((language) => language.code === code) ? (code as Lang) : "en";
 }
 
 function langQuery(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }
+
+export async function generateMetadata({ searchParams }: ResourcesPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = getLang(params?.lang);
+  const t = copy[lang];
+  return {
+    title: { absolute: `${t.sectionTitles.blog} | TK Classic` },
+    description: t.blogLead,
+    keywords: ["portable coffee machine FAQ", "coffee machine certification documents", "OEM coffee buyer guide", "coffee machine sourcing Europe"],
+    alternates: { canonical: localizedUrl("/resources", lang), languages: languageAlternates("/resources") },
+  };
+}
 
 export default async function ResourcesPage({ searchParams }: ResourcesPageProps) {
   const params = await searchParams;

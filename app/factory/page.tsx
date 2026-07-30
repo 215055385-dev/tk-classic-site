@@ -6,14 +6,17 @@ import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { copy, languages, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { uiCopy } from "@/lib/localized-ui";
 
 type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 export const runtime = "edge";
-export const metadata: Metadata = { title: "TK Classic Factory | Portable Coffee OEM", description: "Factory capability, production support and compliance signals for TK Classic portable coffee programs.", keywords: ["portable coffee machine factory", "coffee machine OEM manufacturing", "portable espresso production", "Shenzhen OEM factory"], alternates: { canonical: "/factory", languages: languageAlternates("/factory") } };
 function getLang(value: string | string[] | undefined): Lang { const code = Array.isArray(value) ? value[0] : value; return languages.some((language) => language.code === code) ? (code as Lang) : "en"; }
 function queryFor(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams; const lang = getLang(params?.lang); const t = copy[lang];
+  return { title: { absolute: `${t.sectionTitles.factory} | TK Classic` }, description: t.factory.join(" "), keywords: ["portable coffee machine factory", "coffee machine OEM manufacturing", "portable espresso production", "Shenzhen OEM factory"], alternates: { canonical: localizedUrl("/factory", lang), languages: languageAlternates("/factory") } };
+}
 
 export default async function FactoryPage({ searchParams }: PageProps) {
   const params = await searchParams; const lang = getLang(params?.lang); const query = queryFor(lang); const t = copy[lang]; const ui = uiCopy[lang]; const dir = languages.find((language) => language.code === lang)?.dir ?? "ltr";

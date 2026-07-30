@@ -7,19 +7,12 @@ import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { bundleCopy } from "@/lib/bundle-data";
 import { company, copy, languages, products, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { phoneHref, whatsappHref } from "@/lib/contact";
 
 type ContactPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
 export const runtime = "edge";
-
-export const metadata: Metadata = {
-  title: "Contact TK Classic | Portable Coffee OEM",
-  description: "Contact TK Classic for wholesale pricing, private-label programs, accessory sets and OEM/ODM portable coffee projects.",
-  keywords: ["portable coffee machine quote", "coffee machine wholesale inquiry", "OEM coffee supplier contact", "private label coffee inquiry"],
-  alternates: { canonical: "/contact", languages: languageAlternates("/contact") },
-};
 
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
@@ -27,6 +20,18 @@ function getLang(value: string | string[] | undefined): Lang {
 }
 
 function langQuery(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }
+
+export async function generateMetadata({ searchParams }: ContactPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = getLang(params?.lang);
+  const t = copy[lang];
+  return {
+    title: { absolute: `${t.contactTitle} | TK Classic` },
+    description: t.contactLead,
+    keywords: ["portable coffee machine quote", "coffee machine wholesale inquiry", "OEM coffee supplier contact", "private label coffee inquiry"],
+    alternates: { canonical: localizedUrl("/contact", lang), languages: languageAlternates("/contact") },
+  };
+}
 
 export default async function ContactPage({ searchParams }: ContactPageProps) {
   const params = await searchParams;
@@ -66,8 +71,8 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         <div className="contact-page-details">
           <div className="section-heading align-left"><span>{t.nav.contact}</span><h2>{t.contactTitle}</h2><p>{t.contactLead}</p></div>
           <div className="contact-methods">
-            <Link href="#inquiry-form"><Mail size={20} aria-hidden="true" /><span>Send a secure inquiry</span></Link>
-            <a href={whatsappHref(selectedProduct)} target="_blank" rel="noreferrer"><MessageCircle size={20} aria-hidden="true" /><span>WhatsApp — {selectedProduct}</span></a>
+            <Link href="#inquiry-form"><Mail size={20} aria-hidden="true" /><span>{t.form.emailUs}</span></Link>
+            <a href={whatsappHref(selectedProduct)} target="_blank" rel="noreferrer"><MessageCircle size={20} aria-hidden="true" /><span>{t.form.whatsapp} — {selectedProduct}</span></a>
             <a href={phoneHref(company.phoneBowie)}><Phone size={20} aria-hidden="true" /><span>{company.phoneBowie}</span></a>
           </div>
         </div>

@@ -35,7 +35,7 @@ import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { ProductPriceTag } from "@/components/ProductPriceTag";
 import { ProductAccessorySelector } from "@/components/ProductAccessorySelector";
 import { company, copy, languages, products, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { phoneHref, whatsappHref } from "@/lib/contact";
 
 type ProductPageProps = {
@@ -62,16 +62,16 @@ export async function generateMetadata({ params, searchParams }: ProductPageProp
   const lang = getLang(resolvedSearchParams?.lang);
 
   return {
-    title: `${product.model} | ${copy[lang].nav.products}`,
+    title: { absolute: `${product.model} | ${copy[lang].nav.products} | ${company.brand}` },
     description: product.summary[lang],
     alternates: {
-      canonical: `/products/${product.slug}`,
+      canonical: localizedUrl(`/products/${product.slug}`, lang),
       languages: languageAlternates(`/products/${product.slug}`),
     },
     openGraph: {
       title: `${product.model} | TK Classic Portable Coffee OEM`,
       description: product.summary[lang],
-      url: `/products/${product.slug}`,
+      url: localizedUrl(`/products/${product.slug}`, lang),
       type: "website",
       images: [
         {
@@ -115,7 +115,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         price: product.price.sale,
         priceCurrency: product.price.currency,
         availability: "https://schema.org/InStock",
-        url: `${company.siteUrl}/products/${product.slug}`,
+        url: localizedUrl(`/products/${product.slug}`, lang),
       },
       additionalProperty: Object.entries(product.spec).map(([name, value]) => ({
         "@type": "PropertyValue",
@@ -130,14 +130,14 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         {
           "@type": "ListItem",
           position: 1,
-          name: "Home",
-          item: company.siteUrl,
+          name: copy[lang].nav.home,
+          item: localizedUrl("/", lang),
         },
         {
           "@type": "ListItem",
           position: 2,
           name: product.model,
-          item: `${company.siteUrl}/products/${product.slug}`,
+          item: localizedUrl(`/products/${product.slug}`, lang),
         },
       ],
     },

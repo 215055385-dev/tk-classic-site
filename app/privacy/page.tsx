@@ -7,18 +7,11 @@ import { RevealArticle } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { privacyCopy } from "@/lib/support-page-data";
 import { languages, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 
 type PrivacyPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
 export const runtime = "edge";
-
-export const metadata: Metadata = {
-  title: "TK Classic Privacy Policy",
-  description: "How TK Classic handles information submitted through the website inquiry form.",
-  keywords: ["TK Classic privacy policy", "portable coffee website privacy", "B2B inquiry data policy"],
-  alternates: { canonical: "/privacy", languages: languageAlternates("/privacy") },
-};
 
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
@@ -26,6 +19,18 @@ function getLang(value: string | string[] | undefined): Lang {
 }
 
 function langQuery(lang: Lang) { return lang === "en" ? "" : `?lang=${lang}`; }
+
+export async function generateMetadata({ searchParams }: PrivacyPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = getLang(params?.lang);
+  const privacy = privacyCopy[lang];
+  return {
+    title: { absolute: `${privacy.title} | TK Classic` },
+    description: privacy.intro,
+    keywords: ["TK Classic privacy policy", "portable coffee website privacy", "B2B inquiry data policy"],
+    alternates: { canonical: localizedUrl("/privacy", lang), languages: languageAlternates("/privacy") },
+  };
+}
 
 export default async function PrivacyPage({ searchParams }: PrivacyPageProps) {
   const params = await searchParams;

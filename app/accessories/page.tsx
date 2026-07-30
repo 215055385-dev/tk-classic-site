@@ -9,7 +9,7 @@ import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { accessories } from "@/lib/accessory-data";
 import { copy, languages, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { accessoryPageCopy, getAccessoryDisplay } from "@/lib/translation-copy";
 
 type AccessoriesPageProps = {
@@ -18,13 +18,6 @@ type AccessoriesPageProps = {
 
 export const runtime = "edge";
 
-export const metadata: Metadata = {
-  title: "Coffee Accessories | TK Classic Portable Coffee OEM",
-  description: "Optional capsule adapters, brewing components, cups and acrylic display accessories for TK Classic portable coffee systems and bundles.",
-  keywords: ["portable coffee machine accessories", "coffee machine accessories wholesale", "OEM coffee accessories", "portable espresso bundle"],
-  alternates: { canonical: "/accessories", languages: languageAlternates("/accessories") },
-};
-
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
   return languages.some((language) => language.code === code) ? (code as Lang) : "en";
@@ -32,6 +25,18 @@ function getLang(value: string | string[] | undefined): Lang {
 
 function langQuery(lang: Lang) {
   return lang === "en" ? "" : `?lang=${lang}`;
+}
+
+export async function generateMetadata({ searchParams }: AccessoriesPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = getLang(params?.lang);
+  const pageCopy = accessoryPageCopy[lang];
+  return {
+    title: { absolute: `${pageCopy.heroTitle} | TK Classic` },
+    description: pageCopy.heroLead,
+    keywords: ["portable coffee machine accessories", "coffee machine accessories wholesale", "OEM coffee accessories", "portable espresso bundle"],
+    alternates: { canonical: localizedUrl("/accessories", lang), languages: languageAlternates("/accessories") },
+  };
 }
 
 export default async function AccessoriesPage({ searchParams }: AccessoriesPageProps) {

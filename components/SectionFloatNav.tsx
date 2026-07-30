@@ -36,7 +36,6 @@ export function SectionFloatNav({ lang, path, label }: SectionFloatNavProps) {
         <Link href={`/accessories${query}`}>{t.sectionTitles.accessories}</Link>
         <Link href={`/oem-odm${query}`}>{t.nav.oem}</Link>
         <Link href={`/factory${query}`}>{t.nav.factory}</Link>
-        <Link href={`/certifications${query}`}>{t.nav.certs}</Link>
         <Link href={`/contact${query}`}>{t.nav.contact}</Link>
       </nav>
     </>

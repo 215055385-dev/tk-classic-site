@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { uiCopy } from "@/lib/localized-ui";
 import { commercialCopy } from "@/lib/support-page-data";
 import { copy, languages, type Lang } from "@/lib/site-data";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { whatsappHref } from "@/lib/contact";
 
 type CompanyPageProps = {
@@ -17,13 +17,6 @@ type CompanyPageProps = {
 
 export const runtime = "edge";
 
-export const metadata: Metadata = {
-  title: "TK Classic Company | OEM/ODM Portable Coffee",
-  description: "Factory capabilities, OEM/ODM workflow, quality checkpoints and commercial support for portable coffee sourcing.",
-  keywords: ["portable coffee machine supplier", "Shenzhen coffee machine factory", "coffee OEM ODM supplier", "private label coffee equipment"],
-  alternates: { canonical: "/company", languages: languageAlternates("/company") },
-};
-
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
   return languages.some((language) => language.code === code) ? (code as Lang) : "en";
@@ -31,6 +24,18 @@ function getLang(value: string | string[] | undefined): Lang {
 
 function langQuery(lang: Lang) {
   return lang === "en" ? "" : `?lang=${lang}`;
+}
+
+export async function generateMetadata({ searchParams }: CompanyPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = getLang(params?.lang);
+  const t = copy[lang];
+  return {
+    title: { absolute: `${t.sectionTitles.about} | TK Classic` },
+    description: t.intro,
+    keywords: ["portable coffee machine supplier", "Shenzhen coffee machine factory", "coffee OEM ODM supplier", "private label coffee equipment"],
+    alternates: { canonical: localizedUrl("/company", lang), languages: languageAlternates("/company") },
+  };
 }
 
 export default async function CompanyPage({ searchParams }: CompanyPageProps) {

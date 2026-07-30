@@ -54,7 +54,7 @@ export function SiteFooter({ lang }: SiteFooterProps) {
         <a href={whatsappHref()} target="_blank" rel="noreferrer">
           {footer.whatsappLabel} Bowie
         </a>
-        <Link href={`/contact${query}`}>Contact sales team</Link>
+        <Link href={`/contact${query}`}>{t.contactTitle}</Link>
         <a href={company.brochure}>{t.hero.tertiaryCta}</a>
       </nav>
 

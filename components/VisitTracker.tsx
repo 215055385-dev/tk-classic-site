@@ -7,7 +7,10 @@ export function VisitTracker() {
   const pathname = usePathname();
   useEffect(() => {
     if (!pathname || pathname.startsWith("/admin") || pathname.startsWith("/api")) return;
-    const lang = new URLSearchParams(window.location.search).get("lang") ?? "en";
+    const localeFromPath = pathname.split("/").filter(Boolean)[0];
+    const supportedLocales = new Set(["en", "es", "pt", "fr", "ar", "zh", "ru"]);
+    const lang = new URLSearchParams(window.location.search).get("lang")
+      ?? (localeFromPath && supportedLocales.has(localeFromPath) ? localeFromPath : "en");
     const payload = JSON.stringify({ path: pathname, lang, referrer: document.referrer });
     if (navigator.sendBeacon) {
       navigator.sendBeacon("/api/analytics/visit", new Blob([payload], { type: "application/json" }));

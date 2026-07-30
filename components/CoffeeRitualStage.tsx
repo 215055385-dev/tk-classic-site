@@ -106,7 +106,10 @@ export function CoffeeRitualStage({ model, scenes, stats = [], ctaLabel = "View 
               onClick={() => setActiveIndex(index)}
             >
               <span>0{index + 1}</span>
-              <strong>{scene.label}</strong>
+              <span className="coffee-ritual-tab-copy">
+                <strong>{scene.model ?? scene.label}</strong>
+                {scene.model ? <small>{scene.label}</small> : null}
+              </span>
             </button>
           ))}
         </div>
