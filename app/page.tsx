@@ -113,84 +113,252 @@ export default async function Home({ searchParams }: HomeProps) {
     ["DQ-001", "DQ-002", "DQ-005", "DQ-008", "DQ-010", "DQ-011"].includes(item.model),
   );
   const videoUi = {
-    en: { load: "Scroll to load video", sound: "Sound is off until you choose to play it." },
-    es: { load: "Desplázate para cargar el vídeo", sound: "El sonido permanece apagado hasta que reproduzcas el vídeo." },
-    pt: { load: "Desloque para carregar o vídeo", sound: "O som fica desligado até iniciar o vídeo." },
-    fr: { load: "Faites défiler pour charger la vidéo", sound: "Le son reste coupé jusqu’à la lecture." },
-    ar: { load: "مرّر لتحميل الفيديو", sound: "يبقى الصوت متوقفاً حتى تختار التشغيل." },
-    zh: { load: "滚动后加载视频", sound: "点击播放前默认静音。" },
-    ru: { load: "Прокрутите, чтобы загрузить видео", sound: "Звук выключен до начала воспроизведения." },
-  }[lang];
-  const videoSectionCopy = {
     en: {
-      eyebrow: "DQ-010 operation",
-      title: "See DQ-010 in operation.",
-      lead: "Two focused demonstrations show setup, adapter options and the brewing workflow.",
-      cards: ["Adapter setup", "Brewing workflow"],
-      summaries: [
-        "See how the compatible adapters are installed before brewing.",
-        "Follow the machine assembly and operating sequence from setup to extraction.",
-      ],
+      load: "Video loads when this section enters view",
+      sound: "Muted by default.",
+      play: "Play video",
+      pause: "Pause video",
+      mute: "Mute sound",
+      unmute: "Enable sound",
     },
     es: {
-      eyebrow: "Funcionamiento del DQ-010",
-      title: "Vea el DQ-010 en funcionamiento.",
-      lead: "Dos demostraciones muestran la preparación, los adaptadores y el proceso de extracción.",
-      cards: ["Preparación de adaptadores", "Proceso de extracción"],
-      summaries: [
-        "Vea cómo se instalan los adaptadores compatibles antes de preparar el café.",
-        "Siga el montaje y la secuencia de uso desde la preparación hasta la extracción.",
-      ],
+      load: "El vídeo se carga al entrar en esta sección",
+      sound: "Silenciado de forma predeterminada.",
+      play: "Reproducir vídeo",
+      pause: "Pausar vídeo",
+      mute: "Silenciar",
+      unmute: "Activar sonido",
     },
     pt: {
-      eyebrow: "Operação do DQ-010",
-      title: "Veja o DQ-010 em funcionamento.",
-      lead: "Duas demonstrações mostram a preparação, os adaptadores e o processo de extração.",
-      cards: ["Preparação dos adaptadores", "Processo de extração"],
-      summaries: [
-        "Veja como instalar os adaptadores compatíveis antes do preparo.",
-        "Acompanhe a montagem e a operação, da preparação à extração.",
-      ],
+      load: "O vídeo carrega quando esta seção entra em vista",
+      sound: "Sem som por padrão.",
+      play: "Reproduzir vídeo",
+      pause: "Pausar vídeo",
+      mute: "Silenciar",
+      unmute: "Ativar som",
     },
     fr: {
-      eyebrow: "Utilisation du DQ-010",
-      title: "Découvrez le DQ-010 en fonctionnement.",
-      lead: "Deux démonstrations présentent la mise en place, les adaptateurs et le processus d’extraction.",
-      cards: ["Mise en place des adaptateurs", "Processus d’extraction"],
-      summaries: [
-        "Découvrez comment installer les adaptateurs compatibles avant la préparation.",
-        "Suivez l’assemblage et l’utilisation, de la mise en place à l’extraction.",
-      ],
+      load: "La vidéo se charge lorsque cette section apparaît",
+      sound: "Son coupé par défaut.",
+      play: "Lire la vidéo",
+      pause: "Mettre en pause",
+      mute: "Couper le son",
+      unmute: "Activer le son",
     },
     ar: {
-      eyebrow: "تشغيل DQ-010",
-      title: "شاهد DQ-010 أثناء التشغيل.",
-      lead: "يعرض مقطعان توضيحيان الإعداد والمحوّلات وخطوات تحضير القهوة.",
-      cards: ["إعداد المحوّلات", "خطوات تحضير القهوة"],
-      summaries: [
-        "تعرّف على طريقة تركيب المحوّلات المتوافقة قبل التحضير.",
-        "تابع تجميع الجهاز وتسلسل التشغيل من الإعداد حتى الاستخلاص.",
-      ],
+      load: "يتم تحميل الفيديو عند ظهور هذا القسم",
+      sound: "الفيديو مكتوم افتراضياً.",
+      play: "تشغيل الفيديو",
+      pause: "إيقاف الفيديو مؤقتاً",
+      mute: "كتم الصوت",
+      unmute: "تشغيل الصوت",
     },
     zh: {
-      eyebrow: "DQ-010 操作演示",
-      title: "查看 DQ-010 的实际操作。",
-      lead: "两段演示集中展示安装、适配器和咖啡萃取流程。",
-      cards: ["适配器安装", "咖啡萃取流程"],
-      summaries: [
-        "查看冲煮前如何安装兼容的咖啡适配器。",
-        "了解从机器组装、设置到咖啡萃取的完整操作顺序。",
-      ],
+      load: "进入此区域后加载视频",
+      sound: "默认静音播放。",
+      play: "播放视频",
+      pause: "暂停视频",
+      mute: "静音",
+      unmute: "开启声音",
     },
     ru: {
-      eyebrow: "Работа DQ-010",
-      title: "Посмотрите DQ-010 в работе.",
-      lead: "Два демонстрационных видео показывают настройку, адаптеры и процесс приготовления кофе.",
-      cards: ["Установка адаптеров", "Процесс приготовления"],
-      summaries: [
-        "Посмотрите, как установить совместимые адаптеры перед приготовлением.",
-        "Проследите сборку и порядок работы от настройки до экстракции.",
-      ],
+      load: "Видео загрузится, когда раздел появится на экране",
+      sound: "Звук по умолчанию выключен.",
+      play: "Воспроизвести видео",
+      pause: "Приостановить видео",
+      mute: "Выключить звук",
+      unmute: "Включить звук",
+    },
+  }[lang];
+  const videoStoryCopy = {
+    en: {
+      extraction: {
+        eyebrow: "Extraction / DQ-010",
+        title: "Portable Espresso, Explained",
+        lead: "See how pressure, heat and precision come together in every extraction.",
+        posterAlt: "DQ-010 portable espresso machine extraction video cover",
+        steps: [
+          ["Prepare", "Add water and fit the prepared coffee container as shown in the video."],
+          ["Heat", "The machine heats the water before extraction begins."],
+          ["Extract", "Pressure moves hot water through the coffee and espresso flows into the cup."],
+        ],
+      },
+      operation: {
+        eyebrow: "Real operation / DQ-010",
+        title: "Espresso Anywhere, Made Simple",
+        lead: "A clear, real-product walkthrough from preparation to the finished cup.",
+        posterAlt: "DQ-010 portable espresso machine real operation video cover",
+        steps: [
+          ["Load coffee", "Add ground coffee to the compatible container shown in the video."],
+          ["Add water", "Fill the water chamber following the demonstrated order."],
+          ["Assemble and start", "Fit the parts together and start the machine as shown."],
+          ["Collect espresso", "Let the finished espresso flow directly into the cup."],
+        ],
+        viewProducts: "View DQ-010",
+        getQuote: "Get a quote",
+      },
+    },
+    es: {
+      extraction: {
+        eyebrow: "Extracción / DQ-010",
+        title: "Espresso portátil, explicado",
+        lead: "Descubra cómo la presión, el calor y la precisión trabajan juntos en cada extracción.",
+        posterAlt: "Portada del vídeo de extracción de la cafetera portátil DQ-010",
+        steps: [
+          ["Preparar", "Añada agua y coloque el recipiente de café preparado como aparece en el vídeo."],
+          ["Calentar", "La máquina calienta el agua antes de iniciar la extracción."],
+          ["Extraer", "La presión hace pasar el agua caliente por el café y el espresso cae en la taza."],
+        ],
+      },
+      operation: {
+        eyebrow: "Uso real / DQ-010",
+        title: "Espresso en cualquier lugar, de forma sencilla",
+        lead: "Una demostración clara con el producto real, desde la preparación hasta la taza.",
+        posterAlt: "Portada del vídeo de uso real de la cafetera portátil DQ-010",
+        steps: [
+          ["Colocar el café", "Añada café molido al recipiente compatible que aparece en el vídeo."],
+          ["Añadir agua", "Llene el depósito siguiendo el orden mostrado."],
+          ["Montar y encender", "Una las piezas y encienda la máquina como se muestra."],
+          ["Recoger el espresso", "Deje que el espresso terminado caiga directamente en la taza."],
+        ],
+        viewProducts: "Ver DQ-010",
+        getQuote: "Solicitar cotización",
+      },
+    },
+    pt: {
+      extraction: {
+        eyebrow: "Extração / DQ-010",
+        title: "Espresso portátil, explicado",
+        lead: "Veja como pressão, calor e precisão trabalham juntos em cada extração.",
+        posterAlt: "Capa do vídeo de extração da máquina de espresso portátil DQ-010",
+        steps: [
+          ["Preparar", "Adicione água e encaixe o recipiente de café preparado como mostrado no vídeo."],
+          ["Aquecer", "A máquina aquece a água antes de iniciar a extração."],
+          ["Extrair", "A pressão conduz a água quente pelo café e o espresso flui para a xícara."],
+        ],
+      },
+      operation: {
+        eyebrow: "Uso real / DQ-010",
+        title: "Espresso em qualquer lugar, sem complicação",
+        lead: "Uma demonstração clara com o produto real, do preparo à xícara pronta.",
+        posterAlt: "Capa do vídeo de operação real da máquina de espresso portátil DQ-010",
+        steps: [
+          ["Adicionar café", "Coloque café moído no recipiente compatível mostrado no vídeo."],
+          ["Adicionar água", "Encha o reservatório seguindo a ordem demonstrada."],
+          ["Montar e iniciar", "Encaixe as peças e ligue a máquina como mostrado."],
+          ["Coletar o espresso", "Deixe o espresso pronto fluir diretamente para a xícara."],
+        ],
+        viewProducts: "Ver DQ-010",
+        getQuote: "Solicitar orçamento",
+      },
+    },
+    fr: {
+      extraction: {
+        eyebrow: "Extraction / DQ-010",
+        title: "L’espresso portable, expliqué",
+        lead: "Découvrez comment la pression, la chaleur et la précision agissent ensemble à chaque extraction.",
+        posterAlt: "Affiche de la vidéo d’extraction de la machine à espresso portable DQ-010",
+        steps: [
+          ["Préparer", "Ajoutez l’eau et installez le réceptacle de café préparé comme dans la vidéo."],
+          ["Chauffer", "La machine chauffe l’eau avant le début de l’extraction."],
+          ["Extraire", "La pression fait passer l’eau chaude dans le café et l’espresso coule dans la tasse."],
+        ],
+      },
+      operation: {
+        eyebrow: "Utilisation réelle / DQ-010",
+        title: "Un espresso partout, en toute simplicité",
+        lead: "Une démonstration claire avec le produit réel, de la préparation à la tasse.",
+        posterAlt: "Affiche de la vidéo d’utilisation réelle de la machine à espresso portable DQ-010",
+        steps: [
+          ["Ajouter le café", "Placez le café moulu dans le réceptacle compatible montré dans la vidéo."],
+          ["Ajouter l’eau", "Remplissez le réservoir dans l’ordre présenté."],
+          ["Assembler et démarrer", "Assemblez les pièces et démarrez la machine comme indiqué."],
+          ["Recueillir l’espresso", "Laissez l’espresso terminé couler directement dans la tasse."],
+        ],
+        viewProducts: "Voir le DQ-010",
+        getQuote: "Demander un devis",
+      },
+    },
+    ar: {
+      extraction: {
+        eyebrow: "الاستخلاص / DQ-010",
+        title: "شرح الإسبريسو المحمول",
+        lead: "شاهد كيف تعمل الحرارة والضغط والدقة معاً في كل عملية استخلاص.",
+        posterAlt: "غلاف فيديو استخلاص الإسبريسو باستخدام جهاز DQ-010 المحمول",
+        steps: [
+          ["التحضير", "أضف الماء وثبّت حاوية القهوة كما يظهر في الفيديو."],
+          ["التسخين", "يسخّن الجهاز الماء قبل بدء الاستخلاص."],
+          ["الاستخلاص", "يدفع الضغط الماء الساخن عبر القهوة ليتدفق الإسبريسو إلى الكوب."],
+        ],
+      },
+      operation: {
+        eyebrow: "تشغيل حقيقي / DQ-010",
+        title: "إسبريسو في أي مكان، بخطوات بسيطة",
+        lead: "عرض واضح للمنتج الحقيقي من التجهيز حتى فنجان الإسبريسو.",
+        posterAlt: "غلاف فيديو التشغيل الحقيقي لجهاز الإسبريسو المحمول DQ-010",
+        steps: [
+          ["إضافة القهوة", "ضع القهوة المطحونة في الحاوية المتوافقة الظاهرة في الفيديو."],
+          ["إضافة الماء", "املأ خزان الماء بالترتيب الموضح."],
+          ["التجميع والتشغيل", "ثبّت الأجزاء وشغّل الجهاز كما يظهر في الفيديو."],
+          ["استقبال الإسبريسو", "اترك الإسبريسو الجاهز يتدفق مباشرة إلى الكوب."],
+        ],
+        viewProducts: "عرض DQ-010",
+        getQuote: "طلب عرض سعر",
+      },
+    },
+    zh: {
+      extraction: {
+        eyebrow: "萃取过程 / DQ-010",
+        title: "便携式意式浓缩，原理清晰呈现",
+        lead: "了解加热、压力与精准控制如何共同完成每一次咖啡萃取。",
+        posterAlt: "DQ-010 便携式意式咖啡机萃取演示视频封面",
+        steps: [
+          ["准备", "按照视频所示加入水，并安装准备好的咖啡容器。"],
+          ["加热", "机器在开始萃取前对水进行加热。"],
+          ["萃取", "压力推动热水穿过咖啡，意式浓缩咖啡流入杯中。"],
+        ],
+      },
+      operation: {
+        eyebrow: "真实操作 / DQ-010",
+        title: "随时随地，简单完成一杯意式浓缩",
+        lead: "使用真实产品，从准备到获得咖啡的清晰操作演示。",
+        posterAlt: "DQ-010 便携式意式咖啡机真实操作视频封面",
+        steps: [
+          ["装入咖啡粉", "将咖啡粉装入视频所示的兼容咖啡容器。"],
+          ["加入清水", "按照视频展示的顺序向水箱中加水。"],
+          ["组装并启动", "按照演示完成部件安装并启动机器。"],
+          ["获得咖啡", "让萃取完成的意式浓缩咖啡直接流入杯中。"],
+        ],
+        viewProducts: "查看 DQ-010",
+        getQuote: "获取报价",
+      },
+    },
+    ru: {
+      extraction: {
+        eyebrow: "Экстракция / DQ-010",
+        title: "Как работает портативный эспрессо",
+        lead: "Посмотрите, как нагрев, давление и точность объединяются в процессе экстракции.",
+        posterAlt: "Обложка видео об экстракции в портативной кофемашине DQ-010",
+        steps: [
+          ["Подготовка", "Добавьте воду и установите подготовленный контейнер с кофе, как показано в видео."],
+          ["Нагрев", "Перед началом экстракции машина нагревает воду."],
+          ["Экстракция", "Давление проводит горячую воду через кофе, и эспрессо поступает в чашку."],
+        ],
+      },
+      operation: {
+        eyebrow: "Реальная работа / DQ-010",
+        title: "Эспрессо в любом месте — это просто",
+        lead: "Понятная демонстрация реального продукта: от подготовки до готовой чашки.",
+        posterAlt: "Обложка видео реальной работы портативной кофемашины DQ-010",
+        steps: [
+          ["Добавьте кофе", "Поместите молотый кофе в совместимый контейнер, показанный в видео."],
+          ["Добавьте воду", "Наполните резервуар в показанном порядке."],
+          ["Соберите и запустите", "Соедините детали и запустите машину, как показано."],
+          ["Получите эспрессо", "Дайте готовому эспрессо стечь прямо в чашку."],
+        ],
+        viewProducts: "Посмотреть DQ-010",
+        getQuote: "Запросить цену",
+      },
     },
   }[lang];
   const heroScenes = productLine.map((product) => ({
@@ -208,22 +376,36 @@ export default async function Home({ searchParams }: HomeProps) {
     ],
     alt: `${product.model} portable coffee machine`,
   }));
-  const videoScenes: ProductVideo[] = [
-    {
-      src: "/videos/product-02.mp4",
-      poster: "/optimized/video-posters/dq-010-adapter.webp",
-      label: "DQ-010 · 01",
-      title: videoSectionCopy.cards[0],
-      summary: videoSectionCopy.summaries[0],
+  const extractionVideo: ProductVideo = {
+    src: "/videos/dq-010-extraction-animation.mp4",
+    webmSrc: "/videos/dq-010-extraction-animation.webm",
+    poster: "/optimized/video-posters/dq-010-extraction-animation.webp",
+    posterAlt: videoStoryCopy.extraction.posterAlt,
+    label: videoStoryCopy.extraction.eyebrow,
+    title: videoStoryCopy.extraction.title,
+    summary: videoStoryCopy.extraction.lead,
+    steps: videoStoryCopy.extraction.steps.map(([title, description]) => ({ title, description })),
+    layout: "media-left",
+  };
+  const operationVideo: ProductVideo = {
+    src: "/videos/dq-010-real-operation.mp4",
+    webmSrc: "/videos/dq-010-real-operation.webm",
+    poster: "/optimized/video-posters/dq-010-real-operation.webp",
+    posterAlt: videoStoryCopy.operation.posterAlt,
+    label: videoStoryCopy.operation.eyebrow,
+    title: videoStoryCopy.operation.title,
+    summary: videoStoryCopy.operation.lead,
+    steps: videoStoryCopy.operation.steps.map(([title, description]) => ({ title, description })),
+    primaryCta: {
+      href: `/products/dq-010${langQuery(lang)}`,
+      label: videoStoryCopy.operation.viewProducts,
     },
-    {
-      src: "/videos/product-01.mp4",
-      poster: "/optimized/video-posters/dq-010-brewing.webp",
-      label: "DQ-010 · 02",
-      title: videoSectionCopy.cards[1],
-      summary: videoSectionCopy.summaries[1],
+    secondaryCta: {
+      href: "#contact",
+      label: videoStoryCopy.operation.getQuote,
     },
-  ];
+    layout: "media-right",
+  };
   const structuredData = [
     {
       "@context": "https://schema.org",
@@ -286,6 +468,26 @@ export default async function Home({ searchParams }: HomeProps) {
         name: `${product.model} portable coffee machine`,
         url: `${company.siteUrl}/products/${product.slug}`,
       })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name: extractionVideo.title,
+      description: extractionVideo.summary,
+      thumbnailUrl: `${company.siteUrl}${extractionVideo.poster}`,
+      contentUrl: `${company.siteUrl}${extractionVideo.src}`,
+      duration: "PT59S",
+      inLanguage: lang,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name: operationVideo.title,
+      description: operationVideo.summary,
+      thumbnailUrl: `${company.siteUrl}${operationVideo.poster}`,
+      contentUrl: `${company.siteUrl}${operationVideo.src}`,
+      duration: "PT45S",
+      inLanguage: lang,
     },
   ];
 
@@ -412,13 +614,20 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
       </section>
 
-      <RevealSection className="section product-video-section" id="videos" aria-label="Product videos">
-        <div className="section-heading">
-          <span>{videoSectionCopy.eyebrow}</span>
-          <h2>{videoSectionCopy.title}</h2>
-          <p>{videoSectionCopy.lead}</p>
-        </div>
-        <ProductVideoShowcase videos={videoScenes} loadLabel={videoUi.load} soundNote={videoUi.sound} />
+      <RevealSection
+        className="section product-video-section extraction-video-section"
+        id="extraction-video"
+        aria-label={videoStoryCopy.extraction.title}
+      >
+        <ProductVideoShowcase
+          video={extractionVideo}
+          loadLabel={videoUi.load}
+          playLabel={videoUi.play}
+          pauseLabel={videoUi.pause}
+          muteLabel={videoUi.mute}
+          unmuteLabel={videoUi.unmute}
+          soundNote={videoUi.sound}
+        />
       </RevealSection>
 
       <section className="proof-band" aria-label="TK Classic proof points">
@@ -563,6 +772,22 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
 
       </section>
+
+      <RevealSection
+        className="section product-video-section operation-video-section"
+        id="operation-video"
+        aria-label={videoStoryCopy.operation.title}
+      >
+        <ProductVideoShowcase
+          video={operationVideo}
+          loadLabel={videoUi.load}
+          playLabel={videoUi.play}
+          pauseLabel={videoUi.pause}
+          muteLabel={videoUi.mute}
+          unmuteLabel={videoUi.unmute}
+          soundNote={videoUi.sound}
+        />
+      </RevealSection>
 
       <section className="section home-hub-section">
         <div className="section-heading">

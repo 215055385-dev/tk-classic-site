@@ -1,8 +1,6 @@
 /* Performance layer kept separate from the legacy catalog stylesheet so later
    visual changes do not require reopening the full 7k-line CSS file. */
 @layer tk-performance {
-  .home-shell > .section:not(.hero-section),
-  .home-shell > .proof-band,
   .home-shell > .site-footer {
     content-visibility: auto;
     contain-intrinsic-size: 720px;
@@ -19,8 +17,6 @@
   }
 
   @media (max-width: 720px) {
-    .home-shell > .section:not(.hero-section),
-    .home-shell > .proof-band,
     .home-shell > .site-footer {
       contain-intrinsic-size: 560px;
     }

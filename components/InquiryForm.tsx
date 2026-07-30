@@ -2,7 +2,7 @@
 
 import { Send } from "lucide-react";
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { copy, products, type Lang } from "@/lib/site-data";
 import { uiCopy } from "@/lib/localized-ui";
 import { inquiryCopy } from "@/lib/inquiry-copy";
@@ -12,6 +12,14 @@ type InquiryFormProps = {
   selectedProduct?: string;
   selectedAccessories?: string;
 };
+
+function challengeFromId(id: string) {
+  const seed = Array.from(id).reduce((total, character) => total + character.charCodeAt(0), 0);
+  return {
+    a: (seed % 4) + 2,
+    b: (Math.floor(seed / 4) % 5) + 1,
+  };
+}
 
 export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessories = "" }: InquiryFormProps) {
   const t = copy[lang];
@@ -29,10 +37,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
   const [message, setMessage] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [verificationAnswer, setVerificationAnswer] = useState("");
-  const [challenge] = useState(() => ({
-    a: Math.floor(Math.random() * 4) + 2,
-    b: Math.floor(Math.random() * 5) + 1,
-  }));
+  const challenge = challengeFromId(useId());
   const [startedAt] = useState(() => Date.now());
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [feedback, setFeedback] = useState("");
