@@ -42,6 +42,12 @@ export type SavedInquiry = InquiryPayload & {
   attachmentFiles?: InquiryEmailAttachment[];
 };
 
+export type InquiryDeliveryStatus = {
+  salesEmailSent: boolean;
+  customerEmailSent: boolean;
+  emailError: string;
+};
+
 let resendClient: Resend | null = null;
 
 function requiredEnv(name: string) {
@@ -133,7 +139,11 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
       ip text,
       user_agent text,
       status text NOT NULL DEFAULT 'new',
-      admin_note text
+      admin_note text,
+      sales_email_sent boolean,
+      customer_email_sent boolean,
+      email_error text,
+      email_last_attempt_at timestamptz
     )
   `;
 
@@ -143,6 +153,10 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS source_page text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS referrer text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS attachments jsonb`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS sales_email_sent boolean`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_email_sent boolean`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_error text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_last_attempt_at timestamptz`;
   await sql`CREATE INDEX IF NOT EXISTS inquiries_created_at_idx ON inquiries (created_at DESC)`;
 
   const rows = await sql`
@@ -165,6 +179,19 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
     id: rows[0].id as string,
     createdAt: rows[0].created_at as string,
   } satisfies SavedInquiry;
+}
+
+export async function updateInquiryDeliveryStatus(id: string, delivery: InquiryDeliveryStatus) {
+  const sql = getDatabase();
+  await sql`
+    UPDATE inquiries
+    SET
+      sales_email_sent = ${delivery.salesEmailSent},
+      customer_email_sent = ${delivery.customerEmailSent},
+      email_error = ${delivery.emailError.slice(0, 1000) || null},
+      email_last_attempt_at = now()
+    WHERE id = ${id}::uuid
+  `;
 }
 
 function salesRecipients() {

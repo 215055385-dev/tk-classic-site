@@ -1,1 +1,8 @@
 private-certificate-archive
+/.agents/
+/build/
+/*.jpg
+/*.log
+/*.png
+/skills-lock.json
+/tests/rendered-html.test.mjs

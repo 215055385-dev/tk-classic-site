@@ -130,7 +130,7 @@ export function RevealSection({ children, className, ...props }: MotionProps<"se
       className={className}
       initial={shouldReduceMotion ? false : { opacity: 0, y: 34 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.22 }}
+      viewport={{ once: true, amount: "some" }}
       transition={{ duration: 0.72, ease: softEase }}
       {...props}
     >

@@ -20,6 +20,10 @@ type Inquiry = {
   source: string;
   status: Status;
   adminNote: string;
+  salesEmailSent: boolean | null;
+  customerEmailSent: boolean | null;
+  emailError: string;
+  emailLastAttemptAt: string;
 };
 type Stats = {
   totalInquiries: number;
@@ -28,11 +32,14 @@ type Stats = {
   wonInquiries: number;
   totalVisits: number;
   visitsLast7Days: number;
+  eventsLast7Days: number;
+  emailDeliveryIssues: number;
   topProducts: Array<{ label: string; value: number }>;
   topPaths: Array<{ label: string; value: number }>;
   topReferrers: Array<{ label: string; value: number }>;
   topLanguages: Array<{ label: string; value: number }>;
   dailyVisits: Array<{ label: string; value: number }>;
+  conversionEvents: Array<{ label: string; value: number }>;
 };
 
 const statuses: Array<{ value: Status; label: string }> = [
@@ -43,7 +50,31 @@ const statuses: Array<{ value: Status; label: string }> = [
   { value: "closed", label: "已关闭" },
 ];
 
-const emptyStats: Stats = { totalInquiries: 0, newInquiries: 0, quotedInquiries: 0, wonInquiries: 0, totalVisits: 0, visitsLast7Days: 0, topProducts: [], topPaths: [], topReferrers: [], topLanguages: [], dailyVisits: [] };
+const emptyStats: Stats = {
+  totalInquiries: 0,
+  newInquiries: 0,
+  quotedInquiries: 0,
+  wonInquiries: 0,
+  totalVisits: 0,
+  visitsLast7Days: 0,
+  eventsLast7Days: 0,
+  emailDeliveryIssues: 0,
+  topProducts: [],
+  topPaths: [],
+  topReferrers: [],
+  topLanguages: [],
+  dailyVisits: [],
+  conversionEvents: [],
+};
+
+const eventLabels: Record<string, string> = {
+  product_view: "产品详情浏览",
+  quote_click: "报价按钮点击",
+  whatsapp_click: "WhatsApp 点击",
+  brochure_download: "画册下载",
+  form_start: "开始填写询盘",
+  generate_lead: "成功提交询盘",
+};
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
@@ -122,8 +153,24 @@ export function AdminDashboard() {
   async function logout() { await fetch("/api/admin/logout", { method: "POST" }); setAuthenticated(false); setRows([]); }
 
   function exportCsv() {
-    const header = ["时间", "姓名", "公司", "邮箱", "电话", "国家", "产品", "配件", "数量", "状态", "品牌需求", "留言"];
-    const lines = rows.map((row) => [formatDate(row.createdAt), row.name, row.company, row.email, row.phone, row.country, row.product, row.accessories, row.quantity, row.status, row.branding, row.message].map(escapeCsv).join(","));
+    const header = ["时间", "姓名", "公司", "邮箱", "电话", "国家", "产品", "配件", "数量", "销售邮件", "客户确认邮件", "邮件错误", "状态", "品牌需求", "留言"];
+    const lines = rows.map((row) => [
+      formatDate(row.createdAt),
+      row.name,
+      row.company,
+      row.email,
+      row.phone,
+      row.country,
+      row.product,
+      row.accessories,
+      row.quantity,
+      row.salesEmailSent === null ? "未记录" : row.salesEmailSent ? "已发送" : "失败",
+      row.customerEmailSent === null ? "未记录" : row.customerEmailSent ? "已发送" : "失败",
+      row.emailError,
+      row.status,
+      row.branding,
+      row.message,
+    ].map(escapeCsv).join(","));
     const blob = new Blob([`\uFEFF${[header.map(escapeCsv).join(","), ...lines].join("\n")}`], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = `tk-classic-inquiries-${new Date().toISOString().slice(0, 10)}.csv`; link.click(); URL.revokeObjectURL(url);
   }
@@ -133,8 +180,8 @@ export function AdminDashboard() {
 
   return <main className="admin-shell">
     <header className="admin-header"><div><span className="admin-kicker">TK CLASSIC / PRIVATE AREA</span><h1>询盘与访问数据</h1><p>集中查看客户需求、热门产品和网站访问趋势。</p></div><div className="admin-header-actions"><button className="admin-quiet-button" onClick={() => void loadData()}>刷新数据</button><button className="admin-quiet-button" onClick={() => void logout()}>退出登录</button></div></header>
-    <section className="admin-stat-grid" aria-label="数据概览"><article><span>累计访问</span><strong>{stats.totalVisits}</strong><small>近 7 天：{stats.visitsLast7Days}</small></article><article><span>累计询盘</span><strong>{stats.totalInquiries}</strong><small>已保存到数据库</small></article><article><span>新询盘</span><strong>{stats.newInquiries}</strong><small>需要优先跟进</small></article><article><span>已成交</span><strong>{stats.wonInquiries}</strong><small>已标记为成交</small></article></section>
-    <section className="admin-analytics-grid"><article className="admin-panel"><div className="admin-panel-heading"><h2>热门产品</h2><span>按询盘数量</span></div>{stats.topProducts.length ? stats.topProducts.map((item) => <div className="admin-bar-row" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>) : <p className="admin-muted">收到第一条询盘后，这里会显示产品数据。</p>}</article><article className="admin-panel"><div className="admin-panel-heading"><h2>热门页面</h2><span>按访问次数</span></div>{stats.topPaths.length ? stats.topPaths.map((item) => <div className="admin-bar-row" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>) : <p className="admin-muted">访客浏览网站后，这里会显示访问数据。</p>}</article><article className="admin-panel"><div className="admin-panel-heading"><h2>访问来源</h2><span>按访问次数</span></div>{stats.topReferrers.length ? stats.topReferrers.map((item) => <div className="admin-bar-row" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>) : <p className="admin-muted">有访问来源后，这里会显示渠道数据。</p>}</article><article className="admin-panel"><div className="admin-panel-heading"><h2>语言分布</h2><span>按访问次数</span></div>{stats.topLanguages.length ? stats.topLanguages.map((item) => <div className="admin-bar-row" key={item.label}><span>{item.label.toUpperCase()}</span><strong>{item.value}</strong></div>) : <p className="admin-muted">有页面访问后，这里会显示语言数据。</p>}</article><article className="admin-panel admin-trend-panel"><div className="admin-panel-heading"><h2>近 14 天访问趋势</h2><span>UTC 日期</span></div>{stats.dailyVisits.length ? <div className="admin-trend-list">{stats.dailyVisits.map((item) => <div className="admin-trend-row" key={item.label}><span>{item.label.slice(5)}</span><div><i style={{ width: `${Math.max(8, Math.min(100, (item.value / Math.max(...stats.dailyVisits.map((entry) => entry.value), 1)) * 100))}%` }} /><strong>{item.value}</strong></div></div>)}</div> : <p className="admin-muted">累计访问后，这里会显示近 14 天趋势。</p>}</article></section>
-    <section className="admin-panel admin-inquiry-panel"><div className="admin-panel-heading"><div><h2>询盘记录</h2><span>{loading ? "正在更新…" : `当前显示 ${rows.length} 条`}</span></div><button className="admin-primary-button admin-export-button" onClick={exportCsv} disabled={!rows.length}>导出 CSV</button></div><form className="admin-filter-row" onSubmit={(event) => { event.preventDefault(); void loadData(); }}><select aria-label="询盘状态" value={filters.status} onChange={(event) => setFilters({ ...filters, status: event.target.value })}><option value="">全部状态</option>{statuses.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select><select aria-label="产品型号" value={filters.product} onChange={(event) => setFilters({ ...filters, product: event.target.value })}><option value="">全部型号</option>{products.map((product) => <option key={product} value={product}>{product}</option>)}</select><input aria-label="国家或市场" placeholder="国家 / 市场" value={filters.country} onChange={(event) => setFilters({ ...filters, country: event.target.value })} /><input aria-label="开始日期" type="date" value={filters.from} onChange={(event) => setFilters({ ...filters, from: event.target.value })} /><input aria-label="结束日期" type="date" value={filters.to} onChange={(event) => setFilters({ ...filters, to: event.target.value })} /><button className="admin-quiet-button" type="submit">筛选</button></form>{message ? <p className="admin-message">{message}</p> : null}<div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>时间</th><th>客户</th><th>产品 / 数量</th><th>市场</th><th>配件</th><th>需求</th><th>状态</th></tr></thead><tbody>{rows.map((row) => <tr key={row.id}><td>{formatDate(row.createdAt)}</td><td><strong>{row.name}</strong><small>{row.company || row.email}</small><small>{row.email}</small></td><td><strong>{row.product}</strong><small>{row.quantity}</small></td><td>{row.country || "—"}</td><td>{row.accessories || "—"}</td><td><p>{row.message}</p><small>{row.branding || "—"}</small></td><td><select value={row.status} aria-label={`${row.name} 状态`} onChange={(event) => void updateRow(row, event.target.value as Status, row.adminNote)}>{statuses.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select><input className="admin-note-input" aria-label={`${row.name} 备注`} placeholder="内部备注" defaultValue={row.adminNote} onBlur={(event) => { if (event.target.value !== row.adminNote) void updateRow(row, row.status, event.target.value); }} /></td></tr>)}</tbody></table>{!rows.length ? <p className="admin-empty">没有符合筛选条件的询盘。</p> : null}</div></section>
+    <section className="admin-stat-grid" aria-label="数据概览"><article><span>累计访问</span><strong>{stats.totalVisits}</strong><small>近 7 天：{stats.visitsLast7Days}</small></article><article><span>累计询盘</span><strong>{stats.totalInquiries}</strong><small>已保存到数据库</small></article><article><span>新询盘</span><strong>{stats.newInquiries}</strong><small>需要优先跟进</small></article><article><span>已成交</span><strong>{stats.wonInquiries}</strong><small>已标记为成交</small></article><article className={stats.emailDeliveryIssues ? "is-alert" : ""}><span>邮件异常</span><strong>{stats.emailDeliveryIssues}</strong><small>{stats.emailDeliveryIssues ? "请优先检查 Resend 配置" : "邮件投递状态正常"}</small></article></section>
+    <section className="admin-analytics-grid"><article className="admin-panel"><div className="admin-panel-heading"><h2>转化漏斗</h2><span>近 7 天事件：{stats.eventsLast7Days}</span></div>{stats.conversionEvents.length ? stats.conversionEvents.map((item) => <div className="admin-bar-row" key={item.label}><span>{eventLabels[item.label] ?? item.label}</span><strong>{item.value}</strong></div>) : <p className="admin-muted">访客点击产品、报价或 WhatsApp 后，这里会显示转化数据。</p>}</article><article className="admin-panel"><div className="admin-panel-heading"><h2>热门产品</h2><span>按询盘数量</span></div>{stats.topProducts.length ? stats.topProducts.map((item) => <div className="admin-bar-row" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>) : <p className="admin-muted">收到第一条询盘后，这里会显示产品数据。</p>}</article><article className="admin-panel"><div className="admin-panel-heading"><h2>热门页面</h2><span>按访问次数</span></div>{stats.topPaths.length ? stats.topPaths.map((item) => <div className="admin-bar-row" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>) : <p className="admin-muted">访客浏览网站后，这里会显示访问数据。</p>}</article><article className="admin-panel"><div className="admin-panel-heading"><h2>访问来源</h2><span>按访问次数</span></div>{stats.topReferrers.length ? stats.topReferrers.map((item) => <div className="admin-bar-row" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>) : <p className="admin-muted">有访问来源后，这里会显示渠道数据。</p>}</article><article className="admin-panel"><div className="admin-panel-heading"><h2>语言分布</h2><span>按访问次数</span></div>{stats.topLanguages.length ? stats.topLanguages.map((item) => <div className="admin-bar-row" key={item.label}><span>{item.label.toUpperCase()}</span><strong>{item.value}</strong></div>) : <p className="admin-muted">有页面访问后，这里会显示语言数据。</p>}</article><article className="admin-panel admin-trend-panel"><div className="admin-panel-heading"><h2>近 14 天访问趋势</h2><span>UTC 日期</span></div>{stats.dailyVisits.length ? <div className="admin-trend-list">{stats.dailyVisits.map((item) => <div className="admin-trend-row" key={item.label}><span>{item.label.slice(5)}</span><div><i style={{ width: `${Math.max(8, Math.min(100, (item.value / Math.max(...stats.dailyVisits.map((entry) => entry.value), 1)) * 100))}%` }} /><strong>{item.value}</strong></div></div>)}</div> : <p className="admin-muted">累计访问后，这里会显示近 14 天趋势。</p>}</article></section>
+    <section className="admin-panel admin-inquiry-panel"><div className="admin-panel-heading"><div><h2>询盘记录</h2><span>{loading ? "正在更新…" : `当前显示 ${rows.length} 条`}</span></div><button className="admin-primary-button admin-export-button" onClick={exportCsv} disabled={!rows.length}>导出 CSV</button></div><form className="admin-filter-row" onSubmit={(event) => { event.preventDefault(); void loadData(); }}><select aria-label="询盘状态" value={filters.status} onChange={(event) => setFilters({ ...filters, status: event.target.value })}><option value="">全部状态</option>{statuses.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select><select aria-label="产品型号" value={filters.product} onChange={(event) => setFilters({ ...filters, product: event.target.value })}><option value="">全部型号</option>{products.map((product) => <option key={product} value={product}>{product}</option>)}</select><input aria-label="国家或市场" placeholder="国家 / 市场" value={filters.country} onChange={(event) => setFilters({ ...filters, country: event.target.value })} /><input aria-label="开始日期" type="date" value={filters.from} onChange={(event) => setFilters({ ...filters, from: event.target.value })} /><input aria-label="结束日期" type="date" value={filters.to} onChange={(event) => setFilters({ ...filters, to: event.target.value })} /><button className="admin-quiet-button" type="submit">筛选</button></form>{message ? <p className="admin-message">{message}</p> : null}<div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>时间</th><th>客户</th><th>产品 / 数量</th><th>市场</th><th>配件</th><th>邮件状态</th><th>需求</th><th>状态</th></tr></thead><tbody>{rows.map((row) => <tr key={row.id}><td>{formatDate(row.createdAt)}</td><td><strong>{row.name}</strong><small>{row.company || row.email}</small><small>{row.email}</small></td><td><strong>{row.product}</strong><small>{row.quantity}</small></td><td>{row.country || "—"}</td><td>{row.accessories || "—"}</td><td><div className="admin-delivery-status"><span className={row.salesEmailSent === false ? "is-failed" : row.salesEmailSent ? "is-sent" : "is-unknown"}>销售：{row.salesEmailSent === null ? "未记录" : row.salesEmailSent ? "已发送" : "失败"}</span><span className={row.customerEmailSent === false ? "is-failed" : row.customerEmailSent ? "is-sent" : "is-unknown"}>客户：{row.customerEmailSent === null ? "未记录" : row.customerEmailSent ? "已发送" : "失败"}</span>{row.emailError ? <small title={row.emailError}>{row.emailError}</small> : null}</div></td><td><p>{row.message}</p><small>{row.branding || "—"}</small></td><td><select value={row.status} aria-label={`${row.name} 状态`} onChange={(event) => void updateRow(row, event.target.value as Status, row.adminNote)}>{statuses.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select><input className="admin-note-input" aria-label={`${row.name} 备注`} placeholder="内部备注" defaultValue={row.adminNote} onBlur={(event) => { if (event.target.value !== row.adminNote) void updateRow(row, row.status, event.target.value); }} /></td></tr>)}</tbody></table>{!rows.length ? <p className="admin-empty">没有符合筛选条件的询盘。</p> : null}</div></section>
   </main>;
 }

@@ -6,6 +6,7 @@ import { useId, useState } from "react";
 import { copy, products, type Lang } from "@/lib/site-data";
 import { uiCopy } from "@/lib/localized-ui";
 import { inquiryCopy } from "@/lib/inquiry-copy";
+import { trackConversionEvent } from "@/lib/client-analytics";
 
 type InquiryFormProps = {
   lang: Lang;
@@ -78,8 +79,20 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
         setFeedback(result?.message ?? ui.form.error);
         return;
       }
+      trackConversionEvent("generate_lead", {
+        product,
+        metadata: {
+          inquiryId: String(result.id ?? ""),
+          emailDeliveryPending: Boolean(result.deliveryPending),
+        },
+      });
       const successPath = lang === "en" ? "/contact/success" : `/${lang}/contact/success`;
-      window.location.assign(`${successPath}?product=${encodeURIComponent(product)}`);
+      const successParams = new URLSearchParams({
+        product,
+        id: String(result.id ?? ""),
+        ...(result.deliveryPending ? { delivery: "pending" } : {}),
+      });
+      window.location.assign(`${successPath}?${successParams.toString()}`);
       return;
     } catch {
       setStatus("error");

@@ -4,6 +4,7 @@ import {
   saveInquiry,
   sendInquiryConfirmationEmail,
   sendInquiryEmail,
+  updateInquiryDeliveryStatus,
   validateInquiry,
   type InquiryAttachmentMeta,
   type InquiryEmailAttachment,
@@ -28,6 +29,7 @@ const ALLOWED_TYPES = new Set([
 const rateBuckets = new Map<string, { count: number; resetAt: number }>();
 
 export async function POST(request: Request) {
+  const requestStartedAt = Date.now();
   const contentLength = Number(request.headers.get("content-length") ?? 0);
   if (contentLength > MAX_BODY_BYTES) {
     return NextResponse.json({ ok: false, message: "Request is too large." }, { status: 413 });
@@ -97,20 +99,46 @@ export async function POST(request: Request) {
     const inquiryWithFiles = { ...savedInquiry, attachmentFiles };
     let salesEmailSent = true;
     let customerEmailSent = true;
+    const deliveryErrors: string[] = [];
 
     try {
       await sendInquiryEmail(inquiryWithFiles);
     } catch (emailError) {
       salesEmailSent = false;
-      console.error("Inquiry sales email failed", emailError);
+      deliveryErrors.push(`sales: ${safeErrorMessage(emailError)}`);
+      console.error(JSON.stringify({
+        event: "inquiry_sales_email_failed",
+        inquiryId: savedInquiry.id,
+        error: safeErrorMessage(emailError),
+      }));
     }
 
     try {
       await sendInquiryConfirmationEmail(inquiryWithFiles);
     } catch (emailError) {
       customerEmailSent = false;
-      console.error("Inquiry confirmation email failed", emailError);
+      deliveryErrors.push(`customer: ${safeErrorMessage(emailError)}`);
+      console.error(JSON.stringify({
+        event: "inquiry_confirmation_email_failed",
+        inquiryId: savedInquiry.id,
+        error: safeErrorMessage(emailError),
+      }));
     }
+
+    await updateInquiryDeliveryStatus(savedInquiry.id, {
+      salesEmailSent,
+      customerEmailSent,
+      emailError: deliveryErrors.join(" | "),
+    });
+
+    const deliveryPending = !salesEmailSent || !customerEmailSent;
+    console.info(JSON.stringify({
+      event: "inquiry_saved",
+      inquiryId: savedInquiry.id,
+      salesEmailSent,
+      customerEmailSent,
+      durationMs: Date.now() - requestStartedAt,
+    }));
 
     return NextResponse.json({
       ok: true,
@@ -118,16 +146,27 @@ export async function POST(request: Request) {
       emailSent: salesEmailSent && customerEmailSent,
       salesEmailSent,
       customerEmailSent,
+      deliveryPending,
       message: ui.form.success,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     const isMissingConfig = message.startsWith("Missing ");
+    console.error(JSON.stringify({
+      event: "inquiry_save_failed",
+      error: safeErrorMessage(error),
+      durationMs: Date.now() - requestStartedAt,
+    }));
     return NextResponse.json(
       { ok: false, message: isMissingConfig ? cleanServiceConfigMessage(lang) : ui.form.error },
       { status: isMissingConfig ? 503 : 500 },
     );
   }
+}
+
+function safeErrorMessage(error: unknown) {
+  const value = error instanceof Error ? error.message : "Unknown error";
+  return value.replace(/re_[A-Za-z0-9_-]+/g, "[redacted]").slice(0, 500);
 }
 
 function text(formData: FormData, key: string) {

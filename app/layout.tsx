@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { company } from "@/lib/site-data";
 import { VisitTracker } from "@/components/VisitTracker";
 import { SiteStructuredData } from "@/components/SiteStructuredData";
@@ -76,7 +78,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body><MotionProvider><SiteStructuredData /><LocaleDocumentSync /><VisitTracker />{children}</MotionProvider></body>
+      <body>
+        <MotionProvider>
+          <SiteStructuredData />
+          <LocaleDocumentSync />
+          <VisitTracker />
+          {children}
+          <Analytics />
+          <SpeedInsights />
+        </MotionProvider>
+      </body>
     </html>
   );
 }

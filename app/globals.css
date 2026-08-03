@@ -1687,6 +1687,15 @@ address {
   letter-spacing: 0;
 }
 
+.price-note {
+  margin: 2px 0 0;
+  border-top: 1px solid rgba(139, 76, 37, 0.12);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+  padding-top: 9px;
+}
+
 .price-tag.is-compact {
   max-width: 260px;
   margin: 10px 0 12px;
@@ -2613,9 +2622,12 @@ address {
 .admin-header-actions { display: flex; gap: 10px; }
 .admin-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; max-width: 1440px; margin: 0 auto 18px; }
 .admin-stat-grid article { display: grid; gap: 8px; padding: 22px; }
+.admin-stat-grid article.is-alert { border-color: rgba(186, 73, 34, 0.34); background: #fff0e6; }
+.admin-stat-grid article.is-alert strong { color: #a63f21; }
 .admin-stat-grid span, .admin-stat-grid small, .admin-panel-heading span, .admin-table small, .admin-muted { color: #887b70; font-size: 12px; }
 .admin-stat-grid strong { font-size: clamp(28px, 4vw, 42px); letter-spacing: -0.05em; }
 .admin-analytics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; max-width: 1440px; margin: 0 auto 18px; }
+.admin-analytics-grid > .admin-panel { width: 100%; margin: 0; }
 .admin-analytics-grid .admin-trend-panel { grid-column: 1 / -1; }
 .admin-trend-list { display: grid; gap: 9px; }
 .admin-trend-row { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: center; gap: 12px; color: var(--muted-text, #6b6259); font-size: .82rem; }
@@ -2637,6 +2649,12 @@ address {
 .admin-table td { max-width: 230px; line-height: 1.45; }
 .admin-table td strong, .admin-table td small { display: block; }
 .admin-table td p { margin: 0 0 5px; white-space: pre-wrap; }
+.admin-delivery-status { display: grid; gap: 5px; min-width: 112px; }
+.admin-delivery-status > span { width: fit-content; border-radius: 999px; font-size: 11px; font-weight: 760; padding: 4px 7px; }
+.admin-delivery-status .is-sent { background: #dcefe8; color: #267563; }
+.admin-delivery-status .is-failed { background: #fde4db; color: #a63f21; }
+.admin-delivery-status .is-unknown { background: #eee7df; color: #766a61; }
+.admin-delivery-status small { max-width: 150px; color: #a63f21; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .admin-table select { min-height: 36px; width: 120px; padding: 6px 8px; }
 .admin-note-input { width: 120px; min-height: 34px; margin-top: 7px; padding: 6px 8px; font-size: 12px; }
 .admin-empty { padding: 34px 10px; color: #887b70; text-align: center; }
