@@ -1,6 +1,7 @@
 import { getDatabase } from "@/lib/database";
+import { isSalesAssignee, type SalesAssignee } from "@/lib/lead-assignment";
 
-export const inquiryStatuses = ["new", "contacted", "quoted", "won", "closed"] as const;
+export const inquiryStatuses = ["new", "contacted", "qualified", "sample_discussion", "sample_sent", "quoted", "negotiating", "won", "closed"] as const;
 export type InquiryStatus = (typeof inquiryStatuses)[number];
 
 export type AdminInquiry = {
@@ -23,6 +24,7 @@ export type AdminInquiry = {
   attachmentCount: number;
   status: InquiryStatus;
   adminNote: string;
+  assignedTo: SalesAssignee | "";
   salesEmailSent: boolean | null;
   customerEmailSent: boolean | null;
   emailError: string;
@@ -35,9 +37,13 @@ export const conversionEventNames = [
   "whatsapp_click",
   "brochure_download",
   "form_start",
+  "video_play",
+  "coffee_lab_concept",
+  "coffee_lab_download",
   "generate_lead",
 ] as const;
-export type ConversionEventName = (typeof conversionEventNames)[number];
+export type PublicConversionEventName = (typeof conversionEventNames)[number];
+export type ConversionEventName = PublicConversionEventName | "qualify_lead" | "working_lead" | "close_convert_lead" | "close_unconvert_lead";
 
 export type AdminStats = {
   totalInquiries: number;
@@ -46,17 +52,34 @@ export type AdminStats = {
   wonInquiries: number;
   totalVisits: number;
   visitsLast7Days: number;
+  organicVisitsLast30Days: number;
+  organicInquiriesLast30Days: number;
+  organicConversionRate: number;
   eventsLast7Days: number;
   emailDeliveryIssues: number;
   topProducts: Array<{ label: string; value: number }>;
   topPaths: Array<{ label: string; value: number }>;
   topReferrers: Array<{ label: string; value: number }>;
+  topOrganicPaths: Array<{ label: string; value: number }>;
+  topSearchEngines: Array<{ label: string; value: number }>;
   topLanguages: Array<{ label: string; value: number }>;
   dailyVisits: Array<{ label: string; value: number }>;
   conversionEvents: Array<{ label: string; value: number }>;
 };
 
+let adminSchemaPromise: Promise<void> | undefined;
+
 async function ensureAdminSchema() {
+  if (!adminSchemaPromise) {
+    adminSchemaPromise = initializeAdminSchema().catch((error) => {
+      adminSchemaPromise = undefined;
+      throw error;
+    });
+  }
+  return adminSchemaPromise;
+}
+
+async function initializeAdminSchema() {
   const sql = getDatabase();
   await sql`
     CREATE TABLE IF NOT EXISTS inquiries (
@@ -78,6 +101,7 @@ async function ensureAdminSchema() {
       user_agent text,
       status text NOT NULL DEFAULT 'new',
       admin_note text,
+      assigned_to text,
       sales_email_sent boolean,
       customer_email_sent boolean,
       email_error text,
@@ -90,6 +114,7 @@ async function ensureAdminSchema() {
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS attachments jsonb`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'new'`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS admin_note text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS assigned_to text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS sales_email_sent boolean`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_email_sent boolean`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_error text`;
@@ -165,10 +190,14 @@ export async function listAdminData(filters: {
     sevenDayVisitRows,
     conversionRows,
     sevenDayEventRows,
+    organicVisitRows,
+    organicInquiryRows,
+    organicPathRows,
+    searchEngineRows,
   ] = await Promise.all([
     sql`
       SELECT id, created_at, name, email, company, phone, country, product, accessories,
-        quantity, branding, message, lang, source, source_page, referrer, attachments, status, admin_note,
+        quantity, branding, message, lang, source, source_page, referrer, attachments, status, admin_note, assigned_to,
         sales_email_sent, customer_email_sent, email_error, email_last_attempt_at
       FROM inquiries
       ORDER BY created_at DESC
@@ -181,7 +210,8 @@ export async function listAdminData(filters: {
         COUNT(*) FILTER (WHERE COALESCE(status, 'new') = 'quoted') AS quoted_count,
         COUNT(*) FILTER (WHERE COALESCE(status, 'new') = 'won') AS won_count,
         COUNT(*) FILTER (
-          WHERE sales_email_sent = false OR customer_email_sent = false
+          WHERE sales_email_sent = false
+             OR (customer_email_sent = false AND COALESCE(source, '') <> 'website-chat')
         ) AS email_delivery_issues
       FROM inquiries
     `,
@@ -194,12 +224,16 @@ export async function listAdminData(filters: {
     sql`SELECT COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '7 days'`,
     sql`SELECT name, COUNT(*) AS total FROM site_events GROUP BY name ORDER BY total DESC`,
     sql`SELECT COUNT(*) AS total FROM site_events WHERE occurred_at >= now() - interval '7 days'`,
+    sql`SELECT COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '30 days' AND COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)'`,
+    sql`SELECT COUNT(*) AS total FROM inquiries WHERE created_at >= now() - interval '30 days' AND (COALESCE(source, '') ~* '(google|bing|yahoo|duckduckgo|ecosia|yandex|baidu)' OR COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)')`,
+    sql`SELECT path, COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '30 days' AND COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)' GROUP BY path ORDER BY total DESC LIMIT 8`,
+    sql`SELECT CASE WHEN referrer ~* 'google[.]' THEN 'Google' WHEN referrer ~* 'bing[.]com' THEN 'Bing' WHEN referrer ~* 'search[.]yahoo[.]com' THEN 'Yahoo' WHEN referrer ~* 'duckduckgo[.]com' THEN 'DuckDuckGo' WHEN referrer ~* 'ecosia[.]org' THEN 'Ecosia' WHEN referrer ~* 'yandex[.]' THEN 'Yandex' WHEN referrer ~* 'baidu[.]com' THEN 'Baidu' ELSE 'Other search' END AS engine, COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '30 days' AND COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)' GROUP BY 1 ORDER BY total DESC`,
   ]);
 
   const from = filters.from ? new Date(`${filters.from}T00:00:00.000Z`).getTime() : undefined;
   const to = filters.to ? new Date(`${filters.to}T23:59:59.999Z`).getTime() : undefined;
   const inquiries = inquiryRows
-    .map((row) => ({
+    .map<AdminInquiry>((row) => ({
       id: String(row.id),
       createdAt: new Date(String(row.created_at)).toISOString(),
       name: String(row.name ?? ""),
@@ -219,6 +253,9 @@ export async function listAdminData(filters: {
       attachmentCount: countAttachments(row.attachments),
       status: inquiryStatuses.includes(String(row.status) as InquiryStatus) ? String(row.status) as InquiryStatus : "new",
       adminNote: String(row.admin_note ?? ""),
+      assignedTo: isSalesAssignee(String(row.assigned_to ?? ""))
+        ? (String(row.assigned_to) as SalesAssignee)
+        : "",
       salesEmailSent: nullableBoolean(row.sales_email_sent),
       customerEmailSent: nullableBoolean(row.customer_email_sent),
       emailError: String(row.email_error ?? ""),
@@ -231,6 +268,8 @@ export async function listAdminData(filters: {
     .filter((row) => to === undefined || new Date(row.createdAt).getTime() <= to);
 
   const summary = summaryRows[0] ?? {};
+  const organicVisitsLast30Days = toNumber(organicVisitRows[0]?.total);
+  const organicInquiriesLast30Days = toNumber(organicInquiryRows[0]?.total);
 
   const stats: AdminStats = {
     totalInquiries: toNumber(summary.total),
@@ -239,11 +278,16 @@ export async function listAdminData(filters: {
     wonInquiries: toNumber(summary.won_count),
     totalVisits: toNumber(totalVisitRows[0]?.total),
     visitsLast7Days: toNumber(sevenDayVisitRows[0]?.total),
+    organicVisitsLast30Days,
+    organicInquiriesLast30Days,
+    organicConversionRate: organicVisitsLast30Days ? Number(((organicInquiriesLast30Days / organicVisitsLast30Days) * 100).toFixed(2)) : 0,
     eventsLast7Days: toNumber(sevenDayEventRows[0]?.total),
     emailDeliveryIssues: toNumber(summary.email_delivery_issues),
     topProducts: productRows.map((row) => ({ label: String(row.product), value: toNumber(row.total) })),
     topPaths: pathRows.map((row) => ({ label: String(row.path), value: toNumber(row.total) })),
     topReferrers: referrerRows.map((row) => ({ label: String(row.referrer), value: toNumber(row.total) })),
+    topOrganicPaths: organicPathRows.map((row) => ({ label: String(row.path), value: toNumber(row.total) })),
+    topSearchEngines: searchEngineRows.map((row) => ({ label: String(row.engine), value: toNumber(row.total) })),
     topLanguages: languageRows.map((row) => ({ label: String(row.lang), value: toNumber(row.total) })),
     dailyVisits: dailyVisitRows.map((row) => ({ label: String(row.day), value: toNumber(row.total) })),
     conversionEvents: conversionRows.map((row) => ({ label: String(row.name), value: toNumber(row.total) })),
@@ -252,17 +296,22 @@ export async function listAdminData(filters: {
   return { inquiries, stats };
 }
 
-export async function updateInquiryStatus(id: string, status: string, adminNote: string) {
+export async function updateInquiryStatus(id: string, status: string, adminNote: string, assignedTo: string) {
   if (!inquiryStatuses.includes(status as InquiryStatus)) throw new Error("Invalid inquiry status");
+  if (assignedTo && !isSalesAssignee(assignedTo)) throw new Error("Invalid inquiry assignee");
   const sql = getDatabase();
-  const rows = await sql`
-    UPDATE inquiries
-    SET status = ${status}, admin_note = ${adminNote.slice(0, 2000)}
-    WHERE id = ${id}::uuid
-    RETURNING id, status, admin_note
-  `;
+  const previous = await sql`SELECT status, product FROM inquiries WHERE id = ${id}::uuid LIMIT 1`;
+  if (!previous[0]) throw new Error("Inquiry not found");
+  const rows = await sql`UPDATE inquiries SET status = ${status}, admin_note = ${adminNote.slice(0, 2000)}, assigned_to = ${assignedTo || null} WHERE id = ${id}::uuid RETURNING id, status, admin_note, assigned_to`;
   if (!rows[0]) throw new Error("Inquiry not found");
-  return { id: String(rows[0].id), status: String(rows[0].status) as InquiryStatus, adminNote: String(rows[0].admin_note ?? "") };
+  if (String(previous[0].status ?? "new") !== status) {
+    const eventName: ConversionEventName | undefined = status === "qualified" ? "qualify_lead"
+      : (["sample_discussion", "sample_sent", "quoted", "negotiating"] as string[]).includes(status) ? "working_lead"
+      : status === "won" ? "close_convert_lead"
+      : status === "closed" ? "close_unconvert_lead" : undefined;
+    if (eventName) await recordEvent({ name: eventName, path: "/admin/inquiries", lang: "zh", product: String(previous[0].product ?? ""), referrer: "", userAgent: "admin", metadata: { inquiryId: id, status } });
+  }
+  return { id: String(rows[0].id), status: String(rows[0].status) as InquiryStatus, adminNote: String(rows[0].admin_note ?? ""), assignedTo: String(rows[0].assigned_to ?? "") };
 }
 
 export async function recordVisit(input: { path: string; lang: string; referrer: string; userAgent: string }) {

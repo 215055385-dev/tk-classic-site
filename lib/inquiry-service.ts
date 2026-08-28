@@ -2,6 +2,8 @@ import { Resend } from "resend";
 import { uiCopy } from "@/lib/localized-ui";
 import { company, type Lang } from "@/lib/site-data";
 import { getDatabase } from "@/lib/database";
+import { recordCustomerActivity } from "@/lib/customer-service";
+import { getNextLeadAssignee } from "@/lib/lead-assignment";
 
 export type InquiryAttachmentMeta = {
   filename: string;
@@ -14,6 +16,7 @@ export type InquiryEmailAttachment = InquiryAttachmentMeta & {
 };
 
 export type InquiryPayload = {
+  formType: "full" | "quick";
   name: string;
   email: string;
   company: string;
@@ -39,6 +42,7 @@ export type InquiryPayload = {
 export type SavedInquiry = InquiryPayload & {
   id: string;
   createdAt: string;
+  assignedTo: string;
   attachmentFiles?: InquiryEmailAttachment[];
 };
 
@@ -64,27 +68,29 @@ function getResend() {
 }
 
 export function normalizeInquiry(input: Partial<InquiryPayload>): InquiryPayload {
+  const clean = (value: unknown, max: number) => String(value ?? "").trim().slice(0, max);
   return {
-    name: String(input.name ?? "").trim(),
-    email: String(input.email ?? "").trim().toLowerCase(),
-    company: String(input.company ?? "").trim(),
-    phone: String(input.phone ?? "").trim(),
-    country: String(input.country ?? "").trim(),
-    product: String(input.product ?? "").trim(),
-    accessories: String(input.accessories ?? "").trim(),
-    quantity: String(input.quantity ?? "").trim(),
-    branding: String(input.branding ?? "").trim(),
-    message: String(input.message ?? "").trim(),
-    lang: String(input.lang ?? "en").trim(),
-    source: String(input.source ?? input.sourcePage ?? "website").trim(),
-    sourcePage: String(input.sourcePage ?? input.source ?? "website").trim(),
-    referrer: String(input.referrer ?? "").trim(),
+    formType: input.formType === "quick" ? "quick" : "full",
+    name: clean(input.name, 120),
+    email: clean(input.email, 254).toLowerCase(),
+    company: clean(input.company, 160),
+    phone: clean(input.phone, 80),
+    country: clean(input.country, 120),
+    product: clean(input.product, 80),
+    accessories: clean(input.accessories, 500),
+    quantity: clean(input.quantity, 80),
+    branding: clean(input.branding, 500),
+    message: clean(input.message, 4000),
+    lang: clean(input.lang ?? "en", 12),
+    source: clean(input.source ?? input.sourcePage ?? "website", 200),
+    sourcePage: clean(input.sourcePage ?? input.source ?? "website", 500),
+    referrer: clean(input.referrer, 500),
     startedAt: Number(input.startedAt ?? 0),
     challengeA: Number(input.challengeA ?? 0),
     challengeB: Number(input.challengeB ?? 0),
-    verificationAnswer: String(input.verificationAnswer ?? "").trim(),
+    verificationAnswer: clean(input.verificationAnswer, 20),
     attachments: Array.isArray(input.attachments) ? input.attachments : [],
-    website: String(input.website ?? "").trim(),
+    website: clean(input.website, 200),
   };
 }
 
@@ -99,10 +105,25 @@ export function validateInquiry(inquiry: InquiryPayload) {
   if (!inquiry.quantity) errors.quantity = messages.quantity;
   if (!inquiry.message) errors.message = messages.message;
   if (inquiry.website) errors.website = messages.website;
-  if (Date.now() - inquiry.startedAt < 1200) errors.startedAt = messages.verification;
+  const formAge = Date.now() - inquiry.startedAt;
+  if (
+    !Number.isFinite(inquiry.startedAt) ||
+    inquiry.startedAt <= 0 ||
+    formAge < 1200 ||
+    formAge > 24 * 60 * 60 * 1000
+  ) {
+    errors.startedAt = messages.verification;
+  }
   if (
     !Number.isFinite(inquiry.challengeA) ||
     !Number.isFinite(inquiry.challengeB) ||
+    !Number.isInteger(inquiry.challengeA) ||
+    !Number.isInteger(inquiry.challengeB) ||
+    inquiry.challengeA < 1 ||
+    inquiry.challengeA > 9 ||
+    inquiry.challengeB < 1 ||
+    inquiry.challengeB > 9 ||
+    !/^\d{1,2}$/.test(inquiry.verificationAnswer) ||
     Number(inquiry.verificationAnswer) !== inquiry.challengeA + inquiry.challengeB
   ) {
     errors.verificationAnswer = messages.verification;
@@ -116,6 +137,7 @@ export function validateInquiry(inquiry: InquiryPayload) {
 export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: string; userAgent: string }) {
   const sql = getDatabase();
   const id = crypto.randomUUID();
+  const assignedTo = await getNextLeadAssignee();
 
   await sql`
     CREATE TABLE IF NOT EXISTS inquiries (
@@ -140,6 +162,7 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
       user_agent text,
       status text NOT NULL DEFAULT 'new',
       admin_note text,
+      assigned_to text,
       sales_email_sent boolean,
       customer_email_sent boolean,
       email_error text,
@@ -150,6 +173,7 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS accessories text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'new'`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS admin_note text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS assigned_to text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS source_page text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS referrer text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS attachments jsonb`;
@@ -157,19 +181,30 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_email_sent boolean`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_error text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_last_attempt_at timestamptz`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_id uuid`;
   await sql`CREATE INDEX IF NOT EXISTS inquiries_created_at_idx ON inquiries (created_at DESC)`;
+  await sql`CREATE INDEX IF NOT EXISTS inquiries_customer_id_idx ON inquiries (customer_id)`;
+
+  const customer = await recordCustomerActivity({
+    name: inquiry.name,
+    email: inquiry.email,
+    source: inquiry.source,
+    sourcePage: inquiry.sourcePage,
+    referrer: inquiry.referrer,
+    activity: "inquiry",
+  });
 
   const rows = await sql`
     INSERT INTO inquiries (
       id, name, email, company, phone, country, product, accessories, quantity,
-      branding, message, lang, source, source_page, referrer, attachments, ip, user_agent
+      branding, message, lang, source, source_page, referrer, attachments, ip, user_agent, customer_id, assigned_to
     )
     VALUES (
       ${id}, ${inquiry.name}, ${inquiry.email}, ${inquiry.company}, ${inquiry.phone},
       ${inquiry.country}, ${inquiry.product}, ${inquiry.accessories}, ${inquiry.quantity},
       ${inquiry.branding}, ${inquiry.message}, ${inquiry.lang}, ${inquiry.source},
       ${inquiry.sourcePage}, ${inquiry.referrer}, ${JSON.stringify(inquiry.attachments)},
-      ${requestMeta.ip}, ${requestMeta.userAgent}
+      ${requestMeta.ip}, ${requestMeta.userAgent}, ${customer.id}::uuid, ${assignedTo}
     )
     RETURNING id, created_at
   `;
@@ -178,7 +213,29 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
     ...inquiry,
     id: rows[0].id as string,
     createdAt: rows[0].created_at as string,
+    assignedTo,
   } satisfies SavedInquiry;
+}
+
+export async function hasReachedPersistentInquiryLimit(ip: string, limit = 5) {
+  if (!ip || ip === "unknown") return false;
+
+  try {
+    const sql = getDatabase();
+    const rows = await sql`
+      SELECT count(*)::int AS count
+      FROM inquiries
+      WHERE ip = ${ip}
+        AND created_at > now() - interval '10 minutes'
+    `;
+    return Number(rows[0]?.count ?? 0) >= limit;
+  } catch (error) {
+    // The in-memory guard still protects a fresh installation before the
+    // inquiries table is created. Do not block legitimate leads if the
+    // persistent limiter is temporarily unavailable.
+    console.warn("Persistent inquiry rate limit unavailable", error);
+    return false;
+  }
 }
 
 export async function updateInquiryDeliveryStatus(id: string, delivery: InquiryDeliveryStatus) {
@@ -222,6 +279,7 @@ export async function sendInquiryEmail(inquiry: SavedInquiry) {
       <p><strong>Company:</strong> ${escapeHtml(inquiry.company || "-")}</p>
       <p><strong>WhatsApp / Phone:</strong> ${escapeHtml(inquiry.phone || "-")}</p>
       <p><strong>Country / Market:</strong> ${escapeHtml(inquiry.country || "-")}</p>
+      <p><strong>Assigned sales:</strong> ${escapeHtml(inquiry.assignedTo)}</p>
       <p><strong>Optional accessories:</strong> ${escapeHtml(inquiry.accessories || "-")}</p>
       <p><strong>Branding / Packaging:</strong> ${escapeHtml(inquiry.branding || "-")}</p>
       <p><strong>Message:</strong></p>
@@ -230,6 +288,7 @@ export async function sendInquiryEmail(inquiry: SavedInquiry) {
       <p style="color:#71685d;font-size:13px">
         Inquiry ID: ${inquiry.id}<br />
         Language: ${escapeHtml(inquiry.lang)}<br />
+        Marketing source: ${escapeHtml(inquiry.source || "Direct")}<br />
         Source page: ${escapeHtml(inquiry.sourcePage)}<br />
         Referrer: ${escapeHtml(inquiry.referrer || "Direct")}
       </p>

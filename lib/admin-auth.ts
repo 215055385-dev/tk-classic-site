@@ -1,44 +1,33 @@
-import { createHash, timingSafeEqual } from "node:crypto";
-import { cookies } from "next/headers";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getPrisma } from "@/lib/prisma";
 
-export const ADMIN_COOKIE = "tk_admin_session";
+export const DEFAULT_ADMIN_USERNAME = "215055385";
+export const ADMIN_EMAIL_DOMAIN = "admin.portablecoffeemachine.com";
 
-function tokenHash(token: string) {
-  return createHash("sha256").update(token).digest("hex");
+export function usernameToAdminEmail(username: string) {
+  const normalized = username.normalize("NFKC").trim().toLowerCase();
+  if (!/^[a-z0-9._-]{3,64}$/.test(normalized)) return null;
+  return `${normalized}@${ADMIN_EMAIL_DOMAIN}`;
 }
 
-export function getAdminToken() {
-  const passwordHash = process.env.ADMIN_DASHBOARD_PASSWORD_HASH?.trim();
-  const token = passwordHash ? `hash:${passwordHash}` : (process.env.ADMIN_DASHBOARD_PASSWORD ?? process.env.ADMIN_DASHBOARD_TOKEN)?.trim();
-  if (!token) throw new Error("Missing ADMIN_DASHBOARD_TOKEN");
-  return token;
-}
+export async function getAdminIdentity() {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) return null;
 
-export function matchesAdminToken(candidate: string, expected: string) {
-  const normalizedCandidate = candidate.normalize("NFKC").trim();
-  const candidateHash = Buffer.from(tokenHash(normalizedCandidate));
-  const expectedHash = Buffer.from(expected.startsWith("hash:") ? expected.slice(5) : tokenHash(expected));
-  return candidateHash.length === expectedHash.length && timingSafeEqual(candidateHash, expectedHash);
-}
+    const profile = await getPrisma().adminProfile.findUnique({
+      where: { authUserId: data.user.id },
+      select: { id: true, username: true, displayName: true, role: true, status: true },
+    });
 
-export function adminCookieValue(token: string) {
-  return tokenHash(token);
-}
-
-export function matchesAdminSession(cookieValue: string, token: string) {
-  const actual = Buffer.from(cookieValue);
-  const expected = Buffer.from(adminCookieValue(token));
-  return actual.length === expected.length && timingSafeEqual(actual, expected);
+    if (!profile || profile.status !== "ACTIVE") return null;
+    return { userId: data.user.id, ...profile };
+  } catch {
+    return null;
+  }
 }
 
 export async function hasAdminSession() {
-  let token: string;
-  try {
-    token = getAdminToken();
-  } catch {
-    return false;
-  }
-
-  const cookie = (await cookies()).get(ADMIN_COOKIE)?.value;
-  return Boolean(cookie && matchesAdminSession(cookie, token));
+  return Boolean(await getAdminIdentity());
 }

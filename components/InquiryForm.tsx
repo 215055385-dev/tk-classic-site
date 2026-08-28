@@ -6,7 +6,7 @@ import { useId, useState } from "react";
 import { copy, products, type Lang } from "@/lib/site-data";
 import { uiCopy } from "@/lib/localized-ui";
 import { inquiryCopy } from "@/lib/inquiry-copy";
-import { trackConversionEvent } from "@/lib/client-analytics";
+import { getClientAttribution, trackConversionEvent } from "@/lib/client-analytics";
 
 type InquiryFormProps = {
   lang: Lang;
@@ -63,7 +63,9 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
 
     try {
       const formData = new FormData(event.currentTarget);
+      const attribution = getClientAttribution();
       formData.set("sourcePage", `${window.location.pathname}${window.location.search}`);
+      formData.set("source", attribution.utm_source ?? attribution.referrerHost ?? "direct");
       formData.set("referrer", document.referrer);
       formData.set("startedAt", String(startedAt));
       formData.set("challengeA", String(challenge.a));
@@ -86,10 +88,11 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           emailDeliveryPending: Boolean(result.deliveryPending),
         },
       });
-      const successPath = lang === "en" ? "/contact/success" : `/${lang}/contact/success`;
+      const successPath = "/contact/success";
       const successParams = new URLSearchParams({
         product,
         id: String(result.id ?? ""),
+        ...(lang !== "en" ? { lang } : {}),
         ...(result.deliveryPending ? { delivery: "pending" } : {}),
       });
       window.location.assign(`${successPath}?${successParams.toString()}`);
@@ -103,7 +106,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
   }
 
   return (
-    <form id="inquiry-form" className="inquiry-form" onSubmit={handleSubmit} aria-label={ui.form.ariaLabel}>
+    <form id="inquiry-form" data-track-form className="inquiry-form" onSubmit={handleSubmit} aria-label={ui.form.ariaLabel}>
       <p className="form-helper span-2">
         {ui.form.helper}
       </p>
@@ -115,6 +118,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
         aria-hidden="true"
       />
       <input name="lang" type="hidden" value={lang} />
+      <input name="formType" type="hidden" value="full" />
       <label>
         <span>{t.form.name}</span>
         <input
@@ -123,6 +127,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           onChange={(event) => setName(event.target.value)}
           placeholder="Leo Buyer"
           autoComplete="name"
+          maxLength={120}
           required
         />
       </label>
@@ -135,6 +140,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           onChange={(event) => setEmail(event.target.value)}
           placeholder="buyer@example.com"
           autoComplete="email"
+          maxLength={254}
           required
         />
       </label>
@@ -146,6 +152,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           onChange={(event) => setBuyerCompany(event.target.value)}
           placeholder={ui.form.companyPlaceholder}
           autoComplete="organization"
+          maxLength={160}
         />
       </label>
       <label>
@@ -157,6 +164,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           onChange={(event) => setPhone(event.target.value)}
           placeholder="+86 159 1400 4936"
           autoComplete="tel"
+          maxLength={80}
         />
       </label>
       <label>
@@ -167,6 +175,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           onChange={(event) => setCountry(event.target.value)}
           placeholder={ui.form.countryPlaceholder}
           autoComplete="country-name"
+          maxLength={120}
         />
       </label>
       <label>
@@ -190,6 +199,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           value={quantity}
           onChange={(event) => setQuantity(event.target.value)}
           placeholder={ui.form.quantityPlaceholder}
+          maxLength={80}
           required
         />
       </label>
@@ -200,6 +210,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           value={accessorySelection}
           onChange={(event) => setAccessorySelection(event.target.value)}
           placeholder={lang === "zh" ? "可选：例如 DG 胶囊底座、亚克力支架" : "Optional: e.g. DG capsule base, acrylic machine stand"}
+          maxLength={500}
         />
       </label>
       <label className="span-2">
@@ -209,6 +220,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           value={branding}
           onChange={(event) => setBranding(event.target.value)}
           placeholder={ui.form.brandingPlaceholder}
+          maxLength={500}
         />
       </label>
       <label className="span-2 inquiry-file-field">
@@ -232,6 +244,7 @@ export function InquiryForm({ lang, selectedProduct = "DQ-001", selectedAccessor
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           placeholder={ui.form.messagePlaceholder}
+          maxLength={4000}
           required
         />
       </label>

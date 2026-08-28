@@ -8,6 +8,8 @@ Official B2B independent website for TK Classic portable coffee machines, OEM/OD
 - React 19
 - TypeScript
 - Tailwind CSS v4
+- Supabase Auth, PostgreSQL, and Storage for the CMS
+- Prisma ORM 7 with the PostgreSQL driver adapter
 - Static product/content data in `lib/site-data.ts`
 - Product assets and downloadable PDFs in `public/`
 
@@ -26,6 +28,15 @@ npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+For the Windows one-command setup, Docker option, and a downloadable source
+package, see `docs/local-deployment-zh.md`.
+
+```bash
+npm run local:setup
+npm run local:start
+npm run local:package
+```
 
 ## Quality Checks
 

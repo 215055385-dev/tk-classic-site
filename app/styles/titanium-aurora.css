@@ -1,0 +1,1589 @@
+/*
+ * TK Classic — Titanium Aurora
+ * The final visual layer is intentionally isolated from legacy page styles.
+ * Product data, imagery and business logic remain untouched.
+ */
+
+:root {
+  --tk-space: #080b0f;
+  --tk-graphite: #11171e;
+  --tk-titanium: #1b242d;
+  --tk-steel: #26313b;
+  --tk-glacier: #e8edf1;
+  --tk-silver: #cbd3da;
+  --tk-aurora: #65cbe8;
+  --tk-aurora-soft: #9ce7f5;
+  --tk-copper-tech: #b76e42;
+  --tk-copy: #f3f6f8;
+  --tk-copy-muted: #9faab4;
+  --tk-tech-line: rgba(203, 211, 218, 0.14);
+  --tk-tech-line-strong: rgba(101, 203, 232, 0.36);
+  --tk-tech-glow: 0 0 34px rgba(101, 203, 232, 0.13);
+}
+
+html {
+  color-scheme: dark;
+  background: var(--tk-space);
+}
+
+body {
+  background: var(--tk-space);
+  color: var(--tk-copy);
+}
+
+::selection {
+  background: rgba(101, 203, 232, 0.28);
+  color: #fff;
+}
+
+.home-shell,
+.inner-page,
+.tool-page-shell,
+.scenario-page,
+.not-found-page {
+  --design-primary: var(--tk-aurora);
+  --design-primary-deep: #43a9c8;
+  --design-ink: var(--tk-copy);
+  --design-muted: var(--tk-copy-muted);
+  --design-faint: #7f8b96;
+  --design-canvas: var(--tk-space);
+  --design-soft: var(--tk-graphite);
+  --design-night: var(--tk-space);
+  --design-line: var(--tk-tech-line);
+  --design-line-cool: var(--tk-tech-line);
+  min-height: 100svh;
+  overflow-x: clip;
+  background:
+    radial-gradient(circle at 86% 4%, rgba(101, 203, 232, 0.075), transparent 24rem),
+    linear-gradient(180deg, var(--tk-space), #0b1015 48%, var(--tk-space)) !important;
+  color: var(--tk-copy);
+}
+
+/* Consistent, quiet typography across marketing routes. */
+.home-shell :is(h1, h2, h3),
+.inner-page :is(h1, h2, h3),
+.tool-page-shell :is(h1, h2, h3),
+.scenario-page :is(h1, h2, h3) {
+  color: var(--tk-copy);
+  text-wrap: balance;
+}
+
+.home-shell :is(p, li, dd),
+.inner-page :is(p, li, dd),
+.tool-page-shell :is(p, li, dd),
+.scenario-page :is(p, li, dd) {
+  color: var(--tk-copy-muted);
+}
+
+.section {
+  padding-inline: max(5vw, 24px);
+}
+
+.section-heading {
+  max-width: 760px;
+}
+
+.section-heading h2,
+.coffee-lab-section-heading h2,
+.coffee-lab-ecosystem h2,
+.coffee-lab-process h2 {
+  max-width: 15ch;
+  margin-block: 14px 18px;
+  font-size: clamp(34px, 4.4vw, 66px);
+  line-height: 0.98;
+  letter-spacing: -0.052em;
+}
+
+.section-heading p,
+.inner-hero-lead,
+.hero-lead {
+  max-width: 620px;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.62;
+}
+
+.eyebrow,
+.section-heading > span,
+.card-label {
+  color: var(--tk-aurora) !important;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 720;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+/* One translucent navigation system everywhere. */
+.home-shell .site-header,
+.inner-page .detail-header,
+.tool-page-shell .tool-page-header {
+  top: 12px !important;
+  width: min(1480px, calc(100vw - 32px)) !important;
+  min-height: 66px;
+  border: 1px solid rgba(203, 211, 218, 0.12) !important;
+  border-radius: 18px !important;
+  background: rgba(8, 11, 15, 0.76) !important;
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.26) !important;
+  backdrop-filter: blur(22px) saturate(130%);
+}
+
+.brand-mark,
+.home-shell .brand-mark,
+.inner-page .brand-mark,
+.tool-page-shell .brand-mark {
+  border: 1px solid rgba(101, 203, 232, 0.4);
+  background: linear-gradient(145deg, rgba(101, 203, 232, 0.2), rgba(101, 203, 232, 0.06));
+  color: var(--tk-copy);
+  box-shadow: inset 0 0 18px rgba(101, 203, 232, 0.08);
+}
+
+.brand strong,
+.home-shell .brand strong,
+.inner-page .brand strong,
+.tool-page-shell .brand strong {
+  color: var(--tk-copy);
+}
+
+.brand small,
+.home-shell .brand small,
+.inner-page .brand small,
+.tool-page-shell .brand small {
+  color: rgba(203, 211, 218, 0.52);
+}
+
+.primary-nav > a,
+.resources-nav-menu summary,
+.home-shell .site-header nav a,
+.inner-page .detail-header nav a {
+  color: rgba(232, 237, 241, 0.72) !important;
+  font-size: 13px;
+  font-weight: 620;
+}
+
+.primary-nav > a:hover,
+.primary-nav > a[aria-current="page"],
+.resources-nav-menu summary:hover,
+.resources-nav-menu summary[aria-current="page"] {
+  background: rgba(101, 203, 232, 0.08) !important;
+  color: var(--tk-copy) !important;
+}
+
+.resources-nav-panel {
+  border-color: rgba(203, 211, 218, 0.14);
+  background: rgba(8, 11, 15, 0.97);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.38);
+}
+
+.site-header .resources-nav-panel a:hover {
+  background: rgba(101, 203, 232, 0.08);
+}
+
+.mobile-primary-nav {
+  display: none;
+}
+
+.language-switcher summary,
+.home-shell .language-switcher summary,
+.inner-page .language-switcher summary,
+.tool-page-shell .language-switcher summary {
+  border-color: rgba(203, 211, 218, 0.15);
+  background: rgba(203, 211, 218, 0.04);
+  color: var(--tk-copy);
+}
+
+.site-header .language-menu,
+.detail-header .language-menu,
+.tool-page-header .language-menu {
+  border-color: rgba(203, 211, 218, 0.14) !important;
+  background: rgba(8, 11, 15, 0.98) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42) !important;
+}
+
+.site-header .language-menu a,
+.detail-header .language-menu a,
+.tool-page-header .language-menu a {
+  color: var(--tk-silver) !important;
+}
+
+.site-header .language-menu a:hover,
+.site-header .language-menu a.active,
+.detail-header .language-menu a:hover,
+.detail-header .language-menu a.active,
+.tool-page-header .language-menu a:hover,
+.tool-page-header .language-menu a.active {
+  border-color: rgba(101, 203, 232, 0.22) !important;
+  background: rgba(101, 203, 232, 0.09) !important;
+  color: var(--tk-copy) !important;
+}
+
+/* Secondary quick navigation becomes a thin technical rail, not another header. */
+.home-shell .section-float-nav,
+.inner-page .detail-float-nav {
+  border: 1px solid rgba(203, 211, 218, 0.09) !important;
+  background: rgba(17, 23, 30, 0.76) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: blur(18px);
+}
+
+.home-shell .section-float-nav a,
+.inner-page .detail-float-nav a {
+  color: rgba(203, 211, 218, 0.6);
+}
+
+.home-shell .section-float-nav a:hover,
+.inner-page .detail-float-nav a:hover,
+.inner-page .detail-float-nav a[aria-current="page"] {
+  background: rgba(101, 203, 232, 0.08);
+  color: var(--tk-copy);
+}
+
+/* Buttons are visible without becoming a promotional wall. */
+.primary-action,
+.inner-page .primary-action,
+.tool-page-shell .primary-action {
+  min-height: 48px;
+  border: 1px solid var(--tk-aurora) !important;
+  border-radius: 10px;
+  background: transparent !important;
+  color: var(--tk-copy) !important;
+  box-shadow: inset 0 0 0 1px rgba(101, 203, 232, 0.05), var(--tk-tech-glow);
+}
+
+.primary-action:hover,
+.inner-page .primary-action:hover,
+.tool-page-shell .primary-action:hover {
+  background: var(--tk-aurora) !important;
+  color: var(--tk-space) !important;
+  transform: translateY(-2px);
+}
+
+.secondary-action {
+  min-height: 48px;
+  border-color: rgba(203, 211, 218, 0.24) !important;
+  border-radius: 10px;
+  background: rgba(203, 211, 218, 0.025) !important;
+  color: var(--tk-copy) !important;
+}
+
+.text-action,
+.card-link,
+.back-link,
+.certification-request-link {
+  color: var(--tk-aurora) !important;
+}
+
+/* Homepage: compact editorial copy, full product photography, no boxed template feel. */
+.home-shell {
+  padding-top: 0;
+}
+
+.home-decorations {
+  opacity: 0.52;
+  filter: hue-rotate(152deg) saturate(0.72);
+}
+
+.hero-section.dark-hero {
+  min-height: min(920px, 100svh);
+  padding: clamp(132px, 13vw, 184px) max(5vw, 28px) clamp(56px, 7vw, 92px);
+  background:
+    linear-gradient(90deg, rgba(8, 11, 15, 0.98) 0%, rgba(8, 11, 15, 0.82) 38%, rgba(8, 11, 15, 0.18) 70%),
+    radial-gradient(circle at 76% 42%, rgba(101, 203, 232, 0.12), transparent 24rem),
+    var(--tk-space) !important;
+  color: var(--tk-copy);
+}
+
+.hero-section.dark-hero::before {
+  opacity: 0.28;
+  background:
+    repeating-radial-gradient(ellipse at 12% 80%, transparent 0 24px, rgba(101, 203, 232, 0.08) 25px 26px, transparent 27px 38px);
+}
+
+.hero-section .hero-heading,
+.hero-section .hero-body {
+  z-index: 5;
+  width: min(48vw, 660px);
+}
+
+.hero-section .hero-title {
+  max-width: 14ch;
+  margin: 18px 0 0;
+  color: var(--tk-copy);
+  font-size: clamp(44px, 4.9vw, 72px) !important;
+  font-weight: 610;
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.hero-section .hero-lead {
+  max-width: 500px;
+  color: rgba(203, 211, 218, 0.72);
+}
+
+.hero-section .hero-actions {
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.hero-section .hero-visual {
+  right: max(2vw, 18px);
+  width: min(57vw, 900px);
+  min-height: clamp(480px, 64vw, 760px);
+}
+
+.hero-section .coffee-ritual-stage {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.hero-section .coffee-ritual-media,
+.hero-section .coffee-ritual-scene-panel {
+  border-radius: 0;
+  background: transparent;
+}
+
+.hero-section .coffee-ritual-media img,
+.hero-section .coffee-ritual-stage img {
+  object-fit: contain !important;
+}
+
+.hero-section .coffee-ritual-details {
+  border-color: rgba(203, 211, 218, 0.11);
+  background: rgba(17, 23, 30, 0.7);
+  color: var(--tk-copy);
+  backdrop-filter: blur(18px);
+}
+
+.hero-section .hero-coffee-ring {
+  border-color: rgba(183, 110, 66, 0.2);
+}
+
+.hero-section .hero-coffee-bean {
+  border-color: rgba(183, 110, 66, 0.38);
+  background: rgba(183, 110, 66, 0.18);
+}
+
+.home-proof-ribbon {
+  border-block: 1px solid var(--tk-tech-line);
+  background: rgba(17, 23, 30, 0.74);
+  color: var(--tk-copy);
+}
+
+.home-proof-ribbon > div {
+  border-color: var(--tk-tech-line);
+}
+
+.home-proof-ribbon strong {
+  color: var(--tk-copy);
+}
+
+.home-proof-ribbon span {
+  color: var(--tk-copy-muted);
+}
+
+/* Every content band belongs to the same titanium system. */
+.home-shell :is(.product-video-section, .product-section, .certification-trust-section, .featured-guides-section, .contact-section, .cms-managed-section),
+.inner-page > .section:not(.inner-hero):not(.product-hero):not(.certification-editorial),
+.tool-page-shell > .section {
+  background:
+    radial-gradient(circle at 92% 8%, rgba(101, 203, 232, 0.04), transparent 22rem),
+    linear-gradient(180deg, var(--tk-graphite), var(--tk-space));
+  color: var(--tk-copy);
+}
+
+.launch-system-band {
+  border-block: 1px solid var(--tk-tech-line);
+  background:
+    radial-gradient(circle at 10% 50%, rgba(183, 110, 66, 0.1), transparent 24rem),
+    linear-gradient(120deg, var(--tk-titanium), var(--tk-graphite));
+  color: var(--tk-copy);
+}
+
+.launch-system-intro h2 {
+  max-width: 14ch;
+  font-size: clamp(32px, 4vw, 58px);
+  letter-spacing: -0.05em;
+}
+
+.launch-system-steps li {
+  border-color: var(--tk-tech-line);
+}
+
+.launch-system-steps li small,
+.launch-system-intro > span {
+  color: var(--tk-aurora);
+}
+
+.launch-system-steps li span {
+  color: var(--tk-copy-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Products: image-led, quiet information, minimal outlines. */
+.product-grid,
+.featured-grid,
+.accessory-grid,
+.proof-grid,
+.process-grid {
+  gap: clamp(16px, 2vw, 28px);
+}
+
+.product-card,
+.products-page .product-card,
+.accessory-card,
+.proof-card,
+.process-card,
+.quality-card,
+.commercial-card,
+.resource-guide-card,
+.featured-guide-card {
+  border: 1px solid rgba(203, 211, 218, 0.11) !important;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(27, 36, 45, 0.78), rgba(17, 23, 30, 0.78)) !important;
+  color: var(--tk-copy);
+  box-shadow: none !important;
+}
+
+.product-card:hover,
+.accessory-card:hover,
+.proof-card:hover,
+.featured-guide-card:hover {
+  border-color: rgba(101, 203, 232, 0.34) !important;
+  background: linear-gradient(145deg, rgba(38, 49, 59, 0.9), rgba(17, 23, 30, 0.9)) !important;
+  box-shadow: var(--tk-tech-glow) !important;
+}
+
+.product-image-link,
+.products-page .product-image-link,
+.accessory-card-image {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(101, 203, 232, 0.08), transparent 38%),
+    linear-gradient(145deg, #171e25, #0c1116) !important;
+}
+
+.product-card img,
+.accessory-card img {
+  filter: drop-shadow(0 24px 26px rgba(0, 0, 0, 0.32));
+}
+
+.product-card-body,
+.accessory-card-body {
+  padding: clamp(18px, 2vw, 26px) !important;
+}
+
+.product-card-body h3,
+.accessory-card-body h3 {
+  margin: 8px 0 12px;
+  font-size: clamp(20px, 2vw, 28px);
+}
+
+.product-card-body > p:not(.card-label),
+.accessory-card-body > p:not(.card-label) {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Inner route opening sections now echo the homepage exactly. */
+.inner-page .inner-hero,
+.inner-page .product-hero,
+.accessories-page .accessories-hero,
+.coffee-lab-page .coffee-lab-hero,
+.inner-page .certification-editorial,
+.scenario-page .scenario-hero {
+  border: 0 !important;
+  background:
+    linear-gradient(90deg, rgba(8, 11, 15, 0.98), rgba(8, 11, 15, 0.72) 54%, rgba(8, 11, 15, 0.36)),
+    radial-gradient(circle at 82% 28%, rgba(101, 203, 232, 0.14), transparent 22rem),
+    var(--tk-space) !important;
+  color: var(--tk-copy);
+}
+
+.inner-page:not(.accessories-page) .inner-hero {
+  min-height: clamp(420px, 56svh, 640px);
+  padding-top: clamp(150px, 15vw, 210px);
+  padding-bottom: clamp(58px, 7vw, 96px);
+}
+
+.inner-page .inner-hero h1,
+.inner-page .product-hero h1,
+.accessories-page .accessories-hero h1,
+.inner-page .certification-editorial h1 {
+  max-width: 15ch;
+  margin-block: 16px 20px;
+  font-size: clamp(42px, 5.2vw, 74px) !important;
+  font-weight: 610;
+  line-height: 0.98 !important;
+  letter-spacing: -0.055em !important;
+}
+
+.inner-page .inner-hero-lead,
+.inner-page .product-hero .hero-lead,
+.accessories-page .accessories-hero .inner-hero-lead,
+.inner-page .certification-editorial .inner-hero-lead {
+  color: rgba(203, 211, 218, 0.7) !important;
+}
+
+/* Accessories use three real supplied assets, but the composition feels like a studio board. */
+.accessories-page .accessories-catalog,
+.accessories-page .accessory-cta-section {
+  background: linear-gradient(180deg, var(--tk-graphite), var(--tk-space)) !important;
+}
+
+.accessories-hero-showcase {
+  border-color: rgba(203, 211, 218, 0.12);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 72% 30%, rgba(101, 203, 232, 0.1), transparent 16rem),
+    linear-gradient(145deg, var(--tk-titanium), var(--tk-space));
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.32);
+}
+
+.accessories-hero-media {
+  border-color: rgba(203, 211, 218, 0.1);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #202a33, #10161c);
+}
+
+.accessories-hero-media img {
+  mix-blend-mode: normal;
+}
+
+.accessories-hero-media span,
+.accessories-hero-showcase > p {
+  border-color: rgba(101, 203, 232, 0.25);
+  background: rgba(8, 11, 15, 0.82);
+  color: var(--tk-silver);
+}
+
+/* Certifications: protected overview stays crisp and secondary icons become legible. */
+.certification-trust-section,
+.certification-editorial {
+  background:
+    radial-gradient(circle at 84% 10%, rgba(183, 110, 66, 0.09), transparent 20rem),
+    linear-gradient(180deg, var(--tk-graphite), var(--tk-space)) !important;
+}
+
+.certification-overview,
+.certification-editorial-preview {
+  overflow: hidden;
+  border: 1px solid rgba(203, 211, 218, 0.12);
+  border-radius: 18px;
+  background: #0c1116;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+}
+
+.certification-overview-image,
+.certification-editorial-preview img {
+  max-height: 440px;
+  object-fit: contain;
+}
+
+.certification-icon-grid,
+.certification-editorial-icons {
+  border-block: 1px solid var(--tk-tech-line);
+  background: rgba(17, 23, 30, 0.54);
+}
+
+.certification-icon-item,
+.certification-editorial-icons > div {
+  border-color: var(--tk-tech-line) !important;
+  color: var(--tk-copy);
+}
+
+.certification-trust-mark,
+.certification-editorial-icons svg {
+  color: var(--tk-aurora);
+}
+
+.certification-availability,
+.certification-editorial-note {
+  border-color: rgba(203, 211, 218, 0.12);
+  background: rgba(27, 36, 45, 0.64);
+  color: var(--tk-copy-muted);
+}
+
+/* Product detail pages: verified information remains complete but the first read is concise. */
+.inner-page .product-hero {
+  min-height: clamp(620px, 82svh, 860px);
+  padding: clamp(148px, 14vw, 196px) max(5vw, 28px) clamp(60px, 7vw, 92px);
+}
+
+.inner-page .product-hero-copy {
+  max-width: 590px;
+}
+
+.inner-page .product-hero h1 {
+  font-size: clamp(42px, 5vw, 70px) !important;
+}
+
+.inner-page .product-hero-image {
+  border: 0;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(101, 203, 232, 0.1), transparent 36%),
+    transparent;
+  box-shadow: none;
+}
+
+.inner-page .product-hero-image img {
+  object-fit: contain;
+  filter: drop-shadow(0 30px 38px rgba(0, 0, 0, 0.36));
+}
+
+.spec-pill-row span,
+.use-case-row span {
+  border-color: rgba(203, 211, 218, 0.14);
+  background: rgba(203, 211, 218, 0.04);
+  color: var(--tk-silver);
+}
+
+.product-detail-grid,
+.gallery-section,
+.faq-section,
+.policy-grid,
+.procurement-section,
+.commercial-section,
+.proof-section,
+.factory-section,
+.blog-section,
+.cms-articles-page .cms-article-grid,
+.buyer-guide-page .buyer-guide-models,
+.buyer-guide-page .buyer-guide-faq,
+.buyer-guide-page .buyer-guide-source-note,
+.buyer-guide-page .buyer-guide-cta {
+  border-color: var(--tk-tech-line) !important;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(101, 203, 232, 0.035), transparent 22rem),
+    linear-gradient(180deg, var(--tk-graphite), var(--tk-space)) !important;
+}
+
+.spec-table,
+.compact-product,
+.faq-list details,
+.policy-card,
+.blog-grid article,
+.cms-public-article-card,
+.product-content-disclosure,
+.manual-knowledge,
+.metric-panel,
+.cert-grid a,
+.procurement-contact-section,
+.contact-page-grid {
+  border-color: rgba(203, 211, 218, 0.12) !important;
+  background: rgba(17, 23, 30, 0.72) !important;
+  color: var(--tk-copy);
+  box-shadow: none !important;
+}
+
+.spec-table :is(dt, th),
+.faq-list summary,
+.product-content-disclosure summary,
+.manual-package-contents summary {
+  color: var(--tk-copy);
+}
+
+.spec-table :is(dd, td),
+.faq-list details p,
+.product-content-disclosure p,
+.manual-knowledge :is(p, li, dd, small) {
+  color: var(--tk-copy-muted);
+}
+
+.product-content-disclosure > summary {
+  padding-block: 22px;
+  font-size: clamp(19px, 2vw, 26px);
+}
+
+.gallery-grid img {
+  border-radius: 14px;
+  background: var(--tk-graphite);
+  object-fit: contain;
+}
+
+/* Forms and conversion areas feel like part of the brand, not embedded widgets. */
+.contact-section,
+.inner-page .contact-section,
+.tool-page-shell .tool-page-cta,
+.oem-page .oem-final-cta,
+.products-page .accessory-cta-section {
+  border-color: var(--tk-tech-line) !important;
+  background:
+    radial-gradient(circle at 84% 30%, rgba(101, 203, 232, 0.08), transparent 22rem),
+    linear-gradient(120deg, var(--tk-titanium), var(--tk-space)) !important;
+}
+
+.contact-methods a,
+.inner-page .contact-section .contact-methods a {
+  border-color: rgba(203, 211, 218, 0.13);
+  background: rgba(203, 211, 218, 0.035);
+  color: var(--tk-copy);
+}
+
+.contact-methods a:hover,
+.inner-page .contact-section .contact-methods a:hover {
+  border-color: rgba(101, 203, 232, 0.38);
+  background: rgba(101, 203, 232, 0.06);
+}
+
+.inquiry-form,
+.quick-inquiry-form,
+.contact-page-form,
+.tool-builder-panel,
+.configurator-panel,
+.summary-card,
+.calculator-result {
+  border-color: rgba(203, 211, 218, 0.12) !important;
+  background: linear-gradient(145deg, rgba(27, 36, 45, 0.86), rgba(17, 23, 30, 0.86)) !important;
+  color: var(--tk-copy);
+  box-shadow: none !important;
+}
+
+.inquiry-form :is(input, select, textarea),
+.quick-inquiry-form :is(input, select, textarea),
+.contact-page-form :is(input, select, textarea),
+.tool-page-shell :is(input, select, textarea) {
+  border-color: rgba(203, 211, 218, 0.16);
+  background: rgba(8, 11, 15, 0.7);
+  color: var(--tk-copy);
+}
+
+.inquiry-form :is(input, select, textarea):focus,
+.quick-inquiry-form :is(input, select, textarea):focus,
+.contact-page-form :is(input, select, textarea):focus,
+.tool-page-shell :is(input, select, textarea):focus {
+  border-color: var(--tk-aurora);
+  outline: 2px solid rgba(101, 203, 232, 0.1);
+}
+
+/* Video uses one immersive plane and shorter copy hierarchy. */
+.editorial-video-showcase {
+  overflow: hidden;
+  border: 1px solid rgba(203, 211, 218, 0.11);
+  border-radius: 20px;
+  background: linear-gradient(145deg, var(--tk-titanium), var(--tk-space));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+}
+
+.editorial-video-media {
+  background: #050709;
+}
+
+.editorial-video-copy {
+  background: linear-gradient(145deg, rgba(27, 36, 45, 0.86), rgba(8, 11, 15, 0.86));
+  color: var(--tk-copy);
+}
+
+.editorial-video-copy h2 {
+  max-width: 13ch;
+  font-size: clamp(32px, 4.1vw, 58px);
+}
+
+.editorial-video-lead,
+.product-video-steps li {
+  color: var(--tk-copy-muted);
+}
+
+.product-video-kicker,
+.product-video-steps li::marker {
+  color: var(--tk-aurora);
+}
+
+/* Factory and exhibition experience keeps its 3D behavior with restrained materials. */
+.immersive-gallery-section,
+.factory-gallery-page,
+.exhibition-gallery-page {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(101, 203, 232, 0.07), transparent 28rem),
+    linear-gradient(180deg, var(--tk-graphite), var(--tk-space)) !important;
+}
+
+.gallery-truth-note {
+  border-color: var(--tk-tech-line) !important;
+  background: var(--tk-space) !important;
+}
+
+/* Coffee Lab: same technology palette, while preserving real-photo configuration logic. */
+.coffee-lab-page {
+  --lab-ink: var(--tk-copy);
+  --lab-espresso: var(--tk-space);
+  --lab-copper: var(--tk-aurora);
+  --lab-oat: var(--tk-titanium);
+  --lab-milk: var(--tk-graphite);
+  --lab-moss: var(--tk-steel);
+  background: var(--tk-space);
+  color: var(--tk-copy);
+}
+
+.coffee-lab-page .coffee-lab-hero {
+  min-height: clamp(680px, 88svh, 900px);
+  padding-top: clamp(150px, 14vw, 200px);
+}
+
+.coffee-lab-page .coffee-lab-hero-copy h1 {
+  max-width: 11ch;
+  margin-block: 20px 26px;
+  color: var(--tk-copy);
+  font-size: clamp(48px, 6vw, 82px) !important;
+  font-weight: 610;
+  line-height: 0.9;
+}
+
+.coffee-lab-page .coffee-lab-hero-copy h1 em {
+  color: var(--tk-aurora-soft);
+  font-size: clamp(25px, 3vw, 42px);
+}
+
+.coffee-lab-hero-disc {
+  background: radial-gradient(circle at 38% 34%, rgba(156, 231, 245, 0.84), rgba(101, 203, 232, 0.2) 46%, rgba(101, 203, 232, 0.02) 72%);
+  box-shadow: 0 0 100px rgba(101, 203, 232, 0.12);
+}
+
+.coffee-lab-principles {
+  border-block: 1px solid var(--tk-tech-line);
+  background: var(--tk-titanium);
+  color: var(--tk-copy);
+}
+
+.coffee-lab-principles article {
+  border-color: var(--tk-tech-line);
+}
+
+.coffee-lab-configurator,
+.coffee-lab-process,
+.coffee-lab-ecosystem {
+  background:
+    radial-gradient(circle at 90% 10%, rgba(101, 203, 232, 0.04), transparent 22rem),
+    linear-gradient(180deg, var(--tk-graphite), var(--tk-space));
+  color: var(--tk-copy);
+}
+
+.coffee-lab-workbench {
+  border: 1px solid rgba(203, 211, 218, 0.12);
+  border-radius: 22px;
+  background: var(--tk-space);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.34);
+}
+
+.coffee-lab-preview-panel {
+  background: radial-gradient(circle at 50% 44%, rgba(101, 203, 232, 0.14), var(--tk-space) 68%);
+}
+
+.coffee-lab-machine-stage::before {
+  background: radial-gradient(circle at 38% 32%, var(--tk-aurora-soft), rgba(101, 203, 232, 0.26) 56%, transparent 72%);
+  opacity: 0.66;
+}
+
+.coffee-lab-controls {
+  background: var(--tk-titanium);
+  color: var(--tk-copy);
+}
+
+.coffee-lab-controls :is(p, small, span),
+.coffee-lab-field-help,
+.coffee-lab-selection-status small,
+.coffee-lab-accessory-grid p,
+.coffee-lab-process-note {
+  color: var(--tk-copy-muted);
+}
+
+.coffee-lab-controls :is(button, label),
+.coffee-lab-current-choice,
+.coffee-lab-custom-color,
+.coffee-lab-selection-status,
+.coffee-lab-accessory-grid article,
+.coffee-lab-compact-accessories > button,
+.coffee-lab-inline-review > div {
+  border-color: rgba(203, 211, 218, 0.13) !important;
+  background: rgba(8, 11, 15, 0.46) !important;
+  color: var(--tk-copy) !important;
+}
+
+.coffee-lab-controls :is(button.is-active, button:hover),
+.coffee-lab-accessory-grid article.is-selected,
+.coffee-lab-compact-accessories > button.is-active {
+  border-color: var(--tk-aurora) !important;
+  background: rgba(101, 203, 232, 0.08) !important;
+}
+
+.coffee-lab-accessory-image,
+.coffee-lab-model-thumb,
+.coffee-lab-compact-accessories > button > span {
+  background: var(--tk-graphite);
+}
+
+.coffee-lab-submit-grid {
+  overflow: hidden;
+  border: 1px solid var(--tk-tech-line);
+  border-radius: 22px;
+  background: var(--tk-titanium);
+}
+
+.coffee-lab-configuration-card,
+.coffee-lab-inquiry-form {
+  background: var(--tk-graphite);
+  color: var(--tk-copy);
+}
+
+.coffee-lab-inquiry-form :is(input, select, textarea) {
+  border-color: rgba(203, 211, 218, 0.16);
+  background: rgba(8, 11, 15, 0.7);
+  color: var(--tk-copy);
+}
+
+.coffee-lab-process li {
+  border-color: var(--tk-tech-line);
+}
+
+.coffee-lab-process li span {
+  color: var(--tk-aurora);
+}
+
+/* Scenario, wholesale, blog and long-form content remain readable without a separate palette. */
+.scenario-page {
+  --scenario-night: var(--tk-space);
+  --scenario-espresso: var(--tk-graphite);
+  --scenario-parchment: var(--tk-graphite);
+  --scenario-sand: var(--tk-titanium);
+  --scenario-moss: var(--tk-steel);
+  --scenario-copper: var(--tk-aurora);
+}
+
+.scenario-page :is(.scenario-answer-section, .scenario-check-section, .scenario-type-section, .scenario-process-section, .scenario-model-section, .scenario-closing-cta) {
+  border-color: var(--tk-tech-line);
+  background:
+    radial-gradient(circle at 90% 10%, rgba(101, 203, 232, 0.035), transparent 20rem),
+    linear-gradient(180deg, var(--tk-graphite), var(--tk-space)) !important;
+  color: var(--tk-copy);
+}
+
+.scenario-page .scenario-model-grid article,
+.scenario-page .scenario-hero-media {
+  border-color: rgba(203, 211, 218, 0.12);
+  background: rgba(17, 23, 30, 0.64);
+}
+
+.cms-public-article,
+.buyer-guide-page .buyer-guide-article {
+  color: var(--tk-copy);
+}
+
+.cms-public-article :is(p, li),
+.buyer-guide-page .buyer-guide-article :is(p, li) {
+  color: var(--tk-silver);
+}
+
+.cms-public-article h1,
+.buyer-guide-page h1 {
+  max-width: 18ch;
+  font-size: clamp(42px, 5.2vw, 72px);
+  line-height: 1;
+}
+
+.featured-guides-section,
+.featured-guide-card {
+  background: linear-gradient(145deg, var(--tk-titanium), var(--tk-graphite)) !important;
+}
+
+.featured-guide-icon {
+  background: rgba(101, 203, 232, 0.12);
+  color: var(--tk-aurora);
+}
+
+/* Footer closes every route in the same technical material language. */
+.home-shell .site-footer,
+.inner-page .site-footer,
+.tool-page-shell .site-footer {
+  border-top: 1px solid var(--tk-tech-line) !important;
+  background:
+    radial-gradient(circle at 86% 14%, rgba(101, 203, 232, 0.07), transparent 20rem),
+    linear-gradient(120deg, var(--tk-space), var(--tk-graphite)) !important;
+}
+
+.site-footer :is(h2, h3, strong) {
+  color: var(--tk-copy) !important;
+}
+
+.site-footer :is(p, a, small),
+.home-shell .site-footer p,
+.home-shell .site-footer nav a,
+.inner-page .site-footer p,
+.inner-page .site-footer nav a {
+  color: rgba(203, 211, 218, 0.58);
+}
+
+.site-footer nav a:hover {
+  color: var(--tk-aurora) !important;
+}
+
+@media (max-width: 960px) {
+  .hero-section .hero-heading,
+  .hero-section .hero-body {
+    width: min(48vw, 520px);
+  }
+
+  .hero-section .hero-visual {
+    width: min(58vw, 760px);
+  }
+
+  .primary-nav > a,
+  .resources-nav-menu summary {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-header .primary-nav {
+    display: none !important;
+  }
+
+  .mobile-primary-nav {
+    position: relative;
+    display: block;
+    margin-left: auto;
+    z-index: 90;
+  }
+
+  [dir="rtl"] .mobile-primary-nav {
+    margin-right: auto;
+    margin-left: 0;
+  }
+
+  .mobile-primary-nav summary {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid rgba(203, 211, 218, 0.15);
+    border-radius: 999px;
+    padding: 9px 13px;
+    background: rgba(203, 211, 218, 0.05);
+    color: var(--tk-copy);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    list-style: none;
+  }
+
+  .mobile-primary-nav summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-primary-nav-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    display: grid;
+    width: min(280px, calc(100vw - 32px));
+    max-height: min(620px, calc(100vh - 100px));
+    overflow-y: auto;
+    border: 1px solid rgba(203, 211, 218, 0.16);
+    border-radius: 16px;
+    padding: 8px;
+    background: rgba(8, 11, 15, 0.98);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.46);
+    backdrop-filter: blur(22px) saturate(130%);
+  }
+
+  [dir="rtl"] .mobile-primary-nav-panel {
+    right: auto;
+    left: 0;
+  }
+
+  .mobile-primary-nav-panel a {
+    border-radius: 11px;
+    padding: 12px 14px;
+    color: rgba(232, 237, 241, 0.76);
+    font-size: 13px;
+    font-weight: 650;
+  }
+
+  .mobile-primary-nav-panel a:hover,
+  .mobile-primary-nav-panel a[aria-current="page"] {
+    background: rgba(101, 203, 232, 0.1);
+    color: var(--tk-copy);
+  }
+
+  .home-shell .site-header,
+  .inner-page .detail-header,
+  .tool-page-shell .tool-page-header {
+    top: 8px !important;
+    width: calc(100vw - 16px) !important;
+    min-height: 58px;
+    border-radius: 14px !important;
+  }
+
+  .section {
+    padding-inline: 18px;
+  }
+
+  .section-heading h2,
+  .coffee-lab-section-heading h2,
+  .coffee-lab-ecosystem h2,
+  .coffee-lab-process h2 {
+    max-width: 17ch;
+    font-size: clamp(31px, 9.5vw, 44px);
+  }
+
+  .hero-section.dark-hero {
+    min-height: auto;
+    padding: 154px 18px 52px;
+  }
+
+  .hero-section .hero-heading,
+  .hero-section .hero-body {
+    width: 100%;
+    text-align: left;
+  }
+
+  .hero-section .hero-title {
+    max-width: 15ch;
+    font-size: clamp(38px, 10.5vw, 50px) !important;
+    line-height: 0.98;
+  }
+
+  .home-shell .section-float-nav,
+  .inner-page .detail-float-nav {
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .home-shell .section-float-nav::-webkit-scrollbar,
+  .inner-page .detail-float-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .home-shell .section-float-nav a,
+  .inner-page .detail-float-nav a {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .site-header .language-menu,
+  .detail-header .language-menu,
+  .tool-page-header .language-menu {
+    right: 0 !important;
+    left: auto !important;
+    width: min(228px, calc(100vw - 28px)) !important;
+  }
+
+  .hero-section .hero-lead {
+    max-width: 32rem;
+    font-size: 16px;
+  }
+
+  .hero-section .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero-section .hero-actions .text-action {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+
+  .hero-section .hero-visual {
+    position: relative;
+    right: auto;
+    width: 100%;
+    min-height: 390px;
+    margin-top: 30px;
+  }
+
+  .inner-page:not(.accessories-page) .inner-hero {
+    padding-top: 148px;
+    padding-bottom: 54px;
+  }
+
+  .inner-page .inner-hero h1,
+  .inner-page .product-hero h1,
+  .accessories-page .accessories-hero h1,
+  .inner-page .certification-editorial h1 {
+    max-width: 16ch;
+    font-size: clamp(38px, 11vw, 52px) !important;
+  }
+
+  .product-grid,
+  .featured-grid,
+  .accessory-grid,
+  .proof-grid,
+  .process-grid,
+  .certification-icon-grid,
+  .certification-editorial-icons {
+    grid-template-columns: 1fr !important;
+  }
+
+  .certification-icon-item,
+  .certification-editorial-icons > div {
+    grid-template-columns: 38px 1fr;
+    justify-items: start;
+    text-align: left;
+  }
+
+  .accessories-hero-showcase {
+    min-height: 320px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-decorations,
+  .hero-coffee-orbit,
+  .coffee-atmosphere,
+  .coffee-flow-accent {
+    animation: none !important;
+  }
+}
+
+/* Final route convergence: neutralize legacy forest/oat preview rules. */
+.inner-page .detail-header,
+.inner-page.accessories-page .detail-header,
+.cinematic-products-preview .detail-header,
+.tool-page-shell .tool-page-header {
+  background: rgba(8, 11, 15, 0.96) !important;
+  border-color: rgba(203, 211, 218, 0.14) !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.34) !important;
+  backdrop-filter: blur(20px) saturate(125%);
+}
+
+.cinematic-products-preview {
+  background: var(--tk-space) !important;
+}
+
+.cinematic-products-preview .inner-hero {
+  min-height: 500px;
+  padding: 158px clamp(24px, 6vw, 92px) 68px;
+  background:
+    radial-gradient(circle at 79% 40%, rgba(101, 203, 232, 0.17), transparent 25rem),
+    linear-gradient(118deg, #080b0f, #11171e 58%, #1b242d) !important;
+}
+
+.inner-page.cinematic-products-preview:not(.accessories-page) .inner-hero.product-collection-hero {
+  background:
+    radial-gradient(circle at 79% 40%, rgba(101, 203, 232, 0.17), transparent 25rem),
+    linear-gradient(118deg, #080b0f, #11171e 58%, #1b242d) !important;
+}
+
+body:has(> main.inner-page),
+body:has(> main.home-shell),
+body:has(> main.tool-page-shell) {
+  background: var(--tk-space);
+}
+
+html:has(body > main.inner-page),
+html:has(body > main.home-shell),
+html:has(body > main.tool-page-shell) {
+  background: var(--tk-space);
+}
+
+.inner-page:not(.accessories-page) > .inner-hero.section,
+.inner-page:not(.accessories-page) > .inner-hero.section.product-collection-hero {
+  background:
+    linear-gradient(90deg, rgba(8, 11, 15, 0.98), rgba(8, 11, 15, 0.72) 54%, rgba(8, 11, 15, 0.36)),
+    radial-gradient(circle at 82% 28%, rgba(101, 203, 232, 0.14), transparent 22rem),
+    var(--tk-space) !important;
+}
+
+.inner-page:not(.accessories-page) > .inner-hero.section h1 {
+  max-width: 16ch;
+  font-size: clamp(42px, 4.8vw, 68px) !important;
+}
+
+.cinematic-products-preview .product-collection-stage::before {
+  background: radial-gradient(circle at 38% 35%, rgba(156, 231, 245, 0.88), rgba(101, 203, 232, 0.42) 48%, rgba(38, 49, 59, 0.2) 100%) !important;
+  box-shadow: 0 34px 100px rgba(101, 203, 232, 0.12) !important;
+}
+
+.cinematic-products-preview .product-collection-item span {
+  background: rgba(8, 11, 15, 0.78) !important;
+  color: var(--tk-copy) !important;
+}
+
+.cinematic-products-preview .inner-hero::after {
+  opacity: 0.52;
+  background: repeating-radial-gradient(circle, transparent 0 42px, rgba(101, 203, 232, 0.09) 43px 44px) !important;
+}
+
+.cinematic-products-preview .inner-hero h1 {
+  max-width: 13ch;
+  color: var(--tk-copy) !important;
+  font-size: clamp(46px, 5.4vw, 72px) !important;
+  line-height: 0.98 !important;
+}
+
+.cinematic-products-preview .inner-hero-lead {
+  max-width: 44ch;
+  color: var(--tk-silver) !important;
+  font-size: clamp(16px, 1.25vw, 19px) !important;
+}
+
+.cinematic-products-preview .product-catalog-section {
+  padding: clamp(72px, 8vw, 112px) clamp(24px, 6vw, 92px) !important;
+  background:
+    radial-gradient(circle at 14% 8%, rgba(101, 203, 232, 0.08), transparent 28rem),
+    linear-gradient(180deg, var(--tk-graphite), var(--tk-space)) !important;
+}
+
+.cinematic-products-preview .product-pricing-grid {
+  gap: clamp(64px, 8vw, 108px) !important;
+}
+
+.cinematic-products-preview .product-image-link {
+  overflow: hidden;
+  border: 1px solid rgba(203, 211, 218, 0.12) !important;
+  border-radius: 22px !important;
+  background: linear-gradient(145deg, #18212a, #0d1218) !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.32) !important;
+}
+
+.cinematic-products-preview .product-image-link::after {
+  border-color: rgba(101, 203, 232, 0.1) !important;
+}
+
+.cinematic-products-preview .product-card-body .card-label {
+  color: var(--tk-aurora) !important;
+}
+
+.cinematic-products-preview .product-card-body h3 {
+  max-width: 19ch;
+  margin: 10px 0 14px;
+  color: var(--tk-copy) !important;
+  font-size: clamp(32px, 3.2vw, 48px) !important;
+  line-height: 1.02 !important;
+}
+
+.cinematic-products-preview .product-card-body > p:not(.card-label) {
+  color: var(--tk-silver) !important;
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+}
+
+.cinematic-products-preview .product-card-body dl > div {
+  border: 1px solid rgba(203, 211, 218, 0.1) !important;
+  background: rgba(203, 211, 218, 0.06) !important;
+}
+
+.cinematic-products-preview .product-card-body dl :is(dt, dd) {
+  color: var(--tk-copy) !important;
+}
+
+.cinematic-products-preview .accessory-cta-panel {
+  border: 1px solid rgba(101, 203, 232, 0.16) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 83% 30%, rgba(101, 203, 232, 0.13), transparent 22rem),
+    linear-gradient(125deg, var(--tk-titanium), var(--tk-graphite)) !important;
+  color: var(--tk-copy) !important;
+}
+
+.cinematic-products-preview .accessory-cta-panel :is(h2, p, .eyebrow) {
+  color: inherit !important;
+}
+
+/* Resource and trust content: remove leftover light-template cards. */
+.inner-page .cert-section,
+.inner-page .blog-section,
+.inner-page .faq-section,
+.inner-page .commercial-section {
+  background: linear-gradient(180deg, var(--tk-graphite), var(--tk-space)) !important;
+  color: var(--tk-copy) !important;
+}
+
+.inner-page .section-heading :is(h2, h3),
+.inner-page .cert-section .section-heading h2,
+.inner-page .blog-section .section-heading h2,
+.inner-page .faq-section .section-heading h2,
+.inner-page .commercial-section .section-heading h2 {
+  color: var(--tk-copy) !important;
+}
+
+.inner-page .section-heading > p,
+.inner-page .cert-section .section-heading > p {
+  color: var(--tk-silver) !important;
+}
+
+.inner-page .cert-grid > div,
+.inner-page .blog-grid > article,
+.inner-page .resource-guide-card,
+.inner-page .proof-card,
+.inner-page .faq-list details {
+  border: 1px solid rgba(203, 211, 218, 0.11) !important;
+  background: linear-gradient(145deg, rgba(27, 36, 45, 0.88), rgba(17, 23, 30, 0.92)) !important;
+  color: var(--tk-copy) !important;
+  box-shadow: none !important;
+}
+
+.inner-page .cert-grid > div :is(span, small),
+.inner-page .resource-guide-card :is(h3, p, span),
+.inner-page .proof-card p,
+.inner-page .faq-list :is(summary, p) {
+  color: inherit !important;
+}
+
+.inner-page .cert-grid > div small,
+.inner-page .resource-guide-card p,
+.inner-page .faq-list p {
+  color: var(--tk-silver) !important;
+}
+
+.inner-page .cert-grid svg,
+.inner-page .resource-guide-card svg,
+.inner-page .proof-card svg {
+  color: var(--tk-aurora) !important;
+}
+
+/* OEM/ODM route follows the same restrained technology bands. */
+.inner-page.oem-page :is(
+  .oem-process-section,
+  .procurement-section,
+  .oem-quality-section,
+  .oem-guide-callout,
+  .oem-evidence-section,
+  .oem-qc-evidence,
+  .oem-final-cta
+) {
+  border-color: var(--tk-tech-line) !important;
+  background:
+    radial-gradient(circle at 84% 24%, rgba(101, 203, 232, 0.07), transparent 24rem),
+    linear-gradient(180deg, var(--tk-graphite), var(--tk-space)) !important;
+  color: var(--tk-copy) !important;
+}
+
+.inner-page.oem-page :is(
+  .oem-process-section,
+  .procurement-section,
+  .oem-quality-section,
+  .oem-guide-callout,
+  .oem-evidence-section,
+  .oem-qc-evidence,
+  .oem-final-cta
+) :is(h2, h3, strong) {
+  color: var(--tk-copy) !important;
+}
+
+.inner-page.oem-page :is(
+  .oem-process-section,
+  .procurement-section,
+  .oem-quality-section,
+  .oem-guide-callout,
+  .oem-evidence-section,
+  .oem-qc-evidence,
+  .oem-final-cta
+) :is(p, li, figcaption, small) {
+  color: var(--tk-silver) !important;
+}
+
+.inner-page .procurement-contact-section,
+.inner-page .contact-page-grid {
+  border: 1px solid rgba(203, 211, 218, 0.11) !important;
+  background:
+    radial-gradient(circle at 86% 18%, rgba(101, 203, 232, 0.06), transparent 22rem),
+    linear-gradient(145deg, var(--tk-titanium), var(--tk-graphite)) !important;
+  color: var(--tk-copy) !important;
+}
+
+.inner-page .procurement-contact-section :is(h2, h3, strong),
+.inner-page .contact-page-grid :is(h2, h3, strong) {
+  color: var(--tk-copy) !important;
+}
+
+.inner-page .procurement-contact-section :is(p, li, small),
+.inner-page .contact-page-grid :is(p, li, small) {
+  color: var(--tk-silver) !important;
+}
+
+.inner-page .procurement-expectation,
+.inner-page .procurement-expectation.is-compact {
+  border-color: rgba(203, 211, 218, 0.12) !important;
+  background: rgba(8, 11, 15, 0.36) !important;
+  box-shadow: none !important;
+}
+
+.inner-page .procurement-expectation :is(h2, h3, strong) {
+  color: var(--tk-copy) !important;
+}
+
+.inner-page .procurement-expectation :is(p, small) {
+  color: var(--tk-silver) !important;
+}
+
+.inner-page .procurement-facts {
+  background: rgba(203, 211, 218, 0.1) !important;
+}
+
+.inner-page .procurement-facts > div {
+  background: var(--tk-graphite) !important;
+}
+
+.inner-page .procurement-facts svg,
+.inner-page .procurement-intro > span,
+.inner-page .procurement-next-steps li span {
+  color: var(--tk-aurora) !important;
+}
+
+.inner-page .procurement-next-steps li {
+  border-color: rgba(203, 211, 218, 0.12) !important;
+}
+
+.home-shell > .contact-section.section,
+.inner-page > .contact-section.section,
+.inner-page:not(.accessories-page) > .contact-section.section,
+.tool-page-shell > .tool-page-cta {
+  border-color: var(--tk-tech-line) !important;
+  background:
+    radial-gradient(circle at 84% 30%, rgba(101, 203, 232, 0.09), transparent 24rem),
+    linear-gradient(120deg, var(--tk-titanium), var(--tk-space)) !important;
+  color: var(--tk-copy) !important;
+}
+
+.home-shell > .contact-section.section :is(h2, h3, strong),
+.inner-page > .contact-section.section :is(h2, h3, strong),
+.tool-page-shell > .tool-page-cta :is(h2, h3, strong) {
+  color: var(--tk-copy) !important;
+}
+
+.accessories-page .accessories-hero,
+.inner-page.accessories-page .accessories-hero {
+  background:
+    radial-gradient(circle at 80% 38%, rgba(101, 203, 232, 0.15), transparent 23rem),
+    linear-gradient(118deg, var(--tk-space), var(--tk-graphite) 58%, var(--tk-titanium)) !important;
+}
+
+.accessories-page .accessories-hero :is(.back-link, .eyebrow) {
+  color: var(--tk-aurora) !important;
+}
+
+.accessories-page .accessories-hero .inner-hero-lead {
+  color: var(--tk-silver) !important;
+}
+
+.accessories-page .accessories-hero-image,
+.accessories-page .accessories-hero-showcase {
+  border-color: rgba(203, 211, 218, 0.12) !important;
+  background: linear-gradient(145deg, #18212a, #0c1117) !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32) !important;
+}
+
+@media (max-width: 720px) {
+  .cinematic-products-preview .inner-hero {
+    min-height: 420px;
+    padding: 140px 18px 52px !important;
+  }
+
+  .cinematic-products-preview .inner-hero h1 {
+    max-width: 14ch;
+    font-size: clamp(38px, 10.5vw, 48px) !important;
+  }
+
+  .cinematic-products-preview .product-catalog-section {
+    padding: 62px 18px 82px !important;
+  }
+
+  .cinematic-products-preview .product-card-body h3 {
+    font-size: clamp(30px, 8.5vw, 40px) !important;
+  }
+}

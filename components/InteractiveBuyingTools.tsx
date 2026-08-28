@@ -2,14 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { Check, Clipboard, PackageCheck, SlidersHorizontal } from "lucide-react";
-import { ProductPriceTag } from "@/components/ProductPriceTag";
-import type { Lang, ProductPrice } from "@/lib/site-data";
+import type { Lang } from "@/lib/site-data";
 
 type InteractiveProduct = {
   model: string;
   summary: string;
   featureLabel: string;
-  price: ProductPrice;
   spec: {
     pressure?: string;
     battery?: string;
@@ -325,7 +323,7 @@ export function InteractiveBuyingTools({ lang, products }: InteractiveBuyingTool
             </div>
             <article className="recommended-card">
               <strong>{recommended.model}</strong>
-              <ProductPriceTag compact lang={lang} price={recommended.price} />
+              <div className="selector-quote-note">{lang === "zh" ? "价格按型号、数量和定制需求书面确认" : "Pricing is confirmed by model, quantity and customization scope"}</div>
               <p>{recommended.summary}</p>
               <dl>
                 <div>

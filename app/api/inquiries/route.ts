@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   normalizeInquiry,
+  hasReachedPersistentInquiryLimit,
   saveInquiry,
   sendInquiryConfirmationEmail,
   sendInquiryEmail,
@@ -21,12 +22,20 @@ const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = new Set([
   "image/png",
   "image/jpeg",
+  "image/svg+xml",
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "application/zip",
 ]);
 const rateBuckets = new Map<string, { count: number; resetAt: number }>();
+const QUICK_BUYER_TYPES = new Set([
+  "Importer / wholesaler",
+  "Outdoor retailer",
+  "Coffee brand / private label",
+  "Amazon or marketplace seller",
+  "Other business buyer",
+]);
 
 export async function POST(request: Request) {
   const requestStartedAt = Date.now();
@@ -61,7 +70,13 @@ export async function POST(request: Request) {
     })),
   );
   const attachments: InquiryAttachmentMeta[] = attachmentFiles.map(({ filename, contentType, size }) => ({ filename, contentType, size }));
+  const formType = text(formData, "formType") === "quick" ? "quick" : "full";
+  const buyerType = text(formData, "buyerType");
+  if (formType === "quick" && !QUICK_BUYER_TYPES.has(buyerType)) {
+    return NextResponse.json({ ok: false, message: "Please select a valid buyer type." }, { status: 400 });
+  }
   const body: Partial<InquiryPayload> = {
+    formType,
     name: text(formData, "name"),
     email: text(formData, "email"),
     company: text(formData, "company"),
@@ -69,11 +84,12 @@ export async function POST(request: Request) {
     country: text(formData, "country"),
     product: text(formData, "product"),
     accessories: text(formData, "accessories"),
-    quantity: text(formData, "quantity"),
+    quantity: formType === "quick" ? "To be discussed" : text(formData, "quantity"),
     branding: text(formData, "branding"),
-    message: text(formData, "message"),
+    message: formType === "quick" ? `Quick contact request. Buyer type: ${buyerType}.` : text(formData, "message"),
     lang: text(formData, "lang"),
     sourcePage: text(formData, "sourcePage"),
+    source: text(formData, "source"),
     referrer: text(formData, "referrer"),
     startedAt: Number(text(formData, "startedAt")),
     challengeA: Number(text(formData, "challengeA")),
@@ -89,6 +105,10 @@ export async function POST(request: Request) {
   const errors = validateInquiry(inquiry);
   if (Object.keys(errors).length > 0) {
     return NextResponse.json({ ok: false, message: cleanFormCheckMessage(lang), errors }, { status: 400 });
+  }
+
+  if (await hasReachedPersistentInquiryLimit(ip)) {
+    return NextResponse.json({ ok: false, message: "Too many inquiries. Please try again later." }, { status: 429 });
   }
 
   try {
@@ -180,6 +200,11 @@ function safeFileName(name: string) {
 
 function allowRequest(ip: string) {
   const now = Date.now();
+  if (rateBuckets.size > 5000) {
+    for (const [key, bucket] of rateBuckets) {
+      if (bucket.resetAt <= now) rateBuckets.delete(key);
+    }
+  }
   const current = rateBuckets.get(ip);
   if (!current || current.resetAt <= now) {
     rateBuckets.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
@@ -207,33 +232,6 @@ function cleanFormCheckMessage(lang: Lang) {
 }
 
 function cleanServiceConfigMessage(lang: Lang) {
-  return {
-    en: "Inquiry service is not configured yet.",
-    es: "El servicio de consultas aún no está configurado.",
-    pt: "O serviço de consultas ainda não está configurado.",
-    fr: "Le service de demande n'est pas encore configuré.",
-    ar: "خدمة الاستفسارات غير مهيأة بعد.",
-    zh: "询盘服务尚未完成配置。",
-    ru: "Сервис запросов ещё не настроен.",
-  }[lang];
-}
-
-// Compatibility helpers retained for existing imports.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function formCheckMessage(lang: Lang) {
-  return {
-    en: "Please check the form fields.",
-    es: "Revise los campos del formulario.",
-    pt: "Verifique os campos do formulário.",
-    fr: "Veuillez vérifier les champs du formulaire.",
-    ar: "يرجى التحقق من حقول النموذج.",
-    zh: "请检查表单内容。",
-    ru: "Проверьте поля формы.",
-  }[lang];
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function serviceConfigMessage(lang: Lang) {
   return {
     en: "Inquiry service is not configured yet.",
     es: "El servicio de consultas aún no está configurado.",

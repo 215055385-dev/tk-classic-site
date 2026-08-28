@@ -8,6 +8,7 @@ type AccessoryCompatibilityMatrixProps = { lang: Lang };
 
 export function AccessoryCompatibilityMatrix({ lang }: AccessoryCompatibilityMatrixProps) {
   const pageCopy = accessoryPageCopy[lang];
+  const selectableAccessories = accessories.filter((item) => item.modelSelectable !== false);
   return (
     <section className="section accessory-matrix-section" aria-labelledby="accessory-matrix-title">
       <div className="section-heading align-left">
@@ -20,14 +21,14 @@ export function AccessoryCompatibilityMatrix({ lang }: AccessoryCompatibilityMat
           <thead>
             <tr>
               <th scope="col">{pageCopy.modelLabel}</th>
-              {accessories.map((accessory) => <th scope="col" key={accessory.slug}>{getAccessoryDisplay(accessory.slug, lang, accessory).title}</th>)}
+              {selectableAccessories.map((accessory) => <th scope="col" key={accessory.slug}>{getAccessoryDisplay(accessory.slug, lang, accessory).title}</th>)}
             </tr>
           </thead>
           <tbody>
             {products.map((product) => (
               <tr key={product.model}>
                 <th scope="row"><Link href={`/products/${product.slug}#accessory-selector`}>{product.model}</Link></th>
-                {accessories.map((accessory) => <td key={accessory.slug} aria-label={`${product.model}: ${pageCopy.optionalLabel} ${getAccessoryDisplay(accessory.slug, lang, accessory).title}`}><Check size={16} aria-hidden="true" /></td>)}
+                {selectableAccessories.map((accessory) => <td key={accessory.slug} aria-label={`${product.model}: ${pageCopy.optionalLabel} ${getAccessoryDisplay(accessory.slug, lang, accessory).title}`}><Check size={16} aria-hidden="true" /></td>)}
               </tr>
             ))}
           </tbody>

@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SiteFooter } from "@/components/SiteFooter";
 import { languages, type Lang } from "@/lib/site-data";
+import { brandTagline } from "@/lib/translation-copy";
 
 type ToolPageShellProps = {
   lang: Lang;
@@ -27,7 +28,7 @@ export function ToolPageShell({ lang, eyebrow, title, lead, children }: ToolPage
           <span className="brand-mark">TK</span>
           <span>
             <strong>TK Classic</strong>
-            <small>Portable coffee OEM</small>
+            <small>{brandTagline[lang]}</small>
           </span>
         </Link>
         <Link className="tool-back-link" href={`/${langQuery(lang)}#tools`}>

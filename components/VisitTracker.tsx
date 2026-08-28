@@ -56,20 +56,21 @@ export function VisitTracker() {
       }
     }
 
-    const form = document.getElementById("inquiry-form");
+    const forms = Array.from(document.querySelectorAll<HTMLFormElement>("#inquiry-form, form[data-track-form]"));
     const startKey = `tk-form-start:${pathname}`;
     function handleFormStart() {
       if (sessionStorage.getItem(startKey)) return;
       sessionStorage.setItem(startKey, "1");
-      const selectedProduct = form?.querySelector<HTMLSelectElement>('select[name="product"]')?.value ?? "";
+      const activeForm = document.activeElement?.closest<HTMLFormElement>("form");
+      const selectedProduct = activeForm?.querySelector<HTMLInputElement | HTMLSelectElement>('[name="product"]')?.value ?? "";
       trackConversionEvent("form_start", { product: selectedProduct });
     }
 
     document.addEventListener("click", handleClick);
-    form?.addEventListener("focusin", handleFormStart, { once: true });
+    forms.forEach((form) => form.addEventListener("focusin", handleFormStart, { once: true }));
     return () => {
       document.removeEventListener("click", handleClick);
-      form?.removeEventListener("focusin", handleFormStart);
+      forms.forEach((form) => form.removeEventListener("focusin", handleFormStart));
     };
   }, [pathname]);
 

@@ -1,6 +1,8 @@
 import type { Lang } from "@/lib/site-data";
 
 type CommercialCopy = {
+  orderTermsTitle: string;
+  orderTerms: string;
   shippingTitle: string;
   shipping: string;
   leadTimeTitle: string;
@@ -17,20 +19,24 @@ type CommercialCopy = {
 
 export const commercialCopy: Record<Lang, CommercialCopy> = {
   en: {
+    orderTermsTitle: "Pricing & order terms",
+    orderTerms: "MOQ is discussed after inquiry. Payment methods are T/T, PayPal and Western Union; the final quantity, pricing, Incoterms and quotation validity are confirmed in the formal quotation.",
     shippingTitle: "Shipping & export files",
     shipping: "Export packing, destination-market documents and shipping options are confirmed with the quotation for each market.",
     leadTimeTitle: "Lead time planning",
-    leadTime: "Sample and production timing is confirmed after the model, branding, packaging and order plan are reviewed.",
+    leadTime: "Paid samples are dispatched within 7 days of the sample order. Mass-production lead time depends on quantity and approved scope, and is generally around 35 days.",
     warrantyTitle: "Warranty & after-sales",
     warranty: "Warranty coverage, replacement handling and spare-part support are confirmed by model and destination before order approval.",
     proofTitle: "Buyer-ready proof",
     proofLead: "We use documented product and compliance evidence in the quotation process, without publishing unverified customer claims.",
     proofItems: ["Product brochure and model comparison", "CE / RoHS / FCC / UKCA documents", "LFGB / FDA food-contact reports", "ISO 9001 and EU conformity files"],
     qualityTitle: "Quality checkpoints",
-    qualityLead: "Every project is aligned around a clear approval path from brief to export packing.",
-    qualityItems: ["Project brief and target-market review", "Sample and artwork approval", "Functional, charging and appearance checks", "Final inspection and export packing review"],
+    qualityLead: "Each project follows a documented path from product selection to approved packing.",
+    qualityItems: ["Model, market and compatible-accessory selection", "Paid sample, logo and packaging artwork approval", "Functional, charging, extraction and appearance checks", "Final packing review and written production confirmation"],
   },
   es: {
+    orderTermsTitle: "Precios y condiciones del pedido",
+    orderTerms: "El precio unitario, la cantidad, las condiciones de pago, los Incoterms y la validez de la oferta se confirman en la cotización formal tras revisar el modelo y la personalización.",
     shippingTitle: "Envío y documentación de exportación",
     shipping: "El embalaje de exportación, los documentos del mercado de destino y las opciones logísticas se confirman con la cotización.",
     leadTimeTitle: "Planificación de plazos",
@@ -45,6 +51,8 @@ export const commercialCopy: Record<Lang, CommercialCopy> = {
     qualityItems: ["Brief y revisión del mercado objetivo", "Aprobación de muestra y artes", "Controles funcionales, de carga y apariencia", "Inspección final y revisión del embalaje"],
   },
   pt: {
+    orderTermsTitle: "Preços e condições do pedido",
+    orderTerms: "O preço unitário, a quantidade, as condições de pagamento, os Incoterms e a validade da proposta são confirmados na cotação formal após a revisão do modelo e da personalização.",
     shippingTitle: "Envio e documentos de exportação",
     shipping: "A embalagem de exportação, os documentos do mercado de destino e as opções logísticas são confirmados com a cotação.",
     leadTimeTitle: "Planejamento de prazos",
@@ -59,6 +67,8 @@ export const commercialCopy: Record<Lang, CommercialCopy> = {
     qualityItems: ["Briefing e revisão do mercado-alvo", "Aprovação de amostra e arte", "Testes funcionais, de carga e aparência", "Inspeção final e revisão da embalagem"],
   },
   fr: {
+    orderTermsTitle: "Prix et conditions de commande",
+    orderTerms: "Le prix unitaire, la quantité, les conditions de paiement, les Incoterms et la validité de l'offre sont confirmés dans le devis formel après revue du modèle et de la personnalisation.",
     shippingTitle: "Expédition et dossiers export",
     shipping: "L'emballage export, les documents du marché cible et les options logistiques sont confirmés avec le devis.",
     leadTimeTitle: "Planification des délais",
@@ -73,6 +83,8 @@ export const commercialCopy: Record<Lang, CommercialCopy> = {
     qualityItems: ["Brief et revue du marché cible", "Validation de l'échantillon et des visuels", "Contrôles fonctionnels, charge et aspect", "Inspection finale et revue de l'emballage"],
   },
   ar: {
+    orderTermsTitle: "الأسعار وشروط الطلب",
+    orderTerms: "يتم تأكيد سعر الوحدة والكمية وشروط الدفع وقواعد Incoterms ومدة صلاحية العرض في عرض السعر الرسمي بعد مراجعة الطراز ونطاق التخصيص.",
     shippingTitle: "الشحن وملفات التصدير",
     shipping: "يتم تأكيد تغليف التصدير ومستندات السوق وخيارات الشحن ضمن عرض السعر لكل سوق.",
     leadTimeTitle: "تخطيط المواعيد",
@@ -87,6 +99,8 @@ export const commercialCopy: Record<Lang, CommercialCopy> = {
     qualityItems: ["مراجعة المتطلبات والسوق المستهدف", "اعتماد العينة والتصاميم", "فحوص الوظائف والشحن والمظهر", "الفحص النهائي ومراجعة تغليف التصدير"],
   },
   zh: {
+    orderTermsTitle: "价格与订单条款",
+    orderTerms: "单价、订单数量、付款条款、Incoterms 和报价有效期，会在确认型号与定制范围后写入正式报价单。",
     shippingTitle: "出货与出口资料",
     shipping: "出口包装、目的市场资料和物流方式，会在报价阶段结合具体市场确认。",
     leadTimeTitle: "交期规划",
@@ -101,6 +115,8 @@ export const commercialCopy: Record<Lang, CommercialCopy> = {
     qualityItems: ["需求与目标市场审核", "样品和设计稿确认", "功能、充电与外观检查", "最终检验与出口包装确认"],
   },
   ru: {
+    orderTermsTitle: "Цена и условия заказа",
+    orderTerms: "Цена за единицу, объём, условия оплаты, Incoterms и срок действия предложения подтверждаются в официальной котировке после согласования модели и объёма кастомизации.",
     shippingTitle: "Доставка и экспортные документы",
     shipping: "Экспортная упаковка, документы для рынка назначения и варианты доставки подтверждаются в коммерческом предложении.",
     leadTimeTitle: "Планирование сроков",

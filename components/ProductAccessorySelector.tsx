@@ -32,6 +32,7 @@ const labels: Record<Lang, {
 };
 
 export function ProductAccessorySelector({ lang, model }: ProductAccessorySelectorProps) {
+  const selectableAccessories = accessories.filter((item) => item.modelSelectable !== false);
   const t = labels[lang];
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -41,7 +42,7 @@ export function ProductAccessorySelector({ lang, model }: ProductAccessorySelect
       : [...current, slug]);
   }
 
-  const selectedNames = accessories.filter((item) => selected.includes(item.slug)).map((item) => getAccessoryDisplay(item.slug, lang, item).title);
+  const selectedNames = selectableAccessories.filter((item) => selected.includes(item.slug)).map((item) => getAccessoryDisplay(item.slug, lang, item).title);
   const languageParam = lang === "en" ? "" : `&lang=${lang}`;
   const inquiryHref = `/contact?product=${encodeURIComponent(model)}${selectedNames.length ? `&accessories=${encodeURIComponent(selectedNames.join(", "))}` : ""}${languageParam}`;
 
@@ -53,7 +54,7 @@ export function ProductAccessorySelector({ lang, model }: ProductAccessorySelect
         <p>{t.lead}</p>
       </div>
       <div className="product-accessory-grid">
-        {accessories.map((accessory) => {
+        {selectableAccessories.map((accessory) => {
           const isSelected = selected.includes(accessory.slug);
           return (
             <button

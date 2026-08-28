@@ -1,0 +1,156 @@
+export type GalleryImage = {
+  src: string;
+  alt: string;
+  title: string;
+  description: string;
+  category: string;
+  width: number;
+  height: number;
+  originalFilename: string;
+};
+
+export const factoryGalleryImages: GalleryImage[] = [
+  {
+    src: "/images/factory/core-assembly.webp",
+    alt: "Operator assembling portable coffee machine core modules at a workbench",
+    title: "Core Module Assembly",
+    description: "Hands-on assembly of the pump, circuit board, battery and internal module.",
+    category: "Product Assembly",
+    width: 1350,
+    height: 1800,
+    originalFilename: "机芯装配 (2).jpg",
+  },
+  {
+    src: "/images/factory/production-assembly.webp",
+    alt: "Operators assembling portable coffee machine components on the production line",
+    title: "Production Assembly",
+    description: "Operators complete product assembly at dedicated workstations.",
+    category: "Production Line",
+    width: 1350,
+    height: 1800,
+    originalFilename: "装配图.jpg",
+  },
+  {
+    src: "/images/factory/fixture-testing.webp",
+    alt: "Multiple portable coffee machine heating modules secured in test fixtures",
+    title: "Fixture Testing",
+    description: "Internal modules are secured in repeatable fixtures during functional checks.",
+    category: "Quality Inspection",
+    width: 1350,
+    height: 1800,
+    originalFilename: "9cb5a9236330dc1533761ef6168bd32(1).jpg",
+  },
+  {
+    src: "/images/factory/powered-testing.webp",
+    alt: "Portable coffee machine modules connected for powered functional testing",
+    title: "Powered Function Check",
+    description: "Assembled modules are connected and checked before final housing assembly.",
+    category: "Quality Inspection",
+    width: 1350,
+    height: 1800,
+    originalFilename: "机芯测试.jpg",
+  },
+  {
+    src: "/images/factory/laser-marking.webp",
+    alt: "Operator using a laser marking workstation for a portable coffee machine component",
+    title: "Laser Marking",
+    description: "Product components are positioned at the laser-marking workstation.",
+    category: "Production Line",
+    width: 1350,
+    height: 1800,
+    originalFilename: "镭雕.jpg",
+  },
+  {
+    src: "/images/factory/assembly-batch.webp",
+    alt: "Batch of portable coffee machine modules arranged on an assembly bench",
+    title: "Batch Assembly",
+    description: "Coffee machine bodies, batteries and internal modules prepared in batches.",
+    category: "Product Assembly",
+    width: 1350,
+    height: 1800,
+    originalFilename: "41234.jpg",
+  },
+  {
+    src: "/images/factory/finished-bodies.webp",
+    alt: "Rows of assembled burgundy portable coffee machine bodies awaiting the next production step",
+    title: "Assembled Product Bodies",
+    description: "Finished outer bodies are grouped before the next production stage.",
+    category: "Production Line",
+    width: 1350,
+    height: 1800,
+    originalFilename: "微信图片_20241229143746.jpg",
+  },
+];
+
+export const exhibitionGalleryImages: GalleryImage[] = [
+  {
+    src: "/images/exhibitions/booth-overview-01.webp",
+    alt: "TK Classic exhibition booth with portable coffee machines and accessories on display",
+    title: "Exhibition Booth",
+    description: "A complete booth view with portable coffee machines, warmers and accessories.",
+    category: "Exhibition Highlights",
+    width: 1706,
+    height: 1279,
+    originalFilename: "078c672cc07ef66b1be6feb6f670bcf7.jpg",
+  },
+  {
+    src: "/images/exhibitions/booth-team-01.webp",
+    alt: "TK Classic team presenting portable coffee machines at an exhibition booth",
+    title: "Team at the Booth",
+    description: "The team presents the portable coffee product range at the exhibition stand.",
+    category: "Exhibition Highlights",
+    width: 1350,
+    height: 1800,
+    originalFilename: "50293d525b2bab7544a6dafba2f78248.jpg",
+  },
+  {
+    src: "/images/exhibitions/product-demo-01.webp",
+    alt: "Portable coffee machine being demonstrated to a visitor at an exhibition",
+    title: "Product Demonstration",
+    description: "A close product presentation with the machine and its coffee adapters visible.",
+    category: "Exhibition Highlights",
+    width: 1706,
+    height: 1279,
+    originalFilename: "ca4c4cb991794718c606302485cd4ed6.jpg",
+  },
+  {
+    src: "/images/exhibitions/visitor-discussion-01.webp",
+    alt: "Visitors discussing portable coffee products at an international exhibition booth",
+    title: "Buyer Conversation",
+    description: "An in-person discussion beside the portable coffee machine display.",
+    category: "Exhibition Highlights",
+    width: 1279,
+    height: 1706,
+    originalFilename: "84cd79c2b25406a5f4a4796bfbdc275d.jpg",
+  },
+  {
+    src: "/images/exhibitions/product-presentation-02.webp",
+    alt: "Visitor and TK Classic representative holding a portable coffee machine at an exhibition",
+    title: "Product Presentation",
+    description: "A visitor views the portable coffee machine at the TK Classic stand.",
+    category: "Exhibition Highlights",
+    width: 1707,
+    height: 1280,
+    originalFilename: "73efef58cea048e99541bbffa72a75cd.jpg",
+  },
+  {
+    src: "/images/exhibitions/booth-overview-02.webp",
+    alt: "TK Classic exhibition stand with portable coffee machines displayed across the back wall",
+    title: "Product Range Display",
+    description: "Portable coffee machines and related products arranged across the exhibition stand.",
+    category: "Exhibition Highlights",
+    width: 1279,
+    height: 1706,
+    originalFilename: "edb0e456e97042c516156f64cf28ca90.jpg",
+  },
+  {
+    src: "/images/exhibitions/product-presentation-01.webp",
+    alt: "TK Classic product presentation area with portable coffee appliances",
+    title: "Product Presentation Area",
+    description: "Portable coffee products are shown in a dedicated presentation setting.",
+    category: "Exhibition Highlights",
+    width: 1708,
+    height: 1280,
+    originalFilename: "0ac7321c551a323078b316457e23de1d.jpg",
+  },
+];

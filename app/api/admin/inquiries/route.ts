@@ -1,22 +1,16 @@
 import { NextResponse } from "next/server";
-import { ADMIN_COOKIE, getAdminToken, matchesAdminSession } from "@/lib/admin-auth";
+import { hasAdminSession } from "@/lib/admin-auth";
+import { adminErrorResponse, requireAdmin } from "@/lib/admin-permissions";
 import { listAdminData, updateInquiryStatus } from "@/lib/admin-service";
-import { cookies } from "next/headers";
 
 export const runtime = "nodejs";
 
 async function authorized() {
-  try {
-    const token = getAdminToken();
-    const cookie = (await cookies()).get(ADMIN_COOKIE)?.value;
-    return Boolean(cookie && matchesAdminSession(cookie, token));
-  } catch {
-    return false;
-  }
+  return hasAdminSession();
 }
 
 export async function GET(request: Request) {
-  if (!(await authorized())) return NextResponse.json({ ok: false, message: "Unauthorized." }, { status: 401 });
+  if (!(await authorized())) return NextResponse.json({ ok: false, message: "请先登录后台。" }, { status: 401 });
 
   const url = new URL(request.url);
   try {
@@ -32,28 +26,33 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("Admin data query failed", error);
-    return NextResponse.json({ ok: false, message: "Unable to load admin data." }, { status: 500 });
+    return NextResponse.json({ ok: false, message: "后台数据加载失败，请稍后重试。" }, { status: 500 });
   }
 }
 
 export async function PATCH(request: Request) {
-  if (!(await authorized())) return NextResponse.json({ ok: false, message: "Unauthorized." }, { status: 401 });
+  try {
+    await requireAdmin(true, request);
+  } catch (error) {
+    return adminErrorResponse(error);
+  }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false, message: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ ok: false, message: "请求格式不正确。" }, { status: 400 });
   }
 
-  const payload = body as { id?: unknown; status?: unknown; adminNote?: unknown };
-  if (!payload.id || !payload.status) return NextResponse.json({ ok: false, message: "Missing inquiry update fields." }, { status: 400 });
+  const payload = body as { id?: unknown; status?: unknown; adminNote?: unknown; assignedTo?: unknown };
+  if (!payload.id || !payload.status) return NextResponse.json({ ok: false, message: "缺少询盘编号或跟进状态。" }, { status: 400 });
 
   try {
-    const result = await updateInquiryStatus(String(payload.id), String(payload.status), String(payload.adminNote ?? ""));
+    const result = await updateInquiryStatus(String(payload.id), String(payload.status), String(payload.adminNote ?? ""), String(payload.assignedTo ?? ""));
     return NextResponse.json({ ok: true, inquiry: result });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to update inquiry.";
-    return NextResponse.json({ ok: false, message }, { status: message === "Inquiry not found" ? 404 : 400 });
+    const rawMessage = error instanceof Error ? error.message : "";
+    const message = rawMessage === "Inquiry not found" ? "未找到该询盘。" : rawMessage === "Invalid inquiry status" ? "询盘状态无效。" : rawMessage === "Invalid inquiry assignee" ? "询盘负责人无效。" : "询盘更新失败。";
+    return NextResponse.json({ ok: false, message }, { status: rawMessage === "Inquiry not found" ? 404 : 400 });
   }
 }

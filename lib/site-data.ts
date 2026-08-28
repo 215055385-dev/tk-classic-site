@@ -77,9 +77,9 @@ type Copy = {
 
 export const copy: Record<Lang, Copy> = {
   en: {
-    title: "TK Classic | Portable coffee machines for OEM/ODM and private label brands",
+    title: "Portable Espresso Machine Manufacturer & OEM Supplier | TK Classic",
     description:
-      "Factory-direct portable espresso machines, frothers, warmers and accessories for European wholesalers, private label brands, and OEM/ODM programs.",
+      "Factory-direct portable espresso machines for US importers, wholesalers and private-label brands. Compare verified models, OEM options and request a quote.",
     nav: {
       home: "Home",
       products: "Products",
@@ -92,12 +92,12 @@ export const copy: Record<Lang, Copy> = {
       contact: "Contact",
     },
     hero: {
-      eyebrow: "Factory-direct portable coffee systems",
-      title: "Portable espresso machines designed for private label growth.",
+      eyebrow: "Premium portable coffee machines",
+      title: "Portable Espresso. Anywhere You Go.",
       lead:
-        "TK Classic builds battery-powered portable coffee machines, milk frothers, warmers and accessories for European wholesalers, private label brands, and OEM/ODM programs.",
+        "Premium portable coffee machines designed for outdoor, travel and everyday coffee routines.",
       support:
-        "Factory-direct pricing, custom packaging, and multilingual sales support built for inquiry conversion.",
+        "TK Classic is a Shenzhen portable espresso machine manufacturer serving importers, wholesalers and private-label brands with verified model data and project-based OEM support.",
       primaryCta: "Request quotation",
       secondaryCta: "Chat on WhatsApp",
       tertiaryCta: "Download brochure",
@@ -105,7 +105,7 @@ export const copy: Record<Lang, Copy> = {
     signals: [
       "Factory direct",
       "OEM / ODM",
-      "Quick delivery",
+      "Project-based order planning",
       "European compliance",
       "Custom packaging",
       "Multilingual support",
@@ -119,7 +119,7 @@ export const copy: Record<Lang, Copy> = {
       faq: "FAQ",
       contact: "Get a quotation",
       about: "About TK Classic",
-      accessories: "Coffee accessories and add-ons",
+      accessories: "Accessories",
     },
     intro:
       "Built for European sourcing teams that need a portable coffee supplier with strong product depth, fast response, and private label flexibility.",
@@ -147,7 +147,7 @@ export const copy: Record<Lang, Copy> = {
       "EU conformity declaration and supporting export reports available on request.",
     ],
     blogLead:
-      "Use this content hub to rank for portable espresso machine keywords, private label sourcing questions, and Europe-focused wholesale intent.",
+      "Practical sourcing guides based on published product data, OEM approval steps, packaging decisions and model-specific compliance documents.",
     faq: [
       {
         q: "How do you plan order quantities?",
@@ -216,17 +216,17 @@ export const copy: Record<Lang, Copy> = {
       contact: "Contacto",
     },
     hero: {
-      eyebrow: "Sistemas de café portátiles de fábrica",
-      title: "Máquinas espresso portátiles pensadas para crecer con marca propia.",
+      eyebrow: "Cafeteras portátiles premium",
+      title: "Espresso portátil. Dondequiera que vaya.",
       lead:
-        "TK Classic fabrica máquinas de café portátiles con batería, espumadores, calentadores y accesorios para mayoristas europeos, marcas propias y programas OEM/ODM.",
+        "Cafeteras portátiles premium diseñadas para actividades al aire libre, viajes y rutinas diarias de café.",
       support:
-        "Precio directo de fábrica, embalaje personalizado y soporte multilingüe para convertir consultas en pedidos.",
+        "Para mayoristas, programas de regalo y marcas propias: seleccione un modelo verificado, configure el conjunto y avance hacia la producción con un socio industrial especializado.",
       primaryCta: "Pedir cotización",
       secondaryCta: "Hablar por WhatsApp",
       tertiaryCta: "Descargar catálogo",
     },
-    signals: ["Directo de fábrica", "OEM / ODM", "Entrega rápida", "Cumplimiento europeo", "Embalaje personalizado", "Soporte multilingüe"],
+    signals: ["Directo de fábrica", "OEM / ODM", "Planificación por proyecto", "Cumplimiento europeo", "Embalaje personalizado", "Soporte multilingüe"],
     sectionTitles: {
       products: "Productos destacados",
       oem: "Programa OEM / ODM",
@@ -236,7 +236,7 @@ export const copy: Record<Lang, Copy> = {
       faq: "FAQ",
       contact: "Solicitar cotización",
       about: "Sobre TK Classic",
-      accessories: "Accesorios de café",
+      accessories: "Accesorios",
     },
     intro:
       "Pensado para equipos de compras europeos que necesitan un proveedor de café portátil con respuesta rápida y flexibilidad de marca propia.",
@@ -264,7 +264,7 @@ export const copy: Record<Lang, Copy> = {
       "Declaración de conformidad UE y reportes de exportación a solicitud.",
     ],
     blogLead:
-      "Usa este centro de contenido para posicionar keywords de máquina espresso portátil, preguntas de marca propia e intención mayorista en Europa.",
+      "Guías prácticas basadas en datos de producto publicados, aprobaciones OEM, decisiones de embalaje y documentos de conformidad específicos por modelo.",
     faq: [
       {
         q: "¿Cómo se planifica la cantidad del pedido?",
@@ -333,17 +333,17 @@ export const copy: Record<Lang, Copy> = {
       contact: "Contato",
     },
     hero: {
-      eyebrow: "Sistemas de café portáteis direto da fábrica",
-      title: "Máquinas espresso portáteis pensadas para marcas próprias crescerem.",
+      eyebrow: "Máquinas de café portáteis premium",
+      title: "Espresso portátil. Onde quer que você vá.",
       lead:
-        "A TK Classic fabrica máquinas de café portáteis a bateria, espumadores, aquecedores e acessórios para atacadistas europeus, marcas próprias e programas OEM/ODM.",
+        "Máquinas de café portáteis premium criadas para atividades ao ar livre, viagens e rotinas diárias de café.",
       support:
-        "Preço direto da fábrica, embalagem personalizada e suporte multilíngue para transformar consultas em pedidos.",
+        "Para atacadistas, programas de presentes e marcas próprias: selecione um modelo verificado, configure o conjunto e avance para a produção com um parceiro industrial especializado.",
       primaryCta: "Pedir orçamento",
       secondaryCta: "Falar no WhatsApp",
       tertiaryCta: "Baixar catálogo",
     },
-    signals: ["Direto da fábrica", "OEM / ODM", "Entrega rápida", "Conformidade europeia", "Embalagem personalizada", "Suporte multilíngue"],
+    signals: ["Direto da fábrica", "OEM / ODM", "Planejamento por projeto", "Conformidade europeia", "Embalagem personalizada", "Suporte multilíngue"],
     sectionTitles: {
       products: "Produtos em destaque",
       oem: "Programa OEM / ODM",
@@ -353,7 +353,7 @@ export const copy: Record<Lang, Copy> = {
       faq: "FAQ",
       contact: "Solicitar orçamento",
       about: "Sobre a TK Classic",
-      accessories: "Acessórios de café",
+      accessories: "Acessórios",
     },
     intro:
       "Feito para equipes de compras europeias que precisam de um fornecedor de café portátil com resposta rápida e flexibilidade de marca própria.",
@@ -381,7 +381,7 @@ export const copy: Record<Lang, Copy> = {
       "Declaração de conformidade UE e relatórios de exportação sob solicitação.",
     ],
     blogLead:
-      "Use este centro de conteúdo para ranquear palavras-chave de espresso portátil, dúvidas de marca própria e intenção de atacado na Europa.",
+      "Guias práticos baseados em dados de produto publicados, aprovações OEM, decisões de embalagem e documentos de conformidade específicos por modelo.",
     faq: [
       {
         q: "Como vocês planejam a quantidade do pedido?",
@@ -450,17 +450,17 @@ export const copy: Record<Lang, Copy> = {
       contact: "Contact",
     },
     hero: {
-      eyebrow: "Systèmes café portables en direct usine",
-      title: "Machines espresso portables conçues pour les marques propres.",
+      eyebrow: "Machines à café portables premium",
+      title: "Espresso portable. Partout avec vous.",
       lead:
-        "TK Classic fabrique des machines à café portables à batterie, des mousseurs, des chauffe-tasses et des accessoires pour les grossistes européens, les marques propres et les programmes OEM/ODM.",
+        "Des machines à café portables premium pensées pour le plein air, le voyage et les routines café du quotidien.",
       support:
-        "Prix usine, emballage personnalisé et support multilingue pour convertir les demandes en commandes.",
+        "Pour grossistes, programmes cadeaux et marques propres : choisissez un modèle vérifié, configurez l’ensemble et avancez vers la production avec un partenaire industriel spécialisé.",
       primaryCta: "Demander un devis",
       secondaryCta: "Discuter sur WhatsApp",
       tertiaryCta: "Télécharger le catalogue",
     },
-    signals: ["Direct usine", "OEM / ODM", "Livraison rapide", "Conformité européenne", "Emballage personnalisé", "Support multilingue"],
+    signals: ["Direct usine", "OEM / ODM", "Planification par projet", "Conformité européenne", "Emballage personnalisé", "Support multilingue"],
     sectionTitles: {
       products: "Produits phares",
       oem: "Programme OEM / ODM",
@@ -470,7 +470,7 @@ export const copy: Record<Lang, Copy> = {
       faq: "FAQ",
       contact: "Demander un devis",
       about: "À propos de TK Classic",
-      accessories: "Accessoires café",
+      accessories: "Accessoires",
     },
     intro:
       "Pensé pour les équipes achats européennes qui veulent un fournisseur de café portable réactif et flexible pour les marques propres.",
@@ -481,8 +481,8 @@ export const copy: Record<Lang, Copy> = {
     ],
     factory: [
       "Approvisionnement direct usine pour grossistes, marques propres et cadeaux d'entreprise.",
-      "OEM à partir de 500 unités avec logo et emballage personnalisés.",
-      "ODM à partir de 2 000 unités pour un développement différencié.",
+      "Les programmes OEM prennent en charge la personnalisation du logo et de l'emballage.",
+      "Les programmes ODM prennent en charge le développement différencié.",
       "Recharge Type-C, batteries lithium et format compact prêt pour le retail.",
     ],
     oem: [
@@ -498,7 +498,7 @@ export const copy: Record<Lang, Copy> = {
       "Déclaration UE de conformité et rapports d'export disponibles sur demande.",
     ],
     blogLead:
-      "Utilisez ce hub pour vous positionner sur les mots-clés machine espresso portable, marque propre et intention d'achat en Europe.",
+      "Guides pratiques fondés sur les données produit publiées, les validations OEM, les choix d'emballage et les documents de conformité propres à chaque modèle.",
     faq: [
       {
         q: "Comment planifiez-vous la quantité de commande ?",
@@ -567,17 +567,17 @@ export const copy: Record<Lang, Copy> = {
       contact: "اتصل بنا",
     },
     hero: {
-      eyebrow: "أنظمة قهوة محمولة مباشرة من المصنع",
-      title: "ماكينات إسبرسو محمولة مصممة للنمو مع العلامات الخاصة.",
+      eyebrow: "ماكينات قهوة محمولة فاخرة",
+      title: "إسبريسو محمول. أينما ذهبت.",
       lead:
-        "تصنع TK Classic ماكينات قهوة محمولة تعمل بالبطارية، ومخفقات حليب، وسخانات وملحقات للموزعين الأوروبيين والعلامات الخاصة وبرامج OEM/ODM.",
+        "ماكينات قهوة محمولة فاخرة مصممة للأنشطة الخارجية والسفر وروتين القهوة اليومي.",
       support:
-        "سعر مباشر من المصنع، تغليف مخصص، ودعم متعدد اللغات لتحويل الاستفسارات إلى طلبات.",
+        "للموزعين وبرامج الهدايا والعلامات الخاصة: اختر طرازاً موثقاً، وحدد الحزمة، ثم انتقل نحو الإنتاج مع شريك صناعي متخصص.",
       primaryCta: "طلب عرض سعر",
       secondaryCta: "تواصل عبر واتساب",
       tertiaryCta: "تحميل الكتالوج",
     },
-    signals: ["مباشر من المصنع", "OEM / ODM", "تسليم سريع", "مطابقة أوروبا", "تغليف مخصص", "دعم متعدد اللغات"],
+    signals: ["مباشر من المصنع", "OEM / ODM", "تخطيط حسب المشروع", "مطابقة أوروبا", "تغليف مخصص", "دعم متعدد اللغات"],
     sectionTitles: {
       products: "المنتجات المميزة",
       oem: "برنامج OEM / ODM",
@@ -587,7 +587,7 @@ export const copy: Record<Lang, Copy> = {
       faq: "الأسئلة الشائعة",
       contact: "ابدأ عرض السعر",
       about: "عن TK Classic",
-      accessories: "ملحقات القهوة",
+      accessories: "ملحقات",
     },
     intro:
       "مناسب لفرق الشراء الأوروبية التي تحتاج مورداً للقهوة المحمولة بسرعة استجابة عالية ومرونة في العلامة الخاصة.",
@@ -615,11 +615,11 @@ export const copy: Record<Lang, Copy> = {
       "إقرار المطابقة الأوروبي وتقارير التصدير متاحة عند الطلب.",
     ],
     blogLead:
-      "استخدم هذا المركز للظهور في كلمات مثل ماكينة إسبرسو محمولة، العلامة الخاصة، وطلبات الجملة في أوروبا.",
+      "أدلة شراء عملية مبنية على بيانات المنتجات المنشورة وخطوات اعتماد OEM وقرارات التغليف ووثائق المطابقة الخاصة بكل طراز.",
     faq: [
       {
-        q: "ما هو الحد الأدنى للطلب؟",
-        a: "يبدأ OEM من 500 قطعة ويبدأ ODM من 2000 قطعة. ويمكن تخطيط التغليف وفق الكمية المستهدفة.",
+        q: "كيف يتم تحديد كمية الطلب؟",
+        a: "نؤكد الكمية المناسبة وشكل التغليف بعد مراجعة الطراز والسوق ومتطلبات العلامة التجارية.",
       },
       {
         q: "هل تدعمون الشعار والتغليف المخصص؟",
@@ -684,16 +684,16 @@ export const copy: Record<Lang, Copy> = {
       contact: "联系我们",
     },
     hero: {
-      eyebrow: "工厂直供便携咖啡系统",
-      title: "为私牌增长而设计的便携式意式咖啡机。",
+      eyebrow: "高端便携咖啡机",
+      title: "便携意式咖啡，随行随享。",
       lead:
-        "TK Classic 专注于便携式咖啡机、打奶器、保温器和配件，服务欧洲批发商、私牌品牌和 OEM/ODM 项目。",
-      support: "工厂直供、定制包装和多语言支持，专门为询盘转化而设计。",
+        "专为户外、旅行和日常咖啡场景设计的高端便携咖啡机。",
+      support: "面向批发商、礼品采购和私牌品牌：选择已核实型号、组合配套，并由同一个专业工厂伙伴协同推进生产。",
       primaryCta: "获取报价",
       secondaryCta: "WhatsApp 咨询",
       tertiaryCta: "下载画册",
     },
-    signals: ["工厂直供", "OEM / ODM", "快速交付", "欧洲合规", "定制包装", "多语言支持"],
+    signals: ["工厂直供", "OEM / ODM", "按项目规划订单", "欧洲合规", "定制包装", "多语言支持"],
     sectionTitles: {
       products: "主推产品",
       oem: "OEM / ODM 方案",
@@ -703,7 +703,7 @@ export const copy: Record<Lang, Copy> = {
       faq: "常见问题",
       contact: "开始询盘",
       about: "关于 TK Classic",
-      accessories: "咖啡周边配件",
+      accessories: "咖啡配件",
     },
     intro:
       "面向欧洲采购团队，提供响应快、产品深、支持私牌定制的便携咖啡供应能力。",
@@ -731,7 +731,7 @@ export const copy: Record<Lang, Copy> = {
       "EU DoC 及出口相关资料可按需提供。",
     ],
     blogLead:
-      "这个内容站用于覆盖便携式咖啡机关键词、私牌采购问题和欧洲批发意图。",
+      "基于已发布产品参数、OEM 审批节点、包装决策和型号对应合规资料编写的实用采购指南。",
     faq: [
       {
         q: "订单数量如何规划？",
@@ -800,17 +800,17 @@ export const copy: Record<Lang, Copy> = {
       contact: "Контакты",
     },
     hero: {
-      eyebrow: "Портативные кофейные системы напрямую с фабрики",
-      title: "Портативные эспрессо-машины для роста private label брендов.",
+      eyebrow: "Премиальные портативные кофемашины",
+      title: "Портативный эспрессо. Куда бы вы ни отправились.",
       lead:
-        "TK Classic производит портативные кофемашины на аккумуляторе, капучинаторы, подогреватели и аксессуары для европейских оптовиков, private label и OEM/ODM проектов.",
+        "Премиальные портативные кофемашины для отдыха на природе, путешествий и ежедневных кофейных привычек.",
       support:
-        "Прямые фабричные цены, индивидуальная упаковка и многоязычная поддержка для запросов на поставку.",
+        "Для оптовиков, подарочных программ и private label: выберите проверенную модель, настройте комплект и переходите к производству с одним специализированным партнёром.",
       primaryCta: "Запросить цену",
       secondaryCta: "Связаться в WhatsApp",
       tertiaryCta: "Скачать каталог",
     },
-    signals: ["Фабричная цена", "OEM / ODM", "Быстрая поставка", "Соответствие Европе", "Индивидуальная упаковка", "Многоязычная поддержка"],
+    signals: ["Фабричная цена", "OEM / ODM", "Планирование по проекту", "Соответствие Европе", "Индивидуальная упаковка", "Многоязычная поддержка"],
     sectionTitles: {
       products: "Популярные продукты",
       oem: "Программа OEM / ODM",
@@ -820,7 +820,7 @@ export const copy: Record<Lang, Copy> = {
       faq: "FAQ",
       contact: "Получить предложение",
       about: "О TK Classic",
-      accessories: "Кофейные аксессуары",
+      accessories: "Аксессуары",
     },
     intro:
       "Для европейских закупщиков, которым нужен поставщик портативного кофе с быстрым откликом и гибкостью private label.",
@@ -848,7 +848,7 @@ export const copy: Record<Lang, Copy> = {
       "EU Declaration of Conformity и экспортные отчёты доступны по запросу.",
     ],
     blogLead:
-      "Контент-центр для ключей portable espresso machine, private label и оптового спроса по Европе.",
+      "Практические руководства по закупке на основе опубликованных данных о продукции, этапов согласования OEM, решений по упаковке и документов соответствия для конкретных моделей.",
     faq: [
       {
         q: "Как планируется объём заказа?",
@@ -903,7 +903,7 @@ export const copy: Record<Lang, Copy> = {
   },
 };
 
-type Product = {
+export type Product = {
   slug: string;
   model: string;
   summary: Record<Lang, string>;
@@ -927,13 +927,13 @@ export const products: Product[] = [
     slug: "dq-001",
     model: "DQ-001",
     summary: {
-      en: "25 bar portable espresso maker with capsule, ground coffee and Dolce Gusto adapters.",
-      es: "Cafetera espresso portátil de 25 bar con adaptadores para cápsulas, café molido y Dolce Gusto.",
-      pt: "Máquina espresso portátil de 25 bar com adaptadores para cápsulas, café moído e Dolce Gusto.",
-      fr: "Machine espresso portable 25 bars avec adaptateurs pour capsules, café moulu et Dolce Gusto.",
-      ar: "ماكينة إسبريسو محمولة بضغط 25 بار مع محولات للكبسولات والقهوة المطحونة وDolce Gusto.",
-      zh: "25 巴便携式意式咖啡机，支持胶囊、咖啡粉和 Dolce Gusto 转接器。",
-      ru: "Портативная эспрессо-машина на 25 бар с адаптерами для капсул, молотого кофе и Dolce Gusto.",
+      en: "25 bar BrewHandy portable espresso machine with capsule and ground-coffee adapters.",
+      es: "Cafetera espresso portátil BrewHandy de 25 bar con adaptadores para cápsulas y café molido.",
+      pt: "Máquina espresso portátil BrewHandy de 25 bar com adaptadores para cápsulas e café moído.",
+      fr: "Machine espresso portable BrewHandy 25 bars avec adaptateurs pour capsules et café moulu.",
+      ar: "ماكينة إسبريسو محمولة BrewHandy بضغط 25 بار مع محولين للكبسولات والقهوة المطحونة.",
+      zh: "BrewHandy 25 巴便携式意式咖啡机，配有胶囊和咖啡粉适配器。",
+      ru: "Портативная эспрессо-машина BrewHandy на 25 бар с адаптерами для капсул и молотого кофе.",
     },
     hero: "/optimized/hero-products/dq-001.webp",
     gallery: [
@@ -943,19 +943,18 @@ export const products: Product[] = [
       "/products/dq-001/detail.png",
     ],
     featureLabel: "Portable flagship",
-    price: { regular: 39, sale: 23, currency: "USD" },
+    price: { regular: 39, sale: 25, currency: "USD" },
     spec: {
       model: "DQ-001",
-      cup: "250 mL",
-      capacity: "50-100 mL water tank",
+      cup: "300 mL",
+      capacity: "60-80 mL water tank",
       pressure: "25 bar",
-      battery: "9600mAh / 7800mAh",
-      material: "ABS + PP + stainless steel",
-      charging: "4.5 hours, Type-C",
-      heat: "3.5-4 minutes",
-      size: "7.6 × 7.6 × 27 cm",
-      life: "4 heated cups / 500+ direct extraction cups",
-      adapter: "Nespresso, ground coffee, Dolce Gusto",
+      battery: "9600mAh / 30Wh",
+      material: "ABS + PP + PS",
+      charging: "About 180 minutes, USB Type-C",
+      heat: "Cold-water cycle heats to 96°C",
+      size: "77 × 77 × 268 mm",
+      adapter: "Capsule adapter + ground-coffee adapter",
     },
     highlight: [
       "Best for private label retail launches",
@@ -987,7 +986,7 @@ export const products: Product[] = [
       "/products/dq-002/oem.jpg",
     ],
     featureLabel: "Wholesale hero",
-    price: { regular: 44, sale: 24, currency: "USD" },
+    price: { regular: 44, sale: 26, currency: "USD" },
     spec: {
       model: "DQ-002",
       cup: "Single-cup portable format",
@@ -1012,13 +1011,13 @@ export const products: Product[] = [
     slug: "dq-005",
     model: "DQ-005",
     summary: {
-      en: "Fast-charge portable espresso maker tuned for higher-speed retail and gifting programs.",
-      es: "Cafetera espresso portátil con carga rápida pensada para retail y programas de regalo.",
-      pt: "Máquina espresso portátil com carregamento rápido pensada para varejo e brindes.",
-      fr: "Machine espresso portable à charge rapide pensée pour le retail et les cadeaux.",
-      ar: "ماكينة إسبريسو محمولة بشحن سريع موجهة للتجزئة وبرامج الهدايا.",
-      zh: "快速充电型便携式意式咖啡机，适合零售和礼品项目。",
-      ru: "Портативная эспрессо-машина с быстрой зарядкой для retail и подарочных программ.",
+      en: "25 bar portable coffee machine for N-series capsules, Dolce Gusto capsules and ground coffee.",
+      es: "Cafetera portátil de 25 bar para cápsulas N-series, cápsulas Dolce Gusto y café molido.",
+      pt: "Máquina de café portátil de 25 bar para cápsulas N-series, cápsulas Dolce Gusto e café moído.",
+      fr: "Machine à café portable 25 bars pour capsules N-series, capsules Dolce Gusto et café moulu.",
+      ar: "ماكينة قهوة محمولة بضغط 25 بار لكبسولات N-series وDolce Gusto والقهوة المطحونة.",
+      zh: "25 巴便携式咖啡机，支持 N-series 胶囊、Dolce Gusto 胶囊和咖啡粉。",
+      ru: "Портативная кофемашина на 25 бар для капсул N-series, Dolce Gusto и молотого кофе.",
     },
     hero: "/optimized/hero-products/dq-005.webp",
     gallery: [
@@ -1028,25 +1027,24 @@ export const products: Product[] = [
       "/products/dq-005/black.jpg",
       "/products/dq-005/white.jpg",
     ],
-    featureLabel: "Fast-charge model",
-    price: { regular: 48, sale: 27, currency: "USD" },
+    featureLabel: "Multi-format model",
+    price: { regular: 48, sale: 29, currency: "USD" },
     spec: {
       model: "DQ-005",
-      cup: "250 mL",
+      cup: "300 mL",
       capacity: "50-100 mL water tank",
       pressure: "25 bar",
       battery: "9600mAh",
       material: "ABS + PP + stainless steel",
-      charging: "2 hours, Type-C",
-      heat: "3-4 minutes",
-      size: "8.5 × 8.5 × 26 cm",
-      life: "5 heated cups / 500+ direct extraction cups",
-      adapter: "Nespresso pod adapter, ground coffee chamber",
+      charging: "About 4 hours, 5V / 3A",
+      heat: "Cold-water cycle heats to 96°C",
+      size: "77 × 77 × 268 mm",
+      adapter: "N-series + Dolce Gusto + ground coffee",
     },
     highlight: [
       "Balanced size for shelf and gift-box programs",
       "Black and white versions in stock",
-      "Fast charging supports short lead times",
+      "Three coffee formats documented in the revised manual",
     ],
     useCases: ["Retail shelf", "Gift box", "Travel use", "Private label"],
   },
@@ -1070,7 +1068,7 @@ export const products: Product[] = [
       "/products/dq-008/hero.jpg",
     ],
     featureLabel: "Double-cup design",
-    price: { regular: 48, sale: 27, currency: "USD" },
+    price: { regular: 48, sale: 29, currency: "USD" },
     spec: {
       model: "DQ-008",
       cup: "250 mL per cup, double-cup design",
@@ -1095,13 +1093,13 @@ export const products: Product[] = [
     slug: "dq-010",
     model: "DQ-010",
     summary: {
-      en: "325 mL portable machine with American drip adapter and longer cup capacity.",
-      es: "Máquina portátil de 325 mL con adaptador para café americano y mayor capacidad.",
-      pt: "Máquina portátil de 325 mL com adaptador para drip americano e maior capacidade.",
-      fr: "Machine portable 325 mL avec adaptateur café américain et capacité de tasse plus grande.",
-      ar: "ماكينة محمولة بسعة 325 مل مع محول للقهوة الأمريكية وسعة كوب أكبر.",
-      zh: "325mL 便携机型，带美式滴滤转接器和更大的杯量。",
-      ru: "Портативная модель на 325 мл с адаптером для американского drip и увеличенной ёмкостью.",
+      en: "Premium LCD portable coffee maker with a 325 mL cup for N-series capsules, Dolce Gusto capsules, ground coffee and the documented portable drip-cup format.",
+      es: "Cafetera portátil premium con pantalla LCD y taza de 325 mL para cápsulas N-series, Dolce Gusto, café molido y el formato de goteo portátil documentado.",
+      pt: "Cafeteira portátil premium com tela LCD e copo de 325 mL para cápsulas N-series, Dolce Gusto, café moído e o formato de gotejamento portátil documentado.",
+      fr: "Cafetière portable premium avec écran LCD et tasse de 325 mL pour capsules N-series, Dolce Gusto, café moulu et format filtre portable documenté.",
+      ar: "ماكينة قهوة محمولة فاخرة بشاشة LCD وكوب سعة 325 مل لكبسولات N-series وDolce Gusto والقهوة المطحونة وطريقة التقطير المحمولة الموثقة.",
+      zh: "高端 LCD 便携式咖啡机，配备 325mL 杯，支持 N-series 胶囊、Dolce Gusto 胶囊、咖啡粉及说明书列明的便携滴滤杯模式。",
+      ru: "Премиальная портативная кофемашина с LCD-дисплеем и чашкой 325 мл для капсул N-series, Dolce Gusto, молотого кофе и документированного портативного фильтр-формата.",
     },
     hero: "/optimized/hero-products/dq-010.webp",
     gallery: [
@@ -1111,25 +1109,23 @@ export const products: Product[] = [
       "/products/dq-010/hero.jpg",
       "/products/dq-010/white.jpg",
     ],
-    featureLabel: "Higher-capacity format",
-    price: { regular: 79, sale: 34, currency: "USD" },
+    featureLabel: "Premium LCD multi-format model",
+    price: { regular: 79, sale: 36, currency: "USD" },
     spec: {
       model: "DQ-010",
       cup: "325 mL",
-      capacity: "50-100 mL water tank",
+      capacity: "100 mL maximum water tank",
       pressure: "25 bar",
       battery: "9600mAh",
-      material: "ABS + PP + stainless steel",
-      charging: "2 hours, Type-C",
-      heat: "3-3.5 minutes",
-      size: "8 × 8 × 25 cm",
-      life: "5 heated cups / 500+ direct extraction cups",
-      adapter: "Nespresso pod adapter, American drip chamber + connector",
+      charging: "About 2 hours, USB Type-C",
+      heat: "About 3 min 30 sec heating; 46 sec extraction",
+      size: "85 × 85 × 280 mm",
+      adapter: "N-series + Dolce Gusto + ground coffee; portable drip cup documented",
     },
     highlight: [
-      "Best for value-led private label lines",
+      "Designed for premium private label and retail programs",
       "Good fit for office and travel coffee routines",
-      "American drip accessory broadens the use case",
+      "LCD shows temperature, battery level and extraction mode",
     ],
     useCases: ["Office coffee", "Travel", "Private label", "Retail bundle"],
   },
@@ -1154,7 +1150,7 @@ export const products: Product[] = [
       "/products/dq-011/detail.jpg",
     ],
     featureLabel: "Premium gifting format",
-    price: { regular: 70, sale: 32, currency: "USD" },
+    price: { regular: 70, sale: 34, currency: "USD" },
     spec: {
       model: "DQ-011",
       cup: "285 mL",

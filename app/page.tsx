@@ -1,23 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { brandTagline } from "@/lib/translation-copy";
 import {
+  Award,
   BadgeCheck,
-  Box,
-  Building2,
-  Calculator,
   ChevronRight,
-  Factory,
-  FileDown,
-  FileText,
+  Coffee,
+  Droplets,
+  FileCheck2,
+  Leaf,
   Mail,
   MessageCircle,
-  PackageCheck,
+  PlayCircle,
+  Radio,
   ShieldCheck,
-  Sparkles,
-  SlidersHorizontal,
+  UtensilsCrossed,
+  Wrench,
 } from "lucide-react";
-import { InquiryForm } from "@/components/InquiryForm";
 import {
   HeroActionsMotion,
   HeroCopyMotion,
@@ -25,7 +25,6 @@ import {
   HeroTitleMotion,
   HeroVisualMotion,
   MotionCta,
-  RevealArticle,
   RevealSection,
 } from "@/components/MotionPrimitives";
 import {
@@ -37,20 +36,27 @@ import {
   type Lang,
 } from "@/lib/site-data";
 import { SiteFooter } from "@/components/SiteFooter";
-import { homeUxCopy, localizeFeatureLabel, uiCopy } from "@/lib/localized-ui";
+import { localizeFeatureLabel, uiCopy } from "@/lib/localized-ui";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ProductPriceTag } from "@/components/ProductPriceTag";
-import { bundleCopy } from "@/lib/bundle-data";
-import { CoffeeRitualStage } from "@/components/CoffeeRitualStage";
 import { ProductVideoShowcase, type ProductVideo } from "@/components/ProductVideoShowcase";
 import { MobileStickyCta } from "@/components/MobileStickyCta";
 import { languageAlternates, localizedUrl } from "@/lib/seo";
-import { phoneHref, whatsappHref } from "@/lib/contact";
+import { whatsappHref } from "@/lib/contact";
+import {
+  certificationCtaCopy,
+  certificationPreviewCopy,
+  certificationRequestCopy,
+} from "@/lib/certification-copy";
+import { getPublishedHomepageSections } from "@/lib/cms-content";
+import { getProductGeo } from "@/lib/product-geo";
+import { CoffeeAtmosphere } from "@/components/CoffeeAtmosphere";
+import { PrimaryNav } from "@/components/PrimaryNav";
+import { FeaturedBuyerGuides } from "@/components/FeaturedBuyerGuides";
 
 // The homepage only assembles static catalog content. Serving it from the
 // Edge runtime keeps cold starts short for buyers visiting from Europe and
 // other regions, while the inquiry/admin API routes remain on Node.js.
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 type HomeProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -64,6 +70,16 @@ function getLang(value: string | string[] | undefined): Lang {
 function langQuery(lang: Lang) {
   return lang === "en" ? "" : `?lang=${lang}`;
 }
+
+const certificationIcons = [
+  Leaf,
+  Radio,
+  ShieldCheck,
+  UtensilsCrossed,
+  BadgeCheck,
+  Award,
+  FileCheck2,
+] as const;
 
 export async function generateMetadata({ searchParams }: HomeProps): Promise<Metadata> {
   const params = await searchParams;
@@ -102,12 +118,10 @@ export async function generateMetadata({ searchParams }: HomeProps): Promise<Met
 }
 
 export default async function Home({ searchParams }: HomeProps) {
-  const params = await searchParams;
+  const [params, managedSections] = await Promise.all([searchParams, getPublishedHomepageSections()]);
   const lang = getLang(params?.lang);
   const t = copy[lang];
   const ui = uiCopy[lang];
-  const homeUx = homeUxCopy[lang];
-  const bundles = bundleCopy[lang];
   const dir = languages.find((item) => item.code === lang)?.dir ?? "ltr";
   const productLine = products.filter((item) =>
     ["DQ-001", "DQ-002", "DQ-005", "DQ-008", "DQ-010", "DQ-011"].includes(item.model),
@@ -169,6 +183,82 @@ export default async function Home({ searchParams }: HomeProps) {
       mute: "Выключить звук",
       unmute: "Включить звук",
     },
+  }[lang];
+  const launchPath = {
+    en: {
+      eyebrow: "The private-label launch system",
+      title: "From verified model to market-ready brand.",
+      steps: [
+        ["Select", "Choose a real model and confirmed specification."],
+        ["Configure", "Add compatible accessories and a retail bundle."],
+        ["Brand", "Align logo, colour and packaging requirements."],
+        ["Launch", "Confirm samples, documents and production details."],
+      ],
+      allModels: "Explore all six models",
+    },
+    es: {
+      eyebrow: "Sistema de lanzamiento de marca propia",
+      title: "Del modelo verificado a una marca lista para el mercado.",
+      steps: [["Seleccionar", "Elija un modelo real y especificaciones confirmadas."], ["Configurar", "Añada accesorios compatibles y un conjunto retail."], ["Personalizar", "Defina logo, color y requisitos de embalaje."], ["Lanzar", "Confirme muestras, documentos y detalles de producción."]],
+      allModels: "Ver los seis modelos",
+    },
+    pt: {
+      eyebrow: "Sistema de lançamento de marca própria",
+      title: "Do modelo verificado à marca pronta para o mercado.",
+      steps: [["Selecionar", "Escolha um modelo real e especificações confirmadas."], ["Configurar", "Adicione acessórios compatíveis e um conjunto de varejo."], ["Personalizar", "Alinhe logotipo, cor e requisitos de embalagem."], ["Lançar", "Confirme amostras, documentos e detalhes de produção."]],
+      allModels: "Ver os seis modelos",
+    },
+    fr: {
+      eyebrow: "Système de lancement de marque propre",
+      title: "Du modèle vérifié à une marque prête pour le marché.",
+      steps: [["Sélectionner", "Choisissez un modèle réel et des spécifications confirmées."], ["Configurer", "Ajoutez les accessoires compatibles et un ensemble retail."], ["Personnaliser", "Alignez logo, couleur et exigences d’emballage."], ["Lancer", "Confirmez échantillons, documents et détails de production."]],
+      allModels: "Voir les six modèles",
+    },
+    ar: {
+      eyebrow: "نظام إطلاق العلامة الخاصة",
+      title: "من طراز موثق إلى علامة جاهزة للسوق.",
+      steps: [["الاختيار", "اختر طرازاً حقيقياً ومواصفات مؤكدة."], ["التكوين", "أضف الملحقات المتوافقة وحزمة البيع."], ["العلامة", "حدّد متطلبات الشعار واللون والتغليف."], ["الإطلاق", "أكّد العينات والوثائق وتفاصيل الإنتاج."]],
+      allModels: "استكشف الطرازات الستة",
+    },
+    zh: {
+      eyebrow: "私牌产品上市系统",
+      title: "从真实型号到可投放市场的品牌产品。",
+      steps: [["选型", "选择真实型号并确认已有参数。"], ["选配", "组合兼容配件与零售套装。"], ["品牌化", "确认 Logo、颜色与包装需求。"], ["落地", "核对样品、资料与生产细节。"]],
+      allModels: "查看全部六个型号",
+    },
+    ru: {
+      eyebrow: "Система запуска private label",
+      title: "От проверенной модели до готового к рынку бренда.",
+      steps: [["Выбор", "Выберите реальную модель и подтверждённые характеристики."], ["Комплектация", "Добавьте совместимые аксессуары и розничный комплект."], ["Брендинг", "Согласуйте логотип, цвет и требования к упаковке."], ["Запуск", "Подтвердите образцы, документы и детали производства."]],
+      allModels: "Посмотреть все шесть моделей",
+    },
+  }[lang];
+  const homeHeroCtas = {
+    en: { products: "Explore Products", factory: "Contact Factory", video: "Watch product video" },
+    es: { products: "Explorar productos", factory: "Contactar con fábrica", video: "Ver vídeo del producto" },
+    pt: { products: "Explorar produtos", factory: "Falar com a fábrica", video: "Ver vídeo do produto" },
+    fr: { products: "Explorer les produits", factory: "Contacter l’usine", video: "Voir la vidéo produit" },
+    ar: { products: "استكشف المنتجات", factory: "تواصل مع المصنع", video: "شاهد فيديو المنتج" },
+    zh: { products: "探索产品", factory: "联系工厂", video: "观看产品视频" },
+    ru: { products: "Смотреть продукты", factory: "Связаться с фабрикой", video: "Смотреть видео" },
+  }[lang];
+  const campaign = {
+    en: { title: "Portable Espresso. Anywhere You Go.", lead: "Portable coffee machines for outdoor, travel and private-label programs.", products: "Six models. One portable range.", productLead: "Choose a model, then explore its verified details.", certs: "Compliance, shown simply.", certLead: "Available documents are confirmed by model and destination market.", contact: "Build your next coffee product." },
+    es: { title: "Espresso portátil. Dondequiera que vaya.", lead: "Cafeteras portátiles para exterior, viajes y proyectos de marca propia.", products: "Seis modelos. Una gama portátil.", productLead: "Elija un modelo y consulte sus datos verificados.", certs: "Cumplimiento, de forma clara.", certLead: "Los documentos disponibles se confirman según el modelo y el mercado.", contact: "Cree su próximo producto de café." },
+    pt: { title: "Espresso portátil. Onde quer que você vá.", lead: "Cafeteiras portáteis para uso outdoor, viagens e marca própria.", products: "Seis modelos. Uma linha portátil.", productLead: "Escolha um modelo e veja seus dados verificados.", certs: "Conformidade, sem complicação.", certLead: "Os documentos disponíveis são confirmados por modelo e mercado.", contact: "Crie seu próximo produto de café." },
+    fr: { title: "Espresso portable. Partout avec vous.", lead: "Machines à café portables pour l’outdoor, le voyage et la marque propre.", products: "Six modèles. Une gamme portable.", productLead: "Choisissez un modèle et consultez ses données vérifiées.", certs: "La conformité, en toute clarté.", certLead: "Les documents disponibles sont confirmés selon le modèle et le marché.", contact: "Créez votre prochain produit café." },
+    ar: { title: "إسبريسو محمول. أينما ذهبت.", lead: "ماكينات قهوة محمولة للأنشطة الخارجية والسفر وبرامج العلامة الخاصة.", products: "ستة طرازات. مجموعة محمولة واحدة.", productLead: "اختر الطراز ثم راجع بياناته الموثقة.", certs: "امتثال واضح وبسيط.", certLead: "تُؤكد الوثائق المتاحة حسب الطراز والسوق المستهدف.", contact: "ابدأ منتج القهوة القادم." },
+    zh: { title: "便携意式咖啡，随时随地。", lead: "面向户外、旅行与私牌项目的便携式咖啡机。", products: "六个型号，一套便携产品线。", productLead: "选择型号，查看已经核实的产品资料。", certs: "认证支持，清晰呈现。", certLead: "可提供的资料根据型号和目标市场确认。", contact: "打造您的下一款咖啡产品。" },
+    ru: { title: "Портативный эспрессо. Где бы вы ни были.", lead: "Портативные кофемашины для активного отдыха, поездок и private label.", products: "Шесть моделей. Одна портативная линейка.", productLead: "Выберите модель и изучите проверенные данные.", certs: "Соответствие без лишней сложности.", certLead: "Доступные документы подтверждаются по модели и рынку.", contact: "Создайте свой следующий кофейный продукт." },
+  }[lang];
+  const heroTech = {
+    en: { series: "Product Series", model: "Flagship model", lcd: "LCD control", formats: "4 coffee formats", extraction: "Hot & cold extraction", oem: "OEM / ODM ready", viewAll: "View all models" },
+    es: { series: "Serie de productos", model: "Modelo principal", lcd: "Control LCD", formats: "4 formatos de café", extraction: "Extracción fría y caliente", oem: "Listo para OEM / ODM", viewAll: "Ver todos los modelos" },
+    pt: { series: "Linha de produtos", model: "Modelo principal", lcd: "Controle LCD", formats: "4 formatos de café", extraction: "Extração quente e fria", oem: "Pronto para OEM / ODM", viewAll: "Ver todos os modelos" },
+    fr: { series: "Gamme de produits", model: "Modèle phare", lcd: "Commande LCD", formats: "4 formats de café", extraction: "Extraction chaude et froide", oem: "Prêt pour OEM / ODM", viewAll: "Voir tous les modèles" },
+    ar: { series: "سلسلة المنتجات", model: "الطراز الرئيسي", lcd: "تحكم LCD", formats: "4 أنظمة قهوة", extraction: "استخلاص ساخن وبارد", oem: "جاهز لـ OEM / ODM", viewAll: "عرض جميع الطرازات" },
+    zh: { series: "产品系列", model: "旗舰型号", lcd: "LCD 智能控制", formats: "兼容四种咖啡", extraction: "冷热双萃模式", oem: "支持 OEM / ODM", viewAll: "查看全部型号" },
+    ru: { series: "Линейка продуктов", model: "Флагманская модель", lcd: "LCD-управление", formats: "4 формата кофе", extraction: "Горячая и холодная экстракция", oem: "Готово для OEM / ODM", viewAll: "Все модели" },
   }[lang];
   const videoStoryCopy = {
     en: {
@@ -361,21 +451,6 @@ export default async function Home({ searchParams }: HomeProps) {
       },
     },
   }[lang];
-  const heroScenes = productLine.map((product) => ({
-    model: product.model,
-    title: product.summary[lang],
-    summary: `${localizeFeatureLabel(product.featureLabel, lang)} / ${product.spec.pressure} / ${product.spec.cup}`,
-    label: localizeFeatureLabel(product.featureLabel, lang),
-    src: `/optimized/hero-products/${product.model.toLowerCase()}.webp`,
-    href: `/products/${product.slug}${langQuery(lang)}`,
-    fit: "contain" as const,
-    stats: [
-      { label: t.labels.pressure, value: product.spec.pressure },
-      { label: t.labels.battery, value: product.spec.battery },
-      { label: t.labels.cup, value: product.spec.cup },
-    ],
-    alt: `${product.model} portable coffee machine`,
-  }));
   const extractionVideo: ProductVideo = {
     src: "/videos/dq-010-extraction-animation.mp4",
     webmSrc: "/videos/dq-010-extraction-animation.webm",
@@ -386,25 +461,6 @@ export default async function Home({ searchParams }: HomeProps) {
     summary: videoStoryCopy.extraction.lead,
     steps: videoStoryCopy.extraction.steps.map(([title, description]) => ({ title, description })),
     layout: "media-left",
-  };
-  const operationVideo: ProductVideo = {
-    src: "/videos/dq-010-real-operation.mp4",
-    webmSrc: "/videos/dq-010-real-operation.webm",
-    poster: "/optimized/video-posters/dq-010-real-operation.webp",
-    posterAlt: videoStoryCopy.operation.posterAlt,
-    label: videoStoryCopy.operation.eyebrow,
-    title: videoStoryCopy.operation.title,
-    summary: videoStoryCopy.operation.lead,
-    steps: videoStoryCopy.operation.steps.map(([title, description]) => ({ title, description })),
-    primaryCta: {
-      href: `/products/dq-010${langQuery(lang)}`,
-      label: videoStoryCopy.operation.viewProducts,
-    },
-    secondaryCta: {
-      href: "#contact",
-      label: videoStoryCopy.operation.getQuote,
-    },
-    layout: "media-right",
   };
   const structuredData = [
     {
@@ -422,7 +478,7 @@ export default async function Home({ searchParams }: HomeProps) {
         "Private label coffee equipment",
         "Coffee machine accessories and retail bundles",
       ],
-      areaServed: ["European wholesalers", "Cross-border ecommerce brands", "Gift procurement buyers"],
+      areaServed: ["United States", "Europe", "Middle East", "Global wholesale and private label buyers"],
       address: {
         "@type": "PostalAddress",
         streetAddress: company.address,
@@ -476,23 +532,14 @@ export default async function Home({ searchParams }: HomeProps) {
       description: extractionVideo.summary,
       thumbnailUrl: `${company.siteUrl}${extractionVideo.poster}`,
       contentUrl: `${company.siteUrl}${extractionVideo.src}`,
+      uploadDate: "2026-07-30T16:46:36+08:00",
       duration: "PT59S",
-      inLanguage: lang,
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "VideoObject",
-      name: operationVideo.title,
-      description: operationVideo.summary,
-      thumbnailUrl: `${company.siteUrl}${operationVideo.poster}`,
-      contentUrl: `${company.siteUrl}${operationVideo.src}`,
-      duration: "PT45S",
       inLanguage: lang,
     },
   ];
 
   return (
-    <main className="home-shell" dir={dir} lang={lang}>
+    <main className="home-shell editorial-home cinematic-preview tech-stage-home" dir={dir} lang={lang}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -510,108 +557,115 @@ export default async function Home({ searchParams }: HomeProps) {
           <span className="brand-mark">TK</span>
           <span>
             <strong>TK Classic</strong>
-            <small>Portable coffee OEM</small>
+            <small>{brandTagline[lang]}</small>
           </span>
         </Link>
-        <nav aria-label="Main navigation">
-          <Link href={`/products${langQuery(lang)}`}>{t.nav.products}</Link>
-          <Link href={`/bundles${langQuery(lang)}`}>{bundles.navLabel}</Link>
-          <Link href={`/accessories${langQuery(lang)}`}>{t.sectionTitles.accessories}</Link>
-          <Link href={`/oem-odm${langQuery(lang)}`}>{t.nav.oem}</Link>
-          <Link href={`/factory${langQuery(lang)}`}>{t.nav.factory}</Link>
-          <Link href={`/contact${langQuery(lang)}`}>{t.nav.contact}</Link>
-        </nav>
+        <PrimaryNav lang={lang} current="home" />
         <LanguageSwitcher
           currentLang={lang}
           hrefForLang={(language) => (language === "en" ? "/" : `/?lang=${language}`)}
         />
       </header>
 
-      <nav className="section-float-nav" aria-label="Quick section navigation">
-        <Link href={`/products${langQuery(lang)}`}>{t.nav.products}</Link>
-        <Link href={`/bundles${langQuery(lang)}`}>{bundles.navLabel}</Link>
-        <Link href={`/accessories${langQuery(lang)}`}>{t.sectionTitles.accessories}</Link>
-        <Link href={`/oem-odm${langQuery(lang)}`}>{t.nav.oem}</Link>
-        <Link href={`/factory${langQuery(lang)}`}>{t.nav.factory}</Link>
-        <Link href={`/contact${langQuery(lang)}`}>{t.nav.contact}</Link>
-      </nav>
-
       <section id="home" className="hero-section dark-hero">
+        <div className="hero-coffee-orbit" aria-hidden="true">
+          <span className="hero-coffee-ring" />
+          <span className="hero-coffee-bean bean-one" />
+          <span className="hero-coffee-bean bean-two" />
+        </div>
+        <div className="tech-coffee-current" aria-hidden="true">
+          <svg viewBox="0 0 900 190" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="coffee-current-gradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stopColor="#5a2b16" stopOpacity="0" />
+                <stop offset="0.28" stopColor="#9f5630" stopOpacity="0.78" />
+                <stop offset="0.62" stopColor="#d08b54" stopOpacity="0.88" />
+                <stop offset="1" stopColor="#6f381f" stopOpacity="0" />
+              </linearGradient>
+              <filter id="coffee-current-glow" x="-20%" y="-50%" width="140%" height="200%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+            </defs>
+            <path d="M-40 116 C165 190 286 54 486 116 C650 168 760 59 950 105 L950 136 C760 92 648 196 480 146 C294 92 170 210 -40 145 Z" fill="url(#coffee-current-gradient)" opacity="0.2" filter="url(#coffee-current-glow)" />
+            <path d="M-30 122 C170 190 285 60 480 122 C640 171 740 65 940 114" fill="none" stroke="url(#coffee-current-gradient)" strokeWidth="3" filter="url(#coffee-current-glow)" />
+            <path d="M-20 138 C172 192 308 84 482 139 C635 187 770 91 930 130" fill="none" stroke="url(#coffee-current-gradient)" strokeWidth="1.2" opacity="0.58" />
+          </svg>
+          <span className="coffee-current-particles" />
+        </div>
         <HeroCopyMotion className="hero-copy hero-heading">
-          <p className="eyebrow hero-eyebrow">
-            <Sparkles size={17} aria-hidden="true" />
-            {t.hero.eyebrow}
-          </p>
-          <HeroTitleMotion className="hero-title">{t.hero.title}</HeroTitleMotion>
+          <p className="tech-model-kicker"><span>DQ-010</span>{heroTech.model}</p>
+          <HeroTitleMotion className="hero-title">{campaign.title}</HeroTitleMotion>
         </HeroCopyMotion>
         <HeroCopyMotion className="hero-copy hero-body">
-          <HeroTextMotion className="hero-lead">{t.hero.lead}</HeroTextMotion>
-          <HeroTextMotion className="hero-support">{t.hero.support}</HeroTextMotion>
+          <HeroTextMotion className="hero-lead">{campaign.lead}</HeroTextMotion>
           <HeroActionsMotion className="hero-actions">
-            <MotionCta className="primary-action" href="#contact">
-              <Mail size={18} aria-hidden="true" />
-              {t.hero.primaryCta}
+            <MotionCta className="primary-action" href={`/products${langQuery(lang)}`}>
+              {homeHeroCtas.products}
+              <ChevronRight size={18} aria-hidden="true" />
             </MotionCta>
             <MotionCta
               className="secondary-action"
-              href={whatsappHref()}
-              target="_blank"
-              rel="noreferrer"
+              href={`/contact${langQuery(lang)}#inquiry-form`}
             >
-              <MessageCircle size={18} aria-hidden="true" />
-              {t.hero.secondaryCta}
+              {homeHeroCtas.factory}
+              <ChevronRight size={18} aria-hidden="true" />
             </MotionCta>
-            <MotionCta className="text-action" href={company.brochure}>
-              <FileDown size={18} aria-hidden="true" />
-              {t.hero.tertiaryCta}
+            <MotionCta className="text-action" href="#extraction-video">
+              <PlayCircle size={18} aria-hidden="true" />
+              {homeHeroCtas.video}
             </MotionCta>
           </HeroActionsMotion>
-          <div className="hero-stat-row" aria-label="TK Classic proof points">
-            <div>
-              <strong>15+</strong>
-              <span>{ui.proof.years}</span>
-            </div>
-            <div>
-              <strong>50+</strong>
-              <span>{ui.proof.markets}</span>
-            </div>
-            <div>
-              <strong>25 bar</strong>
-              <span>{ui.proof.extraction}</span>
-            </div>
-          </div>
         </HeroCopyMotion>
 
-        <HeroVisualMotion className="hero-visual" aria-label="TK Classic portable espresso product image">
-          <CoffeeRitualStage scenes={heroScenes} ctaLabel={t.labels.fullSpec} />
+        <HeroVisualMotion className="hero-visual tech-hero-visual" aria-label="DQ-010 portable espresso machine product display">
+          <Link className="tech-product-stage" href={`/products/dq-010${langQuery(lang)}`} aria-label={getProductGeo(productLine.find((product) => product.model === "DQ-010")!, lang).displayName}>
+            <Image
+              src="/optimized/product-scenes/dq-010-1.webp"
+              alt={getProductGeo(productLine.find((product) => product.model === "DQ-010")!, lang).primaryAlt}
+              fill
+              priority
+              sizes="(max-width: 820px) 100vw, 62vw"
+            />
+          </Link>
         </HeroVisualMotion>
-        <a className="hero-scroll-cue" href="#features">
-          <span>{homeUx.scrollCue}</span>
-          <ChevronRight size={16} aria-hidden="true" />
-        </a>
+        <div className="tech-hero-console">
+          <div className="tech-series-list">
+            <span className="tech-series-title">{heroTech.series}</span>
+            <Link className="tech-series-featured" href={`/products/dq-001${langQuery(lang)}`}>
+              <span><strong>DQ-001</strong><small>{t.nav.products}</small></span>
+              <Image
+                src={productLine.find((product) => product.model === "DQ-001")!.hero}
+                alt={getProductGeo(productLine.find((product) => product.model === "DQ-001")!, lang).primaryAlt}
+                width={180}
+                height={180}
+                sizes="160px"
+              />
+              <ChevronRight size={20} aria-hidden="true" />
+            </Link>
+            <div className="tech-series-models">
+              {productLine.map((product) => (
+                <Link href={`/products/${product.slug}${langQuery(lang)}`} key={product.model} className={product.model === "DQ-010" ? "is-active" : undefined}>
+                  {product.model}
+                </Link>
+              ))}
+            </div>
+            <Link className="tech-series-all" href={`/products${langQuery(lang)}`}>{heroTech.viewAll}<ChevronRight size={15} aria-hidden="true" /></Link>
+          </div>
+          <div className="tech-capability-strip" aria-label="DQ-010 key capabilities">
+            <div><Radio aria-hidden="true" /><span>{heroTech.lcd}</span></div>
+            <div><Coffee aria-hidden="true" /><span>{heroTech.formats}</span></div>
+            <div><Droplets aria-hidden="true" /><span>{heroTech.extraction}</span></div>
+            <div><Wrench aria-hidden="true" /><span>{heroTech.oem}</span></div>
+          </div>
+        </div>
       </section>
 
-      <section id="features" className="section feature-section" aria-label={ui.market.eyebrow}>
-        <div className="section-heading">
-          <span>{ui.market.eyebrow}</span>
-          <h2>{ui.market.title}</h2>
-          <p>{ui.market.lead}</p>
-        </div>
-        <div className="feature-grid">
-          {t.signals.slice(0, 4).map((signal, index) => {
-            const icons = [Factory, Box, ShieldCheck, PackageCheck];
-            const Icon = icons[index] ?? BadgeCheck;
-            const card = ui.market.cards[index] ?? [signal, t.intro];
-            return (
-              <RevealArticle className="feature-card" key={signal}>
-                <span className="feature-icon"><Icon size={21} aria-hidden="true" /></span>
-                <span className="feature-index">0{index + 1}</span>
-                <h3>{card[0]}</h3>
-                <p>{card[1]}</p>
-              </RevealArticle>
-            );
-          })}
-        </div>
+      <section id="features" className="home-proof-ribbon" aria-label="TK Classic proof points">
+        <div><strong>15+</strong><span>{ui.proof.years}</span></div>
+        <div><strong>50+</strong><span>{ui.proof.markets}</span></div>
+        <div><strong>OEM / ODM</strong><span>{t.nav.oem}</span></div>
+        <div><strong>{certifications.length}</strong><span>{t.nav.certs}</span></div>
       </section>
 
       <RevealSection
@@ -630,110 +684,84 @@ export default async function Home({ searchParams }: HomeProps) {
         />
       </RevealSection>
 
-      <section className="proof-band" aria-label="TK Classic proof points">
-        <div><strong>15+</strong><span>{ui.proof.years}</span></div>
-        <div><strong>50+</strong><span>{ui.proof.markets}</span></div>
-        <div><strong>25 bar</strong><span>{ui.proof.extraction}</span></div>
-        <div><strong>CE / RoHS</strong><span>{ui.proof.compliance}</span></div>
+      <section className="launch-system-band" aria-label={launchPath.eyebrow}>
+        <CoffeeAtmosphere variant="stream" />
+        <div className="launch-system-intro">
+          <span>{launchPath.eyebrow}</span>
+          <h2>{launchPath.title}</h2>
+        </div>
+        <ol className="launch-system-steps">
+          {launchPath.steps.map(([title, description], index) => (
+            <li key={title}>
+              <small>0{index + 1}</small>
+              <strong>{title}</strong>
+              <span>{description}</span>
+            </li>
+          ))}
+        </ol>
       </section>
 
       <RevealSection className="section certification-trust-section" id="certifications" aria-label={t.sectionTitles.certs}>
-        <div className="section-heading">
-          <span>{t.nav.certs}</span>
-          <h2>{t.sectionTitles.certs}</h2>
-          <p>{t.certs[0]}</p>
+        <CoffeeAtmosphere variant="crema" />
+        <div className="certification-showcase-intro">
+          <div className="section-heading align-left">
+            <span>{t.nav.certs}</span>
+            <h2>{campaign.certs}</h2>
+            <p>{campaign.certLead}</p>
+          </div>
+          <div className="certification-availability" id="certification-availability-note">
+            <ShieldCheck size={22} aria-hidden="true" />
+            <p>{certificationRequestCopy[lang]}</p>
+            <Link className="certification-request-link" href={`/contact${langQuery(lang)}#inquiry-form`}>
+              {certificationCtaCopy[lang]}
+              <ChevronRight size={16} aria-hidden="true" />
+            </Link>
+          </div>
         </div>
-        <div className="certification-trust-grid">
-          {certifications.map((certification) => (
-            <div className="certification-trust-item" key={certification.name}>
-              <span className="certification-trust-mark"><ShieldCheck size={18} aria-hidden="true" /></span>
-              <strong>{certification.name}</strong>
-              <small>{ui.proof.compliance}</small>
-            </div>
-          ))}
+
+        <figure className="certification-overview is-compact" aria-describedby="certification-availability-note">
+          <Image
+            className="certification-overview-image"
+            src="/images/certifications/certification-overview.webp"
+            alt="TK Classic certification and test report preview covering CE, RoHS, FCC, UKCA, LFGB, FDA, ISO 9001 and EU declaration documents"
+            width={1440}
+            height={810}
+            sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) calc(100vw - 64px), 1180px"
+            draggable={false}
+          />
+          <figcaption>
+            <FileCheck2 size={15} aria-hidden="true" />
+            {certificationPreviewCopy[lang]}
+          </figcaption>
+        </figure>
+
+        <div className="certification-icon-grid" aria-label={ui.proof.compliance}>
+          {certifications.map((certification, index) => {
+            const CertificationIcon = certificationIcons[index] ?? ShieldCheck;
+            return (
+              <div className="certification-icon-item" key={certification.name}>
+                <span className="certification-trust-mark"><CertificationIcon size={19} strokeWidth={1.8} aria-hidden="true" /></span>
+                <strong>{certification.name}</strong>
+              </div>
+            );
+          })}
         </div>
       </RevealSection>
 
-      <section id="bundles" className="section bundle-section" aria-label={bundles.eyebrow}>
-        <div className="section-heading">
-          <span>{bundles.eyebrow}</span>
-          <h2>{bundles.title}</h2>
-          <p>{bundles.lead}</p>
-        </div>
-        <div className="bundle-grid">
-          {bundles.cards.map((bundle, index) => (
-            <RevealArticle className="bundle-card" key={bundle.title}>
-              <span className="bundle-index">0{index + 1}</span>
-              <h3>{bundle.title}</h3>
-              <p>{bundle.summary}</p>
-              <div className="bundle-meta">
-                <strong>{bundle.includesLabel}</strong>
-                <span>{bundle.includes}</span>
-              </div>
-              <div className="bundle-meta">
-                <strong>{bundle.fitLabel}</strong>
-                <span>{bundle.fit}</span>
-              </div>
-              <a className="quote-link" href="#contact">
-                {bundles.cta}
-                <Mail size={15} aria-hidden="true" />
-              </a>
-            </RevealArticle>
-          ))}
-        </div>
-      </section>
-
-      <section id="tools" className="section tools-hub-section" aria-label="Buyer tools">
-        <div className="section-heading">
-          <span>{homeUx.toolsEyebrow}</span>
-          <h2>{homeUx.toolsTitle}</h2>
-          <p>{t.hero.support}</p>
-        </div>
-        <div className="tools-hub-grid">
-          <Link className="tool-hub-card" href={`/tools/product-selector${langQuery(lang)}`}>
-            <span className="tool-hub-icon"><SlidersHorizontal size={21} aria-hidden="true" /></span>
-            <small>01</small>
-            <h3>{homeUx.tools[0].title}</h3>
-            <p>{homeUx.tools[0].description}</p>
-            <ChevronRight size={18} aria-hidden="true" />
-          </Link>
-          <Link className="tool-hub-card" href={`/tools/bundle-configurator${langQuery(lang)}`}>
-            <span className="tool-hub-icon"><PackageCheck size={21} aria-hidden="true" /></span>
-            <small>02</small>
-            <h3>{homeUx.tools[1].title}</h3>
-            <p>{homeUx.tools[1].description}</p>
-            <ChevronRight size={18} aria-hidden="true" />
-          </Link>
-          <Link className="tool-hub-card" href={`/tools/savings-calculator${langQuery(lang)}`}>
-            <span className="tool-hub-icon"><Calculator size={21} aria-hidden="true" /></span>
-            <small>03</small>
-            <h3>{homeUx.tools[2].title}</h3>
-            <p>{homeUx.tools[2].description}</p>
-            <ChevronRight size={18} aria-hidden="true" />
-          </Link>
-          <Link className="tool-hub-card" href={`/tools/inquiry-builder${langQuery(lang)}`}>
-            <span className="tool-hub-icon"><FileText size={21} aria-hidden="true" /></span>
-            <small>04</small>
-            <h3>{homeUx.tools[3].title}</h3>
-            <p>{homeUx.tools[3].description}</p>
-            <ChevronRight size={18} aria-hidden="true" />
-          </Link>
-        </div>
-      </section>
-
-      <section id="products" className="section">
+      <section id="products" className="section product-section">
+        <CoffeeAtmosphere variant="stream" />
         <div className="section-heading">
           <span>{t.nav.products}</span>
-          <h2>{t.sectionTitles.products}</h2>
-          <p>{t.intro}</p>
+          <h2>{campaign.products}</h2>
+          <p>{campaign.productLead}</p>
         </div>
-        <div className="product-grid featured-grid product-pricing-grid">
+        <div className="product-grid featured-grid product-visual-grid">
           {productLine.map((product) => (
-            <RevealArticle className="product-card is-featured" key={product.model}>
+            <article className="product-card is-featured" key={product.model}>
               <Link href={`/products/${product.slug}${langQuery(lang)}`} className="product-image-link">
                 <Image
                   src={product.hero}
-                  alt={`${product.model} portable coffee machine`}
+                  alt={getProductGeo(product, lang).primaryAlt}
                   width={900}
                   height={900}
                   sizes="(max-width: 720px) 100vw, (max-width: 1040px) 50vw, 33vw"
@@ -742,110 +770,56 @@ export default async function Home({ searchParams }: HomeProps) {
               <div className="product-card-body">
                 <p className="card-label">{localizeFeatureLabel(product.featureLabel, lang)}</p>
                 <h3>{product.model}</h3>
-                <ProductPriceTag lang={lang} price={product.price} />
-                <p>{product.summary[lang]}</p>
-                <dl>
-                  <div>
-                    <dt>{t.labels.pressure}</dt>
-                    <dd>{product.spec.pressure}</dd>
-                  </div>
-                  <div>
-                    <dt>{t.labels.battery}</dt>
-                    <dd>{product.spec.battery}</dd>
-                  </div>
-                  <div>
-                    <dt>{t.labels.material}</dt>
-                    <dd>{product.spec.material}</dd>
-                  </div>
-                </dl>
                 <Link className="card-link" href={`/products/${product.slug}${langQuery(lang)}`}>
                   {t.labels.fullSpec}
                   <ChevronRight size={17} aria-hidden="true" />
                 </Link>
-                <a className="quote-link" href="#contact">
-                  {t.hero.primaryCta}
-                  <Mail size={15} aria-hidden="true" />
-                </a>
               </div>
-            </RevealArticle>
+            </article>
           ))}
         </div>
-
-      </section>
-
-      <RevealSection
-        className="section product-video-section operation-video-section"
-        id="operation-video"
-        aria-label={videoStoryCopy.operation.title}
-      >
-        <ProductVideoShowcase
-          video={operationVideo}
-          loadLabel={videoUi.load}
-          playLabel={videoUi.play}
-          pauseLabel={videoUi.pause}
-          muteLabel={videoUi.mute}
-          unmuteLabel={videoUi.unmute}
-          soundNote={videoUi.sound}
-        />
-      </RevealSection>
-
-      <section className="section home-hub-section">
-        <div className="section-heading">
-          <span>{t.nav.about}</span>
-          <h2>{t.intro}</h2>
-          <p>{t.contactLead}</p>
-        </div>
-        <div className="home-hub-grid">
-          <Link className="home-hub-card" href={`/oem-odm${langQuery(lang)}`}>
-            <span>{t.nav.oem}</span>
-            <h3>{t.sectionTitles.oem}</h3>
-            <p>{t.oem[0]}</p>
-            <ChevronRight size={19} aria-hidden="true" />
-          </Link>
-          <Link className="home-hub-card" href={`/factory${langQuery(lang)}`}>
-            <span>{t.nav.factory}</span>
-            <h3>{t.sectionTitles.factory}</h3>
-            <p>{t.factory[0]}</p>
-            <ChevronRight size={19} aria-hidden="true" />
-          </Link>
-          <Link className="home-hub-card" href={`/resources${langQuery(lang)}#faq`}>
-            <span>{t.nav.faq}</span>
-            <h3>{t.sectionTitles.faq}</h3>
-            <p>{t.faq[0].a}</p>
-            <ChevronRight size={19} aria-hidden="true" />
+        <div className="product-section-action">
+          <Link className="primary-action" href={`/products${langQuery(lang)}`}>
+            {launchPath.allModels}
+            <ChevronRight size={17} aria-hidden="true" />
           </Link>
         </div>
       </section>
+
+      {managedSections.slice(0, 1).map((section) => {
+        const content = section.translations.find((item) => item.locale === lang)
+          ?? (lang === "en" ? section.translations.find((item) => item.locale === "en") ?? section.translations[0] : undefined);
+        if (!content) return null;
+        return <RevealSection className="section cms-managed-section" key={section.id} data-section-key={section.key}>
+          <div className="section-heading">
+            <span>{section.type}</span>
+            {content.title ? <h2>{content.title}</h2> : null}
+            {content.subtitle ? <p>{content.subtitle}</p> : null}
+          </div>
+          {content.ctaLabel && content.ctaHref ? <Link className="primary-action" href={content.ctaHref}>{content.ctaLabel}<ChevronRight size={17} aria-hidden="true" /></Link> : null}
+        </RevealSection>;
+      })}
+
+      <FeaturedBuyerGuides lang={lang} />
 
       <section id="contact" className="section contact-section">
-        <div>
+        <CoffeeAtmosphere variant="steam" />
+        <div className="home-contact-promo">
           <div className="section-heading align-left">
             <span>{t.nav.contact}</span>
-            <h2>{t.contactTitle}</h2>
-            <p>{t.contactLead}</p>
+            <h2>{campaign.contact}</h2>
           </div>
           <div className="contact-methods">
-            <a href={phoneHref(company.phoneBowie)}>
-              <MessageCircle size={20} aria-hidden="true" />
-              <span>{ui.form.phone}: {company.phoneBowie}</span>
-            </a>
             <a href={whatsappHref("DQ-001")} target="_blank" rel="noreferrer">
               <MessageCircle size={20} aria-hidden="true" />
-              <span>{t.form.whatsapp} — DQ-001</span>
+              <span>{t.form.whatsapp}</span>
             </a>
-            <Link href="#inquiry-form">
+            <Link href={`/contact${langQuery(lang)}#inquiry-form`}>
               <Mail size={20} aria-hidden="true" />
-              <span>{t.form.emailUs}</span>
+              <span>{t.hero.primaryCta}</span>
             </Link>
           </div>
-          <address>
-            <Building2 size={19} aria-hidden="true" />
-            {company.legalName}
-            <br />
-            {company.address}
-          </address>
         </div>
-        <InquiryForm lang={lang} selectedProduct="DQ-001" />
       </section>
 
       <MobileStickyCta

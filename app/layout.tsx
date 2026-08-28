@@ -1,18 +1,32 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { company } from "@/lib/site-data";
+import type { Lang } from "@/lib/site-data";
 import { VisitTracker } from "@/components/VisitTracker";
 import { SiteStructuredData } from "@/components/SiteStructuredData";
 import { LocaleDocumentSync } from "@/components/LocaleDocumentSync";
 import { MotionProvider } from "@/components/MotionProvider";
+import { SiteChatWidget } from "@/components/SiteChatWidget";
+import { GoogleTracking } from "@/components/GoogleTracking";
+import { GlobalLanguageSwitcher } from "@/components/GlobalLanguageSwitcher";
 import "./globals.css";
 import "./styles/performance.css";
 import "./styles/home-carousel.css";
 import "./styles/inquiry.css";
+import "./styles/chat.css";
 import "./styles/upgrade.css";
+import "./styles/editorial-simplify.css";
+import "./styles/outdoor-cinema-preview.css";
+import "./styles/coffee-lab.css";
+import "./styles/site-unified-theme.css";
+import "./styles/titanium-aurora.css";
+import "./styles/home-tech-stage.css";
+import "./styles/scene-transitions.css";
+import "./styles/interaction-depth.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(company.siteUrl),
@@ -21,7 +35,7 @@ export const metadata: Metadata = {
     template: "%s | TK Classic",
   },
   description:
-    "Factory-direct portable espresso machines, frothers, warmers and accessories for European wholesalers, private label brands, and OEM/ODM programs.",
+    "Factory-direct portable espresso machines and OEM/private-label sourcing support for US importers, wholesalers, outdoor retailers and global B2B buyers.",
   keywords: [
     "portable coffee machine OEM",
     "portable espresso machine wholesale",
@@ -44,7 +58,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "TK Classic | Portable Coffee Machine OEM & Private Label Supplier",
     description:
-      "Factory-direct portable espresso machines and coffee accessories for European wholesale and private label sourcing.",
+      "Factory-direct portable espresso machines and coffee accessories for wholesale and private label sourcing.",
     url: "/",
     type: "website",
     siteName: "TK Classic",
@@ -61,8 +75,11 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "TK Classic | Portable Coffee Machine OEM & Private Label Supplier",
     description:
-      "Factory-direct portable espresso machines and coffee accessories for European wholesale and private label sourcing.",
+      "Factory-direct portable espresso machines and coffee accessories for wholesale and private label sourcing.",
     images: ["/optimized/products/dq-010-stand.webp"],
+  },
+  other: {
+    google: "notranslate",
   },
 };
 
@@ -71,19 +88,39 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const requestHeaders = await headers();
+  const requestedLang = requestHeaders.get("x-site-lang") ?? "en";
+  const lang = (["en", "es", "pt", "fr", "ar", "zh", "ru"].includes(requestedLang) ? requestedLang : "en") as Lang;
+  const dir = lang === "ar" ? "rtl" : "ltr";
+
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body>
+    <html
+      lang={lang}
+      dir={dir}
+      translate="no"
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+      className={`notranslate ${GeistSans.variable} ${GeistMono.variable}`}
+    >
+      {process.env.NODE_ENV === "development" ? (
+        <head>
+          <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async />
+        </head>
+      ) : null}
+      <body suppressHydrationWarning>
         <MotionProvider>
           <SiteStructuredData />
-          <LocaleDocumentSync />
+          <LocaleDocumentSync lang={lang} />
           <VisitTracker />
+          <GoogleTracking />
           {children}
+          <GlobalLanguageSwitcher currentLang={lang} />
+          <SiteChatWidget />
           <Analytics />
           <SpeedInsights />
         </MotionProvider>

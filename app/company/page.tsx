@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, BadgeCheck, Building2, CheckCircle2, Mail, MessageCircle, ShieldCheck } from "lucide-react";
+import { BadgeCheck, Building2, CheckCircle2, Mail, MessageCircle, ShieldCheck } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
@@ -10,12 +10,12 @@ import { commercialCopy } from "@/lib/support-page-data";
 import { copy, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { whatsappHref } from "@/lib/contact";
+import { brandTagline } from "@/lib/translation-copy";
+import { PrimaryNav } from "@/components/PrimaryNav";
 
 type CompanyPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
-
-export const runtime = "edge";
 
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
@@ -52,22 +52,14 @@ export default async function CompanyPage({ searchParams }: CompanyPageProps) {
       <header className="site-header detail-header">
         <Link className="brand" href={`/${query}`} aria-label="TK Classic home">
           <span className="brand-mark">TK</span>
-          <span><strong>TK Classic</strong><small>Portable coffee OEM</small></span>
+          <span><strong>TK Classic</strong><small>{brandTagline[lang]}</small></span>
         </Link>
-        <nav aria-label="Company navigation">
-          <Link href={`/products${query}`}>{t.nav.products}</Link>
-          <Link href={`/accessories${query}`}>{t.sectionTitles.accessories}</Link>
-          <Link href={`/oem-odm${query}`}>{t.nav.oem}</Link>
-          <Link href={`/factory${query}`}>{t.nav.factory}</Link>
-          <Link href={`/certifications${query}`}>{t.nav.certs}</Link>
-          <Link href={`/contact${query}`}>{t.nav.contact}</Link>
-        </nav>
+        <PrimaryNav lang={lang} ariaLabel="Company navigation" />
         <LanguageSwitcher currentLang={lang} hrefForLang={(language) => `/company${language === "en" ? "" : `?lang=${language}`}`} />
       </header>
       <SectionFloatNav lang={lang} path="/company" label={t.sectionTitles.about} />
 
       <section className="inner-hero section">
-        <Link className="back-link" href={`/${query}`}><ArrowLeft size={17} aria-hidden="true" />{t.nav.home}</Link>
         <p className="eyebrow">{t.nav.about}</p>
         <h1>{t.sectionTitles.about}</h1>
         <p className="inner-hero-lead">{t.intro}</p>

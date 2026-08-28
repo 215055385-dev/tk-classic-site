@@ -58,7 +58,7 @@ export const uiCopy: Record<
     },
     marquee: [
       "25 bar extraction",
-      "Wholesale starting prices",
+      "Project-based quotations",
       "OEM / ODM pathways",
       "EU compliance files",
       "Gift-ready packaging",
@@ -118,15 +118,15 @@ export const uiCopy: Record<
   },
   es: {
     proof: { extraction: "Plataforma de extracción", years: "Años de experiencia OEM", markets: "Mercados atendidos", compliance: "Documentación de conformidad" },
-    marquee: ["Extracción 25 bar", "Precios mayoristas desde", "Programas OEM / ODM", "Archivos de conformidad UE", "Packaging listo para regalo", "Sistemas espresso portátiles", "Suministro directo de fábrica", "Soporte multilingüe"],
+    marquee: ["Extracción 25 bar", "Cotizaciones por proyecto", "Programas OEM / ODM", "Archivos de conformidad UE", "Packaging listo para regalo", "Sistemas espresso portátiles", "Suministro directo de fábrica", "Soporte multilingüe"],
     market: {
       eyebrow: "Para compradores europeos",
       title: "Preparado para equipos de sourcing retail.",
-      lead: "Una línea enfocada para distribuidores, marcas ecommerce, compras de regalo y compradores private label que necesitan presentación premium y ejecución directa de fábrica.",
+      lead: "Una línea pensada para distribuidores, marcas de comercio electrónico, programas de regalo y compradores de marca propia que buscan una presentación cuidada y ejecución directa de fábrica.",
       cards: [
         ["Mayoristas europeos", "Modelos espresso portátiles, archivos de conformidad y planificación de pedidos para distribución."],
-        ["Marcas cross-border", "Productos hero compactos, imágenes fuertes, bundles de accesorios y ciclos rápidos de cotización."],
-        ["Compras de regalos", "Formatos listos para regalo, packaging, bolsas y bundles retail para campañas estacionales."],
+        ["Marcas de comercio transfronterizo", "Productos principales compactos, imágenes potentes, conjuntos de accesorios y ciclos rápidos de cotización."],
+        ["Compras de regalos", "Formatos listos para regalo, opciones de embalaje, bolsas y conjuntos para campañas estacionales."],
         ["Private label OEM / ODM", "Logo, color, packaging y desarrollo diferenciado desde muestra hasta embalaje de exportación."],
       ],
     },
@@ -168,15 +168,15 @@ export const uiCopy: Record<
   },
   pt: {
     proof: { extraction: "Plataforma de extração", years: "Anos de experiência OEM", markets: "Mercados atendidos", compliance: "Documentação de conformidade" },
-    marquee: ["Extração 25 bar", "Preços de atacado desde", "Programas OEM / ODM", "Arquivos de conformidade UE", "Embalagem pronta para presente", "Sistemas espresso portáteis", "Fornecimento direto da fábrica", "Suporte multilíngue"],
+    marquee: ["Extração 25 bar", "Cotações por projeto", "Programas OEM / ODM", "Arquivos de conformidade UE", "Embalagem pronta para presente", "Sistemas espresso portáteis", "Fornecimento direto da fábrica", "Suporte multilíngue"],
     market: {
       eyebrow: "Adequado para compradores europeus",
       title: "Feito para equipes de sourcing prontas para o varejo.",
-      lead: "Linha focada para distribuidores, marcas ecommerce, brindes e private label que precisam de apresentação premium e execução direta da fábrica.",
+      lead: "Linha voltada a distribuidores, marcas de comércio eletrônico, programas de brindes e compradores de marca própria que buscam apresentação premium e execução direta da fábrica.",
       cards: [
         ["Atacadistas europeus", "Modelos espresso portáteis, arquivos de conformidade e planejamento de pedidos para distribuição."],
-        ["Marcas cross-border", "Produtos hero compactos, imagens fortes, bundles de acessórios e cotações rápidas."],
-        ["Compras de brindes", "Formatos prontos para presente, suporte de embalagem, bolsas e bundles de varejo."],
+        ["Marcas de comércio internacional", "Produtos principais compactos, imagens fortes, conjuntos de acessórios e cotações rápidas."],
+        ["Compras de brindes", "Formatos prontos para presente, suporte de embalagem, bolsas e conjuntos para varejo."],
         ["Private label OEM / ODM", "Logo, cor, embalagem e desenvolvimento diferenciado da amostra à exportação."],
       ],
     },
@@ -218,15 +218,15 @@ export const uiCopy: Record<
   },
   fr: {
     proof: { extraction: "Plateforme d'extraction", years: "Années d'expérience OEM", markets: "Marchés desservis", compliance: "Dossiers de conformité" },
-    marquee: ["Extraction 25 bars", "Tarifs grossiste dès", "Programmes OEM / ODM", "Dossiers conformité UE", "Packaging prêt cadeau", "Systèmes espresso portables", "Approvisionnement usine", "Support multilingue"],
+    marquee: ["Extraction 25 bars", "Devis par projet", "Programmes OEM / ODM", "Dossiers conformité UE", "Packaging prêt cadeau", "Systèmes espresso portables", "Approvisionnement usine", "Support multilingue"],
     market: {
       eyebrow: "Adapté aux acheteurs européens",
       title: "Pensé pour les équipes sourcing retail.",
-      lead: "Une gamme ciblée pour distributeurs, marques ecommerce, cadeaux et private label qui ont besoin d'une présentation premium et d'une exécution usine.",
+      lead: "Une gamme destinée aux distributeurs, aux marques de commerce en ligne, aux programmes cadeaux et aux acheteurs de marque propre recherchant une présentation soignée et une exécution directe usine.",
       cards: [
         ["Grossistes européens", "Modèles espresso portables, dossiers de conformité et planification des commandes pour la distribution."],
-        ["Marques cross-border", "Produits hero compacts, visuels forts, bundles accessoires et cycles de devis rapides."],
-        ["Achats cadeaux", "Formats prêts à offrir, support packaging, sacs et bundles retail pour programmes saisonniers."],
+        ["Marques transfrontalières", "Produits phares compacts, visuels forts, ensembles d’accessoires et cycles de devis rapides."],
+        ["Achats cadeaux", "Formats prêts à offrir, solutions d’emballage, sacs et ensembles pour programmes saisonniers."],
         ["Private label OEM / ODM", "Logo, couleur, packaging et développement différencié de l'échantillon à l'export."],
       ],
     },
@@ -268,7 +268,7 @@ export const uiCopy: Record<
   },
   ar: {
     proof: { extraction: "منصة الاستخلاص", years: "سنوات خبرة OEM", markets: "الأسواق التي نخدمها", compliance: "ملفات المطابقة" },
-    marquee: ["استخلاص 25 بار", "أسعار الجملة تبدأ من", "برامج OEM / ODM", "ملفات مطابقة أوروبا", "تغليف جاهز للهدايا", "أنظمة إسبرسو محمولة", "توريد مباشر من المصنع", "دعم متعدد اللغات"],
+    marquee: ["استخلاص 25 بار", "عروض أسعار حسب المشروع", "برامج OEM / ODM", "ملفات مطابقة أوروبا", "تغليف جاهز للهدايا", "أنظمة إسبرسو محمولة", "توريد مباشر من المصنع", "دعم متعدد اللغات"],
     market: {
       eyebrow: "مناسب للمشترين الأوروبيين",
       title: "مصمم لفرق التوريد الجاهزة للبيع بالتجزئة.",
@@ -318,7 +318,7 @@ export const uiCopy: Record<
   },
   zh: {
     proof: { extraction: "萃取平台", years: "OEM 年经验", markets: "服务市场", compliance: "合规资料" },
-    marquee: ["25 巴萃取", "批发起订价", "OEM / ODM 方案", "欧盟合规资料", "礼品级包装", "便携式意式咖啡系统", "工厂直供", "多语言支持"],
+    marquee: ["25 巴萃取", "按项目书面报价", "OEM / ODM 方案", "欧盟合规资料", "礼品级包装", "便携式意式咖啡系统", "工厂直供", "多语言支持"],
     market: {
       eyebrow: "适合欧洲采购",
       title: "为零售上架型采购团队打造。",
@@ -368,15 +368,15 @@ export const uiCopy: Record<
   },
   ru: {
     proof: { extraction: "Платформа экстракции", years: "Лет опыта OEM", markets: "Рынки поставок", compliance: "Документы соответствия" },
-    marquee: ["Экстракция 25 бар", "Оптовая цена от", "Программы OEM / ODM", "Документы соответствия ЕС", "Подарочная упаковка", "Портативные эспрессо-системы", "Поставка с фабрики", "Многоязычная поддержка"],
+    marquee: ["Экстракция 25 бар", "Расчёт по проекту", "Программы OEM / ODM", "Документы соответствия ЕС", "Подарочная упаковка", "Портативные эспрессо-системы", "Поставка с фабрики", "Многоязычная поддержка"],
     market: {
       eyebrow: "Для европейских покупателей",
       title: "Создано для команд sourcing и retail.",
-      lead: "Сфокусированная линейка для дистрибьюторов, ecommerce-брендов, подарочных программ и private label с премиальной подачей и фабричным исполнением.",
+      lead: "Линейка для дистрибьюторов, брендов электронной коммерции, подарочных программ и заказчиков собственной торговой марки, которым важны премиальная подача и прямое фабричное исполнение.",
       cards: [
         ["Европейские оптовики", "Портативные модели, документы соответствия и повторяемое планирование заказов для дистрибуции."],
-        ["Cross-border бренды", "Компактные hero-продукты, сильные визуалы, наборы аксессуаров и быстрые циклы котировок."],
-        ["Закупка подарков", "Подарочный внешний вид, поддержка упаковки, сумки и retail-наборы для сезонных программ."],
+        ["Бренды международной торговли", "Компактные флагманские товары, выразительные материалы, наборы аксессуаров и быстрые циклы расчёта."],
+        ["Закупка подарков", "Подарочное оформление, поддержка упаковки, сумки и розничные наборы для сезонных программ."],
         ["Private label OEM / ODM", "Логотип, цвет, упаковка и дифференцированная разработка от образца до экспортной упаковки."],
       ],
     },
@@ -524,12 +524,12 @@ const featureLabels: Record<string, Partial<Record<Lang, string>>> = {
     ru: "Портативный флагман",
   },
   "Wholesale hero": {
-    es: "Hero para wholesale",
-    pt: "Hero para atacado",
-    fr: "Hero pour grossistes",
+    es: "Modelo principal para mayoristas",
+    pt: "Modelo principal para atacado",
+    fr: "Modèle vedette pour grossistes",
     ar: "منتج رئيسي للجملة",
     zh: "批发主推款",
-    ru: "Hero-модель для опта",
+    ru: "Флагманская модель для оптовых продаж",
   },
   "Fast-charge model": {
     es: "Modelo de carga rápida",
@@ -538,6 +538,14 @@ const featureLabels: Record<string, Partial<Record<Lang, string>>> = {
     ar: "طراز الشحن السريع",
     zh: "快充型号",
     ru: "Модель с быстрой зарядкой",
+  },
+  "Multi-format model": {
+    es: "Modelo multiformato",
+    pt: "Modelo multiformato",
+    fr: "Modèle multiformat",
+    ar: "طراز متعدد الصيغ",
+    zh: "多规格兼容款",
+    ru: "Мультиформатная модель",
   },
   "Double-cup design": {
     es: "Diseño doble taza",
@@ -555,6 +563,14 @@ const featureLabels: Record<string, Partial<Record<Lang, string>>> = {
     zh: "大容量款",
     ru: "Формат большей ёмкости",
   },
+  "Premium LCD multi-format model": {
+    es: "Modelo premium multiformato con LCD",
+    pt: "Modelo premium multiformato com LCD",
+    fr: "Modèle premium multiformat avec LCD",
+    ar: "طراز فاخر متعدد الصيغ بشاشة LCD",
+    zh: "高端 LCD 多规格兼容款",
+    ru: "Премиальная мультиформатная модель с LCD",
+  },
   "Premium gifting format": {
     es: "Formato regalo premium",
     pt: "Formato premium para brindes",
@@ -566,23 +582,23 @@ const featureLabels: Record<string, Partial<Record<Lang, string>>> = {
 };
 
 const termLabels: Record<string, Partial<Record<Lang, string>>> = {
-  "Retail shelf": { es: "Lineal retail", pt: "Prateleira retail", fr: "Rayon retail", ar: "رف البيع", zh: "零售上架", ru: "Retail-полка" },
-  "Cross-border ecommerce": { es: "Ecommerce cross-border", pt: "Ecommerce cross-border", fr: "Ecommerce cross-border", ar: "تجارة عابرة للحدود", zh: "跨境电商", ru: "Cross-border ecommerce" },
-  "Gift set": { es: "Gift set", pt: "Kit presente", fr: "Coffret cadeau", ar: "طقم هدايا", zh: "礼品套装", ru: "Подарочный набор" },
+  "Retail shelf": { es: "Exposición en tienda", pt: "Exposição no varejo", fr: "Mise en rayon", ar: "رف البيع", zh: "零售上架", ru: "Розничная выкладка" },
+  "Cross-border ecommerce": { es: "Comercio electrónico transfronterizo", pt: "Comércio eletrônico internacional", fr: "Commerce en ligne transfrontalier", ar: "تجارة عابرة للحدود", zh: "跨境电商", ru: "Трансграничная электронная торговля" },
+  "Gift set": { es: "Set de regalo", pt: "Kit para presente", fr: "Coffret cadeau", ar: "طقم هدايا", zh: "礼品套装", ru: "Подарочный набор" },
   "Private label": { es: "Marca propia", pt: "Marca própria", fr: "Marque propre", ar: "علامة خاصة", zh: "私牌", ru: "Private label" },
-  Wholesale: { es: "Wholesale", pt: "Atacado", fr: "Grossiste", ar: "جملة", zh: "批发", ru: "Опт" },
-  "Retail launch": { es: "Lanzamiento retail", pt: "Lançamento retail", fr: "Lancement retail", ar: "إطلاق البيع", zh: "零售上新", ru: "Запуск retail" },
+  Wholesale: { es: "Venta mayorista", pt: "Atacado", fr: "Vente en gros", ar: "جملة", zh: "批发", ru: "Оптовые продажи" },
+  "Retail launch": { es: "Lanzamiento en tiendas", pt: "Lançamento no varejo", fr: "Lancement en magasin", ar: "إطلاق البيع", zh: "零售上新", ru: "Запуск в рознице" },
   "OEM branding": { es: "Branding OEM", pt: "Branding OEM", fr: "Branding OEM", ar: "علامة OEM", zh: "OEM 品牌定制", ru: "OEM-брендинг" },
   "Gift box": { es: "Caja regalo", pt: "Caixa presente", fr: "Coffret cadeau", ar: "علبة هدية", zh: "礼盒", ru: "Подарочная коробка" },
   "Travel use": { es: "Uso de viaje", pt: "Uso em viagem", fr: "Usage voyage", ar: "استخدام السفر", zh: "旅行使用", ru: "Для поездок" },
   "Shared use": { es: "Uso compartido", pt: "Uso compartilhado", fr: "Usage partagé", ar: "استخدام مشترك", zh: "共享使用", ru: "Совместное использование" },
   "Promo gift": { es: "Regalo promocional", pt: "Brinde promocional", fr: "Cadeau promo", ar: "هدية ترويجية", zh: "促销礼品", ru: "Промо-подарок" },
-  Marketplace: { es: "Marketplace", pt: "Marketplace", fr: "Marketplace", ar: "متجر إلكتروني", zh: "电商平台", ru: "Marketplace" },
+  Marketplace: { es: "Plataforma de comercio electrónico", pt: "Plataforma de comércio eletrônico", fr: "Place de marché", ar: "متجر إلكتروني", zh: "电商平台", ru: "Маркетплейс" },
   "Office coffee": { es: "Café de oficina", pt: "Café de escritório", fr: "Café bureau", ar: "قهوة المكتب", zh: "办公室咖啡", ru: "Офисный кофе" },
   Travel: { es: "Viaje", pt: "Viagem", fr: "Voyage", ar: "سفر", zh: "旅行", ru: "Путешествия" },
-  "Retail bundle": { es: "Bundle retail", pt: "Bundle retail", fr: "Bundle retail", ar: "حزمة بيع", zh: "零售组合", ru: "Retail-набор" },
+  "Retail bundle": { es: "Conjunto para venta minorista", pt: "Kit para varejo", fr: "Ensemble pour la vente au détail", ar: "حزمة بيع", zh: "零售组合", ru: "Розничный комплект" },
   "Brand launch": { es: "Lanzamiento de marca", pt: "Lançamento de marca", fr: "Lancement marque", ar: "إطلاق علامة", zh: "品牌上新", ru: "Запуск бренда" },
-  "Premium wholesale": { es: "Wholesale premium", pt: "Atacado premium", fr: "Wholesale premium", ar: "جملة فاخرة", zh: "高端批发", ru: "Премиальный опт" },
+  "Premium wholesale": { es: "Venta mayorista premium", pt: "Atacado premium", fr: "Vente en gros premium", ar: "جملة فاخرة", zh: "高端批发", ru: "Премиальные оптовые продажи" },
 };
 
 const highlightLabels: Record<string, Partial<Record<Lang, string>>> = {
@@ -592,6 +608,50 @@ const highlightLabels: Record<string, Partial<Record<Lang, string>>> = {
   "Strong hero imagery for wholesale pages": { zh: "适合批发页面做主视觉", es: "Visual hero fuerte para páginas wholesale", pt: "Visual hero forte para páginas de atacado", fr: "Visuel hero fort pour pages wholesale", ar: "صور رئيسية قوية لصفحات الجملة", ru: "Сильный hero-визуал для оптовых страниц" },
   "Fits retail gifting and cross-border programs": { zh: "适合零售礼品和跨境项目", es: "Encaja con regalos retail y programas cross-border", pt: "Serve para brindes retail e programas cross-border", fr: "Adapté aux cadeaux retail et programmes cross-border", ar: "مناسب للهدايا والتجارة العابرة للحدود", ru: "Подходит для retail-подарков и cross-border программ" },
   "Easy to localize for OEM launch pages": { zh: "便于本地化为 OEM 上新页面", es: "Fácil de localizar para páginas OEM", pt: "Fácil de localizar para páginas OEM", fr: "Facile à localiser pour pages OEM", ar: "سهل التوطين لصفحات إطلاق OEM", ru: "Легко локализуется для OEM-страниц запуска" },
+  "Three coffee formats documented in the revised manual": { zh: "修订版说明书已列明三种咖啡规格", es: "Tres formatos de café documentados en el manual revisado", pt: "Três formatos de café documentados no manual revisado", fr: "Trois formats de café documentés dans le manuel révisé", ar: "ثلاث صيغ للقهوة موثقة في الدليل المنقح", ru: "Три формата кофе указаны в обновлённом руководстве" },
+  "Balanced size for shelf and gift-box programs": { zh: "机身尺寸兼顾零售陈列与礼盒项目" },
+  "Black and white versions in stock": { zh: "现有黑色与白色版本" },
+  "Good fit for shared-use demos": { zh: "适合共享使用与现场演示" },
+  "Strong on-shelf visibility": { zh: "零售陈列辨识度高" },
+  "Lightweight retail format": { zh: "轻量化零售产品形态" },
+  "Designed for premium private label and retail programs": { zh: "面向高端私牌与零售项目", es: "Diseñado para proyectos premium de marca propia y retail", pt: "Desenvolvido para projetos premium de marca própria e varejo", fr: "Conçu pour les projets premium de marque propre et de retail", ar: "مصمم لمشاريع العلامات الخاصة والبيع بالتجزئة الفاخرة", ru: "Для премиальных проектов private label и розничных программ" },
+  "Good fit for office and travel coffee routines": { zh: "适合办公室与旅行咖啡场景" },
+  "LCD shows temperature, battery level and extraction mode": { zh: "LCD 显示温度、电量与萃取模式" },
+  "A polished gift-friendly silhouette": { zh: "外观精致，适合礼品项目" },
+  "Premium look for branded bundles": { zh: "适合打造高端品牌套装" },
+  "Good companion to private label launches": { zh: "适合搭配私牌新品发布" },
+};
+
+const specValueLabels: Record<string, Partial<Record<Lang, string>>> = {
+  "60-80 mL water tank": { zh: "60–80 mL 水箱" },
+  "50-100 mL water tank": { zh: "50–100 mL 水箱" },
+  "100 mL maximum water tank": { zh: "水箱最大容量 100 mL" },
+  "Single-cup portable format": { zh: "便携单杯规格" },
+  "2-in-1 capsule + ground": { zh: "胶囊与咖啡粉二合一" },
+  "250 mL per cup, double-cup design": { zh: "每杯 250 mL，双杯设计" },
+  "25 bar extraction platform": { zh: "25 巴萃取平台" },
+  "ABS + PP + stainless steel": { zh: "ABS + PP + 不锈钢" },
+  "ABS + PP + silicone + stainless steel": { zh: "ABS + PP + 硅胶 + 不锈钢" },
+  "About 180 minutes, USB Type-C": { zh: "约 180 分钟，USB Type-C" },
+  "About 4 hours, 5V / 3A": { zh: "约 4 小时，5V / 3A" },
+  "Type-C fast charging": { zh: "Type-C 快速充电" },
+  "4 hours, Type-C": { zh: "约 4 小时，Type-C" },
+  "2 hours, Type-C": { zh: "约 2 小时，Type-C" },
+  "About 2 hours, USB Type-C": { zh: "约 2 小时，USB Type-C", es: "Aproximadamente 2 horas, USB Type-C", pt: "Cerca de 2 horas, USB Type-C", fr: "Environ 2 heures, USB Type-C", ar: "حوالي ساعتين، USB Type-C", ru: "Около 2 часов, USB Type-C" },
+  "Cold-water cycle heats to 96°C": { zh: "冷水模式加热至 96°C" },
+  "Fast heat to 92°C": { zh: "快速加热至 92°C" },
+  "About 3 min 30 sec heating; 46 sec extraction": { zh: "加热约 3 分 30 秒；萃取约 46 秒" },
+  "3-4 minutes": { zh: "约 3–4 分钟" },
+  "3-3.5 minutes": { zh: "约 3–3.5 分钟" },
+  "Compact handheld format": { zh: "紧凑手持式设计" },
+  "Designed for portable retail and gifting programs": { zh: "面向便携零售与礼品项目设计" },
+  "3 heated cups / 500+ direct extraction cups": { zh: "约 3 杯加热萃取 / 500 杯以上直接萃取" },
+  "5 heated cups / 500+ direct extraction cups": { zh: "约 5 杯加热萃取 / 500 杯以上直接萃取" },
+  "Capsule adapter + ground-coffee adapter": { zh: "胶囊适配器 + 咖啡粉适配器" },
+  "N-series + Dolce Gusto + ground coffee": { zh: "N-series 胶囊 + Dolce Gusto 胶囊 + 咖啡粉" },
+  "N-series + Dolce Gusto + ground coffee; portable drip cup documented": { zh: "N-series 胶囊 + Dolce Gusto 胶囊 + 咖啡粉；说明书已列明便携滴滤杯" },
+  "Nespresso pod adapter, ground coffee chamber": { zh: "Nespresso 胶囊适配器 + 咖啡粉仓" },
+  "Custom colors / logo / packaging": { zh: "支持颜色、Logo 与包装定制" },
 };
 
 export function localizeFeatureLabel(label: string, lang: Lang) {
@@ -604,4 +664,8 @@ export function localizeTerm(term: string, lang: Lang) {
 
 export function localizeHighlight(text: string, lang: Lang) {
   return highlightLabels[text]?.[lang] ?? text;
+}
+
+export function localizeSpecValue(value: string, lang: Lang) {
+  return specValueLabels[value]?.[lang] ?? value;
 }

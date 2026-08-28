@@ -4,29 +4,176 @@ test.describe("TK Classic buyer journey", () => {
   test("homepage renders the product carousel and CTA", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("main.home-shell")).toBeVisible();
-    await expect(page.locator(".coffee-ritual-frame")).toBeVisible();
-    await expect(page.locator(".coffee-ritual-model-badge strong")).toContainText("DQ-");
-    await expect(page.getByRole("link", { name: /request quotation/i }).first()).toBeVisible();
+    await expect(page.locator(".tech-product-stage")).toBeVisible();
+    await expect(page.locator(".tech-model-kicker")).toContainText("DQ-010");
+    await expect(page.getByRole("link", { name: /explore products/i }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /contact factory/i }).first()).toBeVisible();
   });
 
   test("locale-prefixed product route resolves without query parameters", async ({ page }) => {
     await page.goto("/zh/products/dq-010");
     await expect(page.locator("main[lang='zh']")).toBeVisible();
     await expect(page).toHaveURL(/\/zh\/products\/dq-010$/);
-    await expect(page.getByText("DQ-010", { exact: false }).first()).toBeVisible();
+    await expect(page.locator("h1")).toContainText("DQ-010");
   });
 
-  test("mobile layout keeps carousel media inside its frame", async ({ page }) => {
+  test("language switching keeps the page, document language, and chat copy synchronized", async ({ page }) => {
+    await page.goto("/zh/products");
+    await page.locator("header .language-switcher summary").click();
+    await page.locator("header .language-menu a[href='/fr/products']").click();
+
+    await expect(page).toHaveURL(/\/fr\/products$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "fr");
+    await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
+    await expect(page.locator(".site-chat-launcher")).toContainText("Contacter les ventes");
+
+    await page.locator("header .language-switcher summary").click();
+    await page.locator("header .language-menu a[href='/ar/products']").click();
+    await expect(page).toHaveURL(/\/ar\/products$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "ar");
+    await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+    await expect(page.locator(".site-chat-launcher")).toContainText("تحدث مع المبيعات");
+  });
+
+  test("language menu opens above navigation on every main inner page", async ({ page }) => {
+    for (const path of ["/accessories", "/coffee-lab", "/oem-odm", "/factory", "/resources", "/contact"]) {
+      await page.goto(path);
+      const switcher = page.locator("header.site-header .language-switcher");
+      await switcher.locator("summary").click();
+      await expect(switcher).toHaveAttribute("open", "");
+      await expect(switcher.locator(".language-menu a")).toHaveCount(7);
+      await expect(switcher.locator(".language-menu")).toBeVisible();
+    }
+  });
+
+  test("product logistics uses verified model data and localized labels", async ({ page }) => {
+    await page.goto("/zh/products/dq-010");
+    const logistics = page.locator(".product-logistics");
+    await expect(logistics).toContainText("包装与物流");
+    await expect(logistics).toContainText("L85 × W85 × H280 mm");
+    await expect(logistics).toContainText("17.8 kg");
+    await expect(page.locator("html")).toHaveAttribute("lang", "zh");
+  });
+
+  test("mobile layout keeps hero product media inside its frame", async ({ page }) => {
     await page.goto("/");
-    const frame = page.locator(".coffee-ritual-frame");
-    const image = page.locator(".coffee-ritual-media img");
+    const frame = page.locator(".tech-product-stage");
+    const image = frame.locator("img");
     const frameBox = await frame.boundingBox();
     const imageBox = await image.boundingBox();
     expect(frameBox).not.toBeNull();
     expect(imageBox).not.toBeNull();
-    expect(imageBox!.x).toBeGreaterThanOrEqual(frameBox!.x - 1);
-    expect(imageBox!.y).toBeGreaterThanOrEqual(frameBox!.y - 1);
-    expect(imageBox!.x + imageBox!.width).toBeLessThanOrEqual(frameBox!.x + frameBox!.width + 1);
-    expect(imageBox!.y + imageBox!.height).toBeLessThanOrEqual(frameBox!.y + frameBox!.height + 1);
+    // Verify the product stage clips its restrained motion and stays inside
+    // the mobile viewport without cropping the image element itself away.
+    await expect(frame).toHaveCSS("overflow", "hidden");
+    expect(frameBox!.x).toBeGreaterThanOrEqual(0);
+    expect(frameBox!.x + frameBox!.width).toBeLessThanOrEqual(await page.evaluate(() => innerWidth));
+    expect(imageBox!.width).toBeGreaterThan(0);
+    expect(imageBox!.height).toBeGreaterThan(0);
+  });
+
+  test("US wholesale page exposes buyer guides without horizontal overflow", async ({ page }) => {
+    await page.goto("/wholesale/usa");
+    await expect(page.getByRole("heading", { name: /Portable espresso for retail/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Prepare the sourcing brief/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Read the buyer guide/i }).first()).toBeVisible();
+    const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+  });
+
+  test("Coffee Lab guides buyers through a real-product configuration without overflow", async ({ page }) => {
+    await page.goto("/zh/coffee-lab");
+    await expect(page.getByRole("heading", { name: "创建你的配置" })).toBeVisible();
+
+    const configurator = page.locator("#configurator");
+    await expect(configurator.getByRole("tab", { name: "01 咖啡机主体" })).toHaveAttribute("aria-selected", "true");
+    await configurator.getByRole("tab", { name: "04 兼容配件" }).click();
+    const firstAccessory = configurator.locator(".coffee-lab-compact-accessories > button").first();
+    await firstAccessory.click();
+    await expect(firstAccessory).toHaveAttribute("aria-pressed", "true");
+
+    await configurator.getByRole("tab", { name: "05 配置摘要" }).click();
+    await configurator.getByRole("button", { name: "生成定制效果图" }).click();
+    await expect(configurator.locator(".coffee-lab-concept-board img")).toBeVisible();
+
+    const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+  });
+
+  test("public sections share the outdoor-coffee navigation palette and compact accessory label", async ({ page }) => {
+    const headerBackgrounds: string[] = [];
+    const headerTops: number[] = [];
+
+    for (const path of [
+      "/",
+      "/products",
+      "/products/dq-001",
+      "/resources",
+      "/accessories",
+      "/coffee-lab",
+      "/oem-odm",
+      "/camping-coffee-machine",
+      "/wholesale/usa",
+    ]) {
+      await page.goto(path);
+      const header = page.locator("header.site-header");
+      await expect(header).toBeVisible();
+      headerBackgrounds.push(await header.evaluate((element) => getComputedStyle(element).backgroundColor));
+      headerTops.push(await header.evaluate((element) => Math.round(element.getBoundingClientRect().top)));
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBe(true);
+    }
+
+    expect(new Set(headerBackgrounds).size).toBe(1);
+    expect(Math.max(...headerTops) - Math.min(...headerTops)).toBeLessThanOrEqual(1);
+    await page.goto("/products");
+    await expect(page.locator(".product-card").first()).toBeVisible();
+    await page.goto("/accessories");
+    await expect(page.locator(".detail-float-nav")).toContainText("Accessories");
+    await expect(page.locator(".detail-float-nav")).not.toContainText("Coffee accessories and add-ons");
+    const accessoryShowcase = page.locator(".accessories-hero-showcase");
+    await expect(accessoryShowcase).toBeVisible();
+    await expect(accessoryShowcase.locator("img")).toHaveCount(3);
+    await expect.poll(() => accessoryShowcase.locator("img").evaluateAll((images) => images.every((image) => (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
+    await expect.poll(() => accessoryShowcase.evaluate((element) => element.getBoundingClientRect().height <= 600)).toBe(true);
+  });
+
+  test("global navigation exposes Home and a compact Resources hub", async ({ page }) => {
+    await page.goto("/");
+    const header = page.locator("header.site-header");
+    await expect(header.locator(".primary-nav > a[href='/en']")).toHaveAttribute("aria-current", "page");
+    await expect(page.locator(".featured-guide-card")).toHaveCount(3);
+
+    if ((page.viewportSize()?.width ?? 0) > 720) {
+      await header.locator(".resources-nav-menu summary").click();
+      const panel = header.locator(".resources-nav-panel");
+      await expect(panel.getByRole("link", { name: "Buyer guides" })).toHaveAttribute("href", "/en/resources");
+      await expect(panel.getByRole("link", { name: "Use scenarios" })).toHaveAttribute("href", "/en/solutions");
+      await expect(panel.getByRole("link", { name: "USA wholesale" })).toHaveAttribute("href", "/en/wholesale/usa");
+      await panel.getByRole("link", { name: "Buyer guides" }).click();
+    } else {
+      const mobileMenu = header.locator(".mobile-primary-nav");
+      await mobileMenu.locator("summary").click();
+      const resourcesLink = mobileMenu.locator("a[href='/en/resources']");
+      await expect(resourcesLink).toBeVisible();
+      await resourcesLink.click();
+    }
+    await expect(page).toHaveURL(/\/(?:en\/)?resources$/);
+    await expect(page.locator(".resource-guide-card").first()).toBeVisible();
+
+    await page.goto("/accessories");
+    await expect(page.locator(".accessories-hero .back-link")).toHaveCount(0);
+    await expect(page.locator("header.site-header .primary-nav > a").first()).toHaveAttribute("href", "/en");
+  });
+
+  test("factory and exhibition photography share one continuous page", async ({ page }) => {
+    await page.goto("/factory");
+    await expect(page.locator("#factory-gallery")).toBeVisible();
+    await expect(page.locator("#exhibitions")).toBeVisible();
+    await expect(page.locator("#factory-gallery img")).toHaveCount(7);
+    await expect(page.locator("#exhibitions img")).toHaveCount(7);
+
+    await page.goto("/exhibitions");
+    await expect(page).toHaveURL(/\/factory#exhibitions$/);
+    await expect(page.locator("#exhibitions")).toBeVisible();
   });
 });

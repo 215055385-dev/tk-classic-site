@@ -17,6 +17,19 @@
   }
 
   @media (max-width: 720px) {
+    .site-footer nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding-block: 6px;
+    }
+
+    .inner-page .back-link,
+    .tool-page-shell .tool-back-link {
+      min-height: 40px;
+      padding-block: 8px;
+    }
+
     .home-shell > .site-footer {
       contain-intrinsic-size: 560px;
     }

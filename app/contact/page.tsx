@@ -1,18 +1,18 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, Mail, MessageCircle, Phone } from "lucide-react";
+import { Mail, MessageCircle, Phone } from "lucide-react";
 import { InquiryForm } from "@/components/InquiryForm";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { SiteFooter } from "@/components/SiteFooter";
-import { bundleCopy } from "@/lib/bundle-data";
 import { company, copy, languages, products, type Lang } from "@/lib/site-data";
 import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { phoneHref, whatsappHref } from "@/lib/contact";
+import { brandTagline } from "@/lib/translation-copy";
+import { ProcurementExpectation } from "@/components/ProcurementExpectation";
+import { PrimaryNav } from "@/components/PrimaryNav";
 
 type ContactPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
-
-export const runtime = "edge";
 
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
@@ -37,7 +37,6 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   const params = await searchParams;
   const lang = getLang(params?.lang);
   const t = copy[lang];
-  const bundles = bundleCopy[lang];
   const query = langQuery(lang);
   const dir = languages.find((language) => language.code === lang)?.dir ?? "ltr";
   const requestedProduct = Array.isArray(params?.product) ? params?.product[0] : params?.product;
@@ -47,24 +46,20 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   return (
     <main className="inner-page contact-page" dir={dir} lang={lang}>
       <header className="site-header detail-header">
-        <Link className="brand" href={`/${query}`} aria-label="TK Classic home"><span className="brand-mark">TK</span><span><strong>TK Classic</strong><small>Portable coffee OEM</small></span></Link>
-        <nav aria-label="Contact navigation">
-          <Link href={`/products${query}`}>{t.nav.products}</Link>
-          <Link href={`/accessories${query}`}>{t.sectionTitles.accessories}</Link>
-          <Link href={`/bundles${query}`}>{bundles.navLabel}</Link>
-          <Link href={`/oem-odm${query}`}>{t.nav.oem}</Link>
-          <Link href={`/factory${query}`}>{t.nav.factory}</Link>
-          <Link href={`/contact${query}`} aria-current="page">{t.nav.contact}</Link>
-        </nav>
+        <Link className="brand" href={`/${query}`} aria-label="TK Classic home"><span className="brand-mark">TK</span><span><strong>TK Classic</strong><small>{brandTagline[lang]}</small></span></Link>
+        <PrimaryNav lang={lang} current="contact" ariaLabel="Contact navigation" />
         <LanguageSwitcher currentLang={lang} hrefForLang={(language) => `/contact${language === "en" ? "" : `?lang=${language}`}`} />
       </header>
       <SectionFloatNav lang={lang} path="/contact" label={t.nav.contact} />
 
       <section className="inner-hero section">
-        <Link className="back-link" href={`/${query}`}><ArrowLeft size={17} aria-hidden="true" />{t.nav.home}</Link>
         <p className="eyebrow">{t.nav.contact}</p>
         <h1>{t.contactTitle}</h1>
         <p className="inner-hero-lead">{t.contactLead}</p>
+      </section>
+
+      <section className="section procurement-contact-section">
+        <ProcurementExpectation lang={lang} compact />
       </section>
 
       <section className="section contact-page-grid">

@@ -1,0 +1,509 @@
+/* Final interaction and contrast layer: one titanium system across all routes. */
+
+.home-shell,
+.inner-page,
+.tool-page-shell,
+.scenario-page {
+  --lava-caramel: #65cbe8;
+  --open-caramel: #65cbe8;
+  --alpine-ember: #65cbe8;
+  --terrain-copper: #9ce7f5;
+  --editorial-copper: #65cbe8;
+  --final-moss: #11171e;
+  --depth-copper: #d7a46b;
+  --depth-ice: #8fe4f6;
+  --depth-panel: rgba(14, 21, 28, 0.9);
+}
+
+/* Remove remaining high-specificity brown bands from the previous direction. */
+.home-shell.tech-stage-home :is(
+  .product-video-section,
+  .extraction-video-section,
+  .launch-system-band,
+  .certification-trust-section,
+  .product-section,
+  .featured-guides-section,
+  .contact-section,
+  .cms-managed-section
+) {
+  border-color: rgba(143, 228, 246, 0.12) !important;
+  background:
+    radial-gradient(circle at 86% 12%, rgba(101, 203, 232, 0.09), transparent 26rem),
+    radial-gradient(circle at 8% 86%, rgba(215, 164, 107, 0.055), transparent 22rem),
+    linear-gradient(150deg, #111820 0%, #080d12 56%, #0d141a 100%) !important;
+  color: var(--tk-copy) !important;
+}
+
+.home-shell.tech-stage-home :is(h1, h2, h3, strong),
+.inner-page :is(h1, h2, h3, .product-model, .spec-value),
+.tool-page-shell :is(h1, h2, h3) {
+  color: #f4f8fb !important;
+}
+
+.home-shell.tech-stage-home :is(p, li, dd),
+.inner-page :is(p, li, dd) {
+  color: #aebbc5;
+}
+
+.home-shell.tech-stage-home .section-heading > span,
+.inner-page .section-heading > span,
+.inner-page .eyebrow,
+.home-shell.tech-stage-home .eyebrow {
+  color: var(--depth-ice) !important;
+}
+
+/* Conversion actions need an unmistakable resting state, not just a hover state. */
+:is(.home-shell, .inner-page, .tool-page-shell, .scenario-page) .primary-action {
+  border: 1px solid #8fe4f6 !important;
+  background: linear-gradient(135deg, #9ce7f5 0%, #65cbe8 58%, #4db6d5 100%) !important;
+  color: #061017 !important;
+  font-weight: 760 !important;
+  box-shadow:
+    0 0 0 1px rgba(156, 231, 245, 0.18),
+    0 12px 34px rgba(56, 177, 211, 0.22),
+    inset 0 1px rgba(255, 255, 255, 0.42) !important;
+}
+
+:is(.home-shell, .inner-page, .tool-page-shell, .scenario-page) .primary-action:hover {
+  border-color: #c7f4fb !important;
+  background: linear-gradient(135deg, #c7f4fb, #78d9fa) !important;
+  color: #03090d !important;
+  transform: translateY(-3px);
+  box-shadow: 0 16px 44px rgba(56, 177, 211, 0.3) !important;
+}
+
+:is(.home-shell, .inner-page, .tool-page-shell, .scenario-page) .secondary-action {
+  border: 1px solid rgba(232, 241, 246, 0.42) !important;
+  background: rgba(232, 241, 246, 0.09) !important;
+  color: #f4f8fb !important;
+  font-weight: 680 !important;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+:is(.home-shell, .inner-page, .tool-page-shell, .scenario-page) .secondary-action:hover {
+  border-color: rgba(143, 228, 246, 0.74) !important;
+  background: rgba(101, 203, 232, 0.15) !important;
+  color: #fff !important;
+}
+
+:is(.card-link, .certification-request-link, .text-action, .back-link) {
+  min-height: 36px;
+  color: #8fe4f6 !important;
+  font-weight: 690 !important;
+}
+
+.product-card .card-link,
+.accessory-card .card-link,
+.featured-guide-card .card-link {
+  width: fit-content;
+  border: 1px solid rgba(143, 228, 246, 0.24);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: rgba(101, 203, 232, 0.07);
+}
+
+.contact-methods a,
+.certification-availability,
+.accessory-cta-panel,
+.home-contact-promo {
+  border-color: rgba(143, 228, 246, 0.2) !important;
+  background: rgba(17, 28, 36, 0.82) !important;
+  color: #edf6fa !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.26) !important;
+}
+
+.home-shell.tech-stage-home .certification-showcase-intro .section-heading p {
+  color: #aebbc5 !important;
+}
+
+.home-shell.tech-stage-home .certification-request-link {
+  border: 1px solid rgba(143, 228, 246, 0.42) !important;
+  border-radius: 999px;
+  padding: 8px 13px;
+  background: rgba(101, 203, 232, 0.12) !important;
+  color: #a9edf8 !important;
+  box-shadow: 0 0 22px rgba(101, 203, 232, 0.1);
+}
+
+.home-shell.tech-stage-home .certification-request-link:hover {
+  background: #65cbe8 !important;
+  color: #061017 !important;
+}
+
+.certification-icon-item,
+.certification-editorial-icons > div {
+  background: rgba(19, 30, 38, 0.72) !important;
+  color: #eaf3f7 !important;
+}
+
+.certification-trust-mark,
+.certification-editorial-icons svg {
+  border-color: rgba(143, 228, 246, 0.28) !important;
+  background: rgba(101, 203, 232, 0.1) !important;
+  color: #8fe4f6 !important;
+  filter: drop-shadow(0 0 10px rgba(101, 203, 232, 0.22));
+}
+
+/* Chat and footer were the last visible legacy-brown surfaces. */
+.site-chat-launcher {
+  border-color: rgba(143, 228, 246, 0.44) !important;
+  background: rgba(10, 18, 24, 0.92) !important;
+  color: #f3f8fb !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.34), 0 0 24px rgba(101, 203, 232, 0.11) !important;
+  backdrop-filter: blur(18px);
+}
+
+.site-chat-launcher:hover {
+  background: rgba(24, 47, 59, 0.96) !important;
+  border-color: #8fe4f6 !important;
+}
+
+.site-chat-panel {
+  border-color: rgba(143, 228, 246, 0.26) !important;
+  background: #111820 !important;
+  color: #edf5f8 !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.48) !important;
+}
+
+.site-chat-panel > header {
+  background: linear-gradient(135deg, #172630, #0b1218) !important;
+  color: #f4f8fb !important;
+}
+
+.site-chat-start,
+.site-chat-messages,
+.site-chat-compose {
+  background: #111820 !important;
+  color: #edf5f8 !important;
+}
+
+.site-chat-start :is(p, label > span, small),
+.site-chat-welcome,
+.site-chat-closed,
+.site-chat-message time {
+  color: #9faeb8 !important;
+}
+
+.site-chat-start :is(input, textarea),
+.site-chat-compose textarea {
+  border-color: rgba(143, 228, 246, 0.2) !important;
+  background: #0a1117 !important;
+  color: #edf5f8 !important;
+}
+
+.site-chat-primary,
+.site-chat-compose button {
+  background: #65cbe8 !important;
+  color: #061017 !important;
+}
+
+.site-chat-message p {
+  background: #1a2730 !important;
+  color: #eaf3f7 !important;
+  box-shadow: none !important;
+}
+
+.site-chat-message.is-visitor p {
+  background: #245469 !important;
+  color: #fff !important;
+}
+
+:is(.home-shell, .inner-page, .tool-page-shell) .site-footer {
+  border-color: rgba(143, 228, 246, 0.1) !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(101, 203, 232, 0.07), transparent 24rem),
+    linear-gradient(155deg, #0e151b, #060a0e) !important;
+  color: #eef5f8 !important;
+}
+
+:is(.home-shell, .inner-page, .tool-page-shell) .site-footer :is(p, small, nav a, .footer-bottom) {
+  color: #93a3ad !important;
+}
+
+@media (max-width: 760px) {
+  .home-shell .mobile-sticky-cta {
+    border-color: rgba(143, 228, 246, 0.2) !important;
+    background: rgba(8, 14, 19, 0.9) !important;
+    box-shadow: 0 -12px 34px rgba(0, 0, 0, 0.32) !important;
+    backdrop-filter: blur(18px);
+  }
+
+  .home-shell .mobile-sticky-cta a:first-child {
+    background: #65cbe8 !important;
+    color: #061017 !important;
+  }
+
+  .home-shell .mobile-sticky-cta a:last-child {
+    border-color: rgba(143, 228, 246, 0.24) !important;
+    background: #14212a !important;
+    color: #eef6f9 !important;
+  }
+}
+
+/* Depth, fog and floating coffee particles shared by story sections. */
+.coffee-atmosphere {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.coffee-fog {
+  position: absolute;
+  width: clamp(260px, 35vw, 620px);
+  aspect-ratio: 1.8;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(164, 209, 222, 0.1), rgba(101, 203, 232, 0.025) 48%, transparent 72%);
+  filter: blur(34px);
+  opacity: 0.58;
+  will-change: transform;
+}
+
+.coffee-fog-one {
+  top: 8%;
+  left: -8%;
+  animation: coffee-fog-drift 16s ease-in-out infinite alternate;
+}
+
+.coffee-fog-two {
+  right: -9%;
+  bottom: 5%;
+  opacity: 0.36;
+  animation: coffee-fog-drift 20s ease-in-out -6s infinite alternate-reverse;
+}
+
+.coffee-particle-field {
+  position: absolute;
+  inset: 0;
+}
+
+.coffee-particle-field i {
+  --particle-x: 10%;
+  --particle-y: 20%;
+  --particle-size: 3px;
+  position: absolute;
+  top: var(--particle-y);
+  left: var(--particle-x);
+  width: var(--particle-size);
+  height: var(--particle-size);
+  border-radius: 50%;
+  background: #d7a46b;
+  box-shadow: 0 0 12px rgba(215, 164, 107, 0.55);
+  opacity: 0.45;
+  animation: coffee-particle-rise 9s ease-in-out infinite;
+}
+
+.coffee-particle-field i:nth-child(2) { --particle-x: 23%; --particle-y: 74%; --particle-size: 2px; animation-delay: -4s; }
+.coffee-particle-field i:nth-child(3) { --particle-x: 38%; --particle-y: 26%; --particle-size: 4px; animation-delay: -7s; }
+.coffee-particle-field i:nth-child(4) { --particle-x: 54%; --particle-y: 82%; --particle-size: 2px; animation-delay: -2s; }
+.coffee-particle-field i:nth-child(5) { --particle-x: 66%; --particle-y: 16%; --particle-size: 3px; animation-delay: -5s; }
+.coffee-particle-field i:nth-child(6) { --particle-x: 78%; --particle-y: 66%; --particle-size: 2px; animation-delay: -8s; }
+.coffee-particle-field i:nth-child(7) { --particle-x: 88%; --particle-y: 30%; --particle-size: 4px; animation-delay: -3s; }
+.coffee-particle-field i:nth-child(8) { --particle-x: 94%; --particle-y: 84%; --particle-size: 2px; animation-delay: -6s; }
+
+.coffee-dimensional-scene {
+  position: absolute;
+  z-index: 0;
+  top: 8%;
+  right: 3%;
+  width: min(29vw, 420px);
+  aspect-ratio: 1;
+  transform-style: preserve-3d;
+  animation: coffee-orbit-turn 22s linear infinite;
+}
+
+.coffee-dimensional-bean {
+  position: absolute;
+  width: 38px;
+  height: 56px;
+  border: 1px solid rgba(215, 164, 107, 0.42);
+  border-radius: 52% 48% 52% 48%;
+  background:
+    linear-gradient(100deg, rgba(215, 164, 107, 0.18), rgba(52, 29, 18, 0.22) 52%, rgba(215, 164, 107, 0.08));
+  box-shadow: inset 7px 0 12px rgba(215, 164, 107, 0.08), 0 16px 30px rgba(0, 0, 0, 0.24);
+  transform-style: preserve-3d;
+}
+
+.coffee-dimensional-bean::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: 50%;
+  width: 1px;
+  background: rgba(215, 164, 107, 0.42);
+  transform: rotate(13deg);
+}
+
+.bean-depth-one { top: 12%; left: 47%; transform: translateZ(120px) rotate(28deg); }
+.bean-depth-two { right: 8%; bottom: 24%; transform: translateZ(40px) scale(0.72) rotate(-31deg); }
+.bean-depth-three { bottom: 4%; left: 20%; transform: translateZ(-70px) scale(0.54) rotate(68deg); opacity: 0.55; }
+
+/* Existing four-step launch path becomes a scroll-lit product timeline. */
+.home-shell.tech-stage-home .launch-system-band {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(86px, 9vw, 140px) !important;
+}
+
+.home-shell.tech-stage-home .launch-system-steps {
+  position: relative;
+  z-index: 2;
+  isolation: isolate;
+}
+
+.home-shell.tech-stage-home .launch-system-steps::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 27px;
+  right: 4%;
+  left: 4%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(143, 228, 246, 0.7), rgba(215, 164, 107, 0.5), transparent);
+  box-shadow: 0 0 18px rgba(101, 203, 232, 0.24);
+}
+
+.home-shell.tech-stage-home .launch-system-steps li {
+  position: relative;
+  border-color: rgba(143, 228, 246, 0.15) !important;
+  background: linear-gradient(160deg, rgba(24, 36, 45, 0.7), rgba(10, 16, 21, 0.74)) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.45s ease, box-shadow 0.45s ease, filter 0.45s ease;
+}
+
+.home-shell.tech-stage-home .launch-system-steps li::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 22px;
+  width: 13px;
+  height: 13px;
+  border: 2px solid #8fe4f6;
+  border-radius: 50%;
+  background: #0c1319;
+  box-shadow: 0 0 18px rgba(101, 203, 232, 0.48);
+}
+
+/* Camera push is applied only to large visual stages, never to product geometry. */
+@supports (animation-timeline: view()) {
+  .editorial-video-media,
+  .certification-overview,
+  .accessories-hero-showcase,
+  .inner-page .product-hero-image {
+    animation: depth-camera-push linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 42%;
+  }
+
+  .home-shell.tech-stage-home .launch-system-steps li {
+    animation: timeline-step-light linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 34%;
+  }
+}
+
+@keyframes coffee-fog-drift {
+  from { transform: translate3d(-5%, 5%, 0) scale(0.92); }
+  to { transform: translate3d(16%, -8%, 0) scale(1.12); }
+}
+
+@keyframes coffee-particle-rise {
+  0%, 100% { transform: translate3d(0, 10px, 0); opacity: 0.1; }
+  45% { opacity: 0.55; }
+  70% { transform: translate3d(12px, -34px, 60px); opacity: 0.34; }
+}
+
+@keyframes coffee-orbit-turn {
+  from { transform: rotateY(0deg) rotateZ(-4deg); }
+  to { transform: rotateY(360deg) rotateZ(4deg); }
+}
+
+@keyframes depth-camera-push {
+  from { transform: scale(0.965) translateY(22px); filter: brightness(0.72) saturate(0.72); opacity: 0.55; }
+  to { transform: scale(1) translateY(0); filter: brightness(1) saturate(1); opacity: 1; }
+}
+
+@keyframes timeline-step-light {
+  from { filter: brightness(0.68); border-color: rgba(143, 228, 246, 0.08); }
+  to { filter: brightness(1); border-color: rgba(143, 228, 246, 0.35); box-shadow: 0 22px 62px rgba(35, 158, 192, 0.14); }
+}
+
+@media (max-width: 760px) {
+  .coffee-dimensional-scene {
+    right: -18%;
+    width: 72vw;
+    opacity: 0.5;
+  }
+
+  .coffee-fog { opacity: 0.3; }
+
+  .home-shell.tech-stage-home .launch-system-steps::before {
+    display: none;
+  }
+
+  .home-shell.tech-stage-home .launch-system-steps li::before {
+    top: 16px;
+    left: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coffee-fog,
+  .coffee-particle-field i,
+  .coffee-dimensional-scene,
+  .editorial-video-media,
+  .certification-overview,
+  .accessories-hero-showcase,
+  .inner-page .product-hero-image,
+  .home-shell.tech-stage-home .launch-system-steps li {
+    animation: none !important;
+  }
+}
+/* Resources is a real destination first, with a compact secondary menu.
+   Keeping the label as a Link avoids the previous dead-end summary control. */
+.resources-nav-group {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.site-header .resources-nav-direct {
+  padding-right: 5px !important;
+  white-space: nowrap;
+}
+
+.resources-nav-group .resources-nav-menu {
+  position: static;
+  flex: 0 0 auto;
+}
+
+.resources-nav-group .resources-nav-menu summary {
+  min-width: 28px;
+  padding-right: 9px !important;
+  padding-left: 5px !important;
+}
+
+.resources-nav-group .resources-nav-panel {
+  top: calc(100% + 10px);
+  right: 0;
+  isolation: isolate;
+  z-index: 160;
+}
+
+.resources-nav-group:has(.resources-nav-menu[open]) {
+  z-index: 170;
+}
+
+.resources-nav-direct[aria-current="page"] {
+  color: var(--tk-copy) !important;
+}
+
+@media (max-width: 720px) {
+  .resources-nav-group .resources-nav-menu {
+    display: none;
+  }
+
+  .site-header .resources-nav-direct {
+    padding-right: 10px !important;
+  }
+}

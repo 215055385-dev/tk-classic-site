@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { bundleCopy } from "@/lib/bundle-data";
 import { copy, type Lang } from "@/lib/site-data";
-import { localizedUrl } from "@/lib/seo";
+import { localizedPath, localizedUrl } from "@/lib/seo";
+import { coffeeLabNav } from "@/lib/coffee-lab-data";
 
 type SectionFloatNavProps = {
   lang: Lang;
@@ -9,14 +9,10 @@ type SectionFloatNavProps = {
   label?: string;
 };
 
-function langQuery(lang: Lang) {
-  return lang === "en" ? "" : `?lang=${lang}`;
-}
-
 export function SectionFloatNav({ lang, path, label }: SectionFloatNavProps) {
-  const query = langQuery(lang);
   const t = copy[lang];
-  const bundles = bundleCopy[lang];
+  const resources = { en: "Resources", es: "Recursos", pt: "Recursos", fr: "Ressources", ar: "الموارد", zh: "资源", ru: "Ресурсы" }[lang];
+  const accessories = { en: "Accessories", es: "Accesorios", pt: "Acessórios", fr: "Accessoires", ar: "الملحقات", zh: "配件", ru: "Аксессуары" }[lang];
 
   const structuredData = path && label ? {
     "@context": "https://schema.org",
@@ -31,12 +27,14 @@ export function SectionFloatNav({ lang, path, label }: SectionFloatNavProps) {
     <>
       {structuredData ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} /> : null}
       <nav className="section-float-nav detail-float-nav" aria-label="Quick section navigation">
-        <Link href={`/products${query}`}>{t.nav.products}</Link>
-        <Link href={`/bundles${query}`}>{bundles.navLabel}</Link>
-        <Link href={`/accessories${query}`}>{t.sectionTitles.accessories}</Link>
-        <Link href={`/oem-odm${query}`}>{t.nav.oem}</Link>
-        <Link href={`/factory${query}`}>{t.nav.factory}</Link>
-        <Link href={`/contact${query}`}>{t.nav.contact}</Link>
+        <Link href={localizedPath("/", lang)}>{t.nav.home}</Link>
+        <Link href={localizedPath("/products", lang)}>{t.nav.products}</Link>
+        <Link href={localizedPath("/accessories", lang)}>{accessories}</Link>
+        <Link href={localizedPath("/coffee-lab", lang)}>{coffeeLabNav[lang]}</Link>
+        <Link href={localizedPath("/oem-odm", lang)}>{t.nav.oem}</Link>
+        <Link href={localizedPath("/factory", lang)}>{t.nav.factory}</Link>
+        <Link href={localizedPath("/resources", lang)}>{resources}</Link>
+        <Link href={localizedPath("/contact", lang)}>{t.nav.contact}</Link>
       </nav>
     </>
   );

@@ -6,8 +6,6 @@ import { copy, languages, type Lang } from "@/lib/site-data";
 import { getInteractiveProducts } from "@/lib/tool-products";
 import { languageAlternates } from "@/lib/seo";
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "Portable Coffee Machine Product Selector | TK Classic",
   description: "Match a portable coffee machine model to your market, quantity, destination and private-label direction.",

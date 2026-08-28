@@ -8,8 +8,6 @@ type SuccessPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "Inquiry received | TK Classic",
   description: "Your TK Classic inquiry has been received.",
@@ -29,7 +27,7 @@ export default async function InquirySuccessPage({ searchParams }: SuccessPagePr
   const pending = params?.delivery === "pending";
   const inquiryId = typeof params?.id === "string" ? params.id : "";
   const dir = languages.find((language) => language.code === lang)?.dir ?? "ltr";
-  const prefix = lang === "en" ? "" : `/${lang}`;
+  const query = lang === "en" ? "" : `?lang=${lang}`;
 
   return (
     <main className="inner-page inquiry-success-page" dir={dir} lang={lang}>
@@ -48,10 +46,10 @@ export default async function InquirySuccessPage({ searchParams }: SuccessPagePr
               <MessageCircle size={16} aria-hidden="true" />WhatsApp
             </a>
           ) : null}
-          <Link className="primary-action" href={`${prefix}/products`}>
+          <Link className="primary-action" href={`/products${query}`}>
             {t.nav.products}<ArrowRight size={16} aria-hidden="true" />
           </Link>
-          <Link className="secondary-action" href={`${prefix}/contact`}>
+          <Link className="secondary-action" href={`/contact${query}`}>
             {ui.backToContact}
           </Link>
         </div>

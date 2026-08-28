@@ -4,8 +4,6 @@ import type { Metadata } from "next";
 import { copy, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates } from "@/lib/seo";
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "Wholesale Coffee Inquiry Builder | TK Classic",
   description: "Prepare a concise wholesale, private-label or OEM/ODM brief before sending your portable coffee project inquiry.",

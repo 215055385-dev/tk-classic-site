@@ -1,0 +1,354 @@
+.coffee-lab-page {
+  --lab-ink: #201711;
+  --lab-espresso: #382117;
+  --lab-copper: #db6b32;
+  --lab-oat: #ead8bc;
+  --lab-milk: #f6eddf;
+  --lab-moss: #75855b;
+  background: var(--lab-milk);
+  color: var(--lab-ink);
+  overflow: clip;
+}
+
+.coffee-lab-header { margin-bottom: 0; }
+
+.coffee-lab-hero {
+  min-height: min(820px, calc(100svh - 86px));
+  display: grid;
+  grid-template-columns: minmax(320px, .78fr) minmax(520px, 1.22fr);
+  align-items: center;
+  padding: clamp(72px, 8vw, 130px) max(5vw, 28px);
+  background: radial-gradient(circle at 78% 42%, rgba(219, 107, 50, .22), transparent 27%), linear-gradient(115deg, #241710 0 42%, #432519 100%);
+  color: #fff8ed;
+  position: relative;
+  isolation: isolate;
+}
+
+.coffee-lab-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .25;
+  pointer-events: none;
+  background-image: repeating-radial-gradient(ellipse at 86% 45%, transparent 0 36px, rgba(234, 216, 188, .25) 37px 38px, transparent 39px 50px);
+  mask-image: linear-gradient(90deg, transparent 35%, #000);
+  z-index: -1;
+}
+
+.coffee-lab-hero-copy { max-width: 650px; position: relative; z-index: 2; }
+.coffee-lab-hero-copy .eyebrow { color: #e5ad75; letter-spacing: .17em; }
+.coffee-lab-hero-copy h1 { font-size: clamp(4.2rem, 8.8vw, 9.4rem); line-height: .8; letter-spacing: -.075em; max-width: 8ch; margin: 28px 0 34px; text-wrap: balance; }
+.coffee-lab-hero-copy h1 span, .coffee-lab-hero-copy h1 em { display: block; }
+.coffee-lab-hero-copy h1 em { margin-top: .22em; color: #e6b788; font: 650 clamp(1.85rem, 4.2vw, 4.5rem)/.98 var(--font-geist-sans); letter-spacing: -.055em; font-style: normal; }
+.coffee-lab-hero-copy > p:not(.eyebrow) { max-width: 560px; font-size: clamp(1.08rem, 1.5vw, 1.42rem); color: rgba(255, 248, 237, .76); line-height: 1.55; }
+.coffee-lab-hero-copy > small { display: block; max-width: 520px; color: rgba(255, 248, 237, .5); margin-top: 22px; }
+.coffee-lab-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+.coffee-lab-hero-actions a { min-height: 54px; padding: 0 24px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-weight: 750; transition: transform .25s ease, background .25s ease; }
+.coffee-lab-hero-actions a:first-child { background: var(--lab-copper); color: #21140e; }
+.coffee-lab-hero-actions a:last-child { border: 1px solid rgba(255, 248, 237, .34); color: #fff8ed; }
+.coffee-lab-hero-actions a:hover { transform: translateY(-3px); }
+
+.coffee-lab-hero-visual { height: min(720px, 76svh); position: relative; z-index: 1; }
+.coffee-lab-hero-visual > img { object-fit: contain; object-position: center; z-index: 3; filter: drop-shadow(0 40px 40px rgba(0,0,0,.35)); }
+.coffee-lab-hero-disc { position: absolute; width: min(44vw, 610px); aspect-ratio: 1; border-radius: 50%; background: linear-gradient(145deg, #f58a46, #be481f); top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 100px rgba(228, 102, 44, .3); }
+.coffee-lab-hero-contour { position: absolute; inset: 8% 2%; border: 1px solid rgba(255,255,255,.15); border-radius: 50%; transform: rotate(-9deg); }
+.coffee-lab-model-stamp { position: absolute; right: 4%; bottom: 12%; z-index: 5; display: grid; padding: 14px 18px; border-radius: 15px; background: rgba(31, 20, 14, .78); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(14px); }
+.coffee-lab-model-stamp span { font: 700 .64rem/1.2 var(--font-geist-mono); letter-spacing: .12em; color: #d9b58d; }
+.coffee-lab-model-stamp strong { font-size: 1.35rem; }
+.coffee-lab-floating-part { position: absolute; z-index: 4; width: clamp(76px, 8vw, 118px); aspect-ratio: 1; border-radius: 50%; background: rgba(246,237,223,.92); border: 1px solid rgba(255,255,255,.35); box-shadow: 0 18px 40px rgba(0,0,0,.22); animation: coffeeLabFloat 6s ease-in-out infinite; }
+.coffee-lab-floating-part img { object-fit: contain; padding: 12px; }
+.coffee-lab-floating-part span { position: absolute; white-space: nowrap; left: 50%; top: calc(100% + 8px); transform: translateX(-50%); font-size: .67rem; color: #f7ead7; opacity: .8; }
+.coffee-lab-floating-part.part-1 { top: 12%; left: 12%; }
+.coffee-lab-floating-part.part-2 { top: 20%; right: 7%; animation-delay: -1.4s; }
+.coffee-lab-floating-part.part-3 { bottom: 16%; left: 5%; animation-delay: -2.8s; }
+.coffee-lab-floating-part.part-4 { bottom: 9%; right: 18%; animation-delay: -4.2s; }
+@keyframes coffeeLabFloat { 50% { transform: translateY(-10px) rotate(2deg); } }
+
+.coffee-lab-principles { display: grid; grid-template-columns: repeat(4, 1fr); background: #d56b36; color: #22150f; }
+.coffee-lab-principles article { min-height: 136px; padding: 28px clamp(18px, 3vw, 46px); display: grid; grid-template-columns: auto 1fr; gap: 14px 18px; align-content: center; border-right: 1px solid rgba(32,23,17,.18); }
+.coffee-lab-principles article > span { font: 700 .7rem/1 var(--font-geist-mono); opacity: .58; justify-self: end; }
+.coffee-lab-principles strong { grid-column: 1 / -1; font-size: clamp(.95rem, 1.3vw, 1.2rem); }
+
+.coffee-lab-configurator { padding: clamp(90px, 10vw, 160px) max(4.5vw, 22px); background: var(--lab-milk); }
+.coffee-lab-section-heading { max-width: 900px; margin-bottom: clamp(42px, 6vw, 78px); }
+.coffee-lab-section-heading h2, .coffee-lab-ecosystem h2, .coffee-lab-process h2 { font-size: clamp(2.7rem, 6vw, 6.3rem); line-height: .94; letter-spacing: -.06em; margin: 18px 0 24px; text-wrap: balance; }
+.coffee-lab-section-heading > p:last-child, .coffee-lab-ecosystem > div > p:last-child, .coffee-lab-process .coffee-lab-section-heading > p:last-child { max-width: 720px; color: #65564b; font-size: clamp(1rem, 1.4vw, 1.25rem); line-height: 1.6; }
+.coffee-lab-workbench { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(380px, .82fr); min-height: 780px; background: #211712; color: #fff8ee; border-radius: 42px; overflow: hidden; box-shadow: 0 36px 90px rgba(57,36,23,.18); }
+.coffee-lab-preview-panel { display: grid; grid-template-rows: auto 1fr auto; min-width: 0; background: radial-gradient(circle at 50% 45%, #554033, #231812 68%); }
+.coffee-lab-preview-head { display: flex; justify-content: space-between; gap: 24px; padding: 26px 30px; border-bottom: 1px solid rgba(255,255,255,.1); }
+.coffee-lab-preview-head div { display: grid; }
+.coffee-lab-preview-head span, .coffee-lab-preview-head small { color: rgba(255,248,238,.58); font-size: .75rem; }
+.coffee-lab-preview-head strong { font-size: 1.4rem; }
+.coffee-lab-preview-head small { max-width: 340px; text-align: right; }
+.coffee-lab-machine-stage { min-height: 570px; position: relative; overflow: hidden; isolation: isolate; }
+.coffee-lab-machine-stage::before { content: ""; position: absolute; width: 48%; aspect-ratio: 1; border-radius: 50%; left: 50%; top: 52%; transform: translate(-50%,-50%); background: #ce6030; opacity: .88; z-index: -1; }
+.coffee-lab-machine-stage.finish-gloss::after, .coffee-lab-machine-stage.finish-metallic::after { content: ""; position: absolute; inset: 0; background: linear-gradient(112deg, transparent 35%, rgba(255,255,255,.14) 47%, transparent 59%); pointer-events: none; z-index: 7; }
+.coffee-lab-real-variant-board { position: absolute; inset: 6%; z-index: 2; overflow: hidden; border-radius: 30px; background: #15100d; box-shadow: 0 28px 70px rgba(0,0,0,.34); }
+.coffee-lab-real-variant-board > img { object-fit: contain; }
+.coffee-lab-real-variant-board.is-cmf-reference { background: #16110e; }
+.coffee-lab-photo-badge { position: absolute; left: 18px; bottom: 18px; z-index: 4; padding: 9px 12px; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(28,19,15,.82); color: #fff8ee; font: 750 .64rem/1 var(--font-geist-mono); letter-spacing: .08em; backdrop-filter: blur(10px); }
+.coffee-lab-real-color-marker { position: absolute; width: clamp(74px, 11vw, 118px); aspect-ratio: 1; transform: translate(-50%,-50%); border: 3px solid #fff8ee; border-radius: 50%; box-shadow: 0 0 0 5px var(--marker-color), 0 16px 30px rgba(0,0,0,.3); pointer-events: none; transition: left .35s cubic-bezier(.2,.8,.2,1), top .35s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+.coffee-lab-real-color-marker::after { content: ""; position: absolute; inset: 18%; border-radius: 50%; border: 1px solid rgba(255,255,255,.82); }
+.coffee-lab-real-color-marker span { position: absolute; left: 50%; bottom: -36px; transform: translateX(-50%); width: max-content; max-width: 190px; padding: 8px 11px; border-radius: 999px; background: #211712; color: #fff8ee; font-size: .7rem; font-weight: 800; white-space: nowrap; box-shadow: 0 8px 20px rgba(0,0,0,.25); }
+.coffee-lab-sample-color-chip { position: absolute; left: 22px; right: 22px; bottom: 22px; display: grid; grid-template-columns: 38px 1fr; gap: 2px 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: rgba(33,23,18,.9); color: #fff8ee; backdrop-filter: blur(12px); }
+.coffee-lab-sample-color-chip i { grid-row: 1 / 3; width: 38px; aspect-ratio: 1; border: 2px solid rgba(255,255,255,.6); border-radius: 50%; }
+.coffee-lab-sample-color-chip span { font-size: .82rem; font-weight: 800; }
+.coffee-lab-sample-color-chip small { color: rgba(255,248,238,.62); font-size: .68rem; line-height: 1.35; }
+.coffee-lab-board-logo { position: absolute; right: 22px; top: 22px; width: 92px; height: 58px; border-radius: 12px; background: rgba(255,255,255,.9) center/contain no-repeat; box-shadow: 0 10px 24px rgba(0,0,0,.2); }
+.coffee-lab-product-canvas { position: absolute; width: min(86%, 620px); aspect-ratio: 1; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 2; isolation: isolate; }
+.coffee-lab-recolor-canvas { width: 100%; height: 100%; display: block; object-fit: contain; filter: drop-shadow(0 32px 28px rgba(0,0,0,.36)); }
+.coffee-lab-direct-preview-label { position: absolute; z-index: 9; left: 28px; bottom: 24px; display: grid; grid-template-columns: 32px auto; gap: 1px 10px; align-items: center; padding: 11px 14px; border: 1px solid rgba(255,255,255,.14); border-radius: 14px; background: rgba(25,17,13,.78); backdrop-filter: blur(14px); box-shadow: 0 12px 28px rgba(0,0,0,.22); }
+.coffee-lab-direct-preview-label i { grid-row: 1 / 3; width: 32px; aspect-ratio: 1; border: 2px solid rgba(255,255,255,.56); border-radius: 50%; }
+.coffee-lab-direct-preview-label span { color: rgba(255,248,238,.58); font-size: .62rem; text-transform: uppercase; letter-spacing: .08em; }
+.coffee-lab-direct-preview-label strong { color: #fff8ee; font-size: .78rem; }
+.coffee-lab-machine-image { object-fit: contain; z-index: 2; filter: drop-shadow(0 35px 30px rgba(0,0,0,.34)); }
+.coffee-lab-color-layer { position: absolute; z-index: 3; background: var(--layer-color); opacity: .68; mix-blend-mode: multiply; pointer-events: none; transition: background-color .28s ease, opacity .28s ease, filter .28s ease; }
+.coffee-lab-color-layer.is-lid { clip-path: inset(2% 4% round 46% 46% 18% 18%); }
+.coffee-lab-color-layer.is-body { clip-path: inset(0 5% round 16%); }
+.coffee-lab-color-layer.is-cup { clip-path: inset(0 5% round 10% 10% 34% 34%); opacity: .56; }
+.coffee-lab-color-layer.finish-gloss { opacity: .57; filter: saturate(1.1) brightness(1.08); }
+.coffee-lab-color-layer.finish-metallic { opacity: .5; filter: saturate(.72) contrast(1.1); }
+.coffee-lab-color-layer.is-active { opacity: .76; }
+.coffee-lab-orbit { position: absolute; border: 1px solid rgba(255,255,255,.13); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 1; }
+.coffee-lab-orbit.orbit-one { width: 70%; aspect-ratio: 1; }
+.coffee-lab-orbit.orbit-two { width: 88%; height: 52%; transform: translate(-50%,-50%) rotate(-13deg); }
+.coffee-lab-logo-preview { position: absolute; z-index: 6; height: 70px; transform: translate(-50%,-50%); background-repeat: no-repeat; background-position: center; background-size: contain; filter: drop-shadow(0 2px 3px rgba(0,0,0,.28)); }
+.coffee-lab-layer-labels { position: absolute; inset: 0; pointer-events: none; z-index: 8; }
+.coffee-lab-layer-labels span { position: absolute; right: 5%; font: 700 .65rem/1 var(--font-geist-mono); letter-spacing: .08em; color: rgba(255,248,238,.55); }
+.coffee-lab-layer-labels span::before { content: ""; position: absolute; width: 50px; height: 1px; background: currentColor; right: calc(100% + 10px); top: 50%; }
+.coffee-lab-layer-labels span:nth-child(1) { top: 22%; }
+.coffee-lab-layer-labels span:nth-child(2) { top: 48%; }
+.coffee-lab-layer-labels span:nth-child(3) { top: 77%; }
+.coffee-lab-live-color-readout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,.1); border-top: 1px solid rgba(255,255,255,.1); }
+.coffee-lab-live-color-readout button { min-width: 0; display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 2px 9px; align-items: center; padding: 13px 17px; border: 0; background: #2b1d16; color: #fff8ee; text-align: left; cursor: pointer; transition: background .2s ease; }
+.coffee-lab-live-color-readout button:hover, .coffee-lab-live-color-readout button.is-active { background: #56301f; }
+.coffee-lab-live-color-readout button > span { grid-row: 1 / 3; width: 24px; aspect-ratio: 1; border: 1px solid rgba(255,255,255,.42); border-radius: 50%; box-shadow: inset 0 0 0 3px rgba(255,255,255,.1); }
+.coffee-lab-live-color-readout small { color: rgba(255,248,238,.56); font-size: .64rem; }
+.coffee-lab-live-color-readout strong { overflow: hidden; text-overflow: ellipsis; font-size: .76rem; white-space: nowrap; }
+.coffee-lab-summary-strip { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(255,255,255,.1); }
+.coffee-lab-summary-strip > div { display: grid; gap: 4px; padding: 20px 24px; border-right: 1px solid rgba(255,255,255,.1); }
+.coffee-lab-summary-strip span { color: rgba(255,255,255,.48); font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; }
+.coffee-lab-summary-strip strong { font-size: .95rem; }
+
+.coffee-lab-controls { padding: clamp(26px, 3.2vw, 46px); background: #f2e5d3; color: var(--lab-ink); overflow: auto; max-height: 860px; display: flex; flex-direction: column; }
+.coffee-lab-step-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin: 0 0 30px; padding-bottom: 18px; border-bottom: 1px solid rgba(32,23,17,.14); }
+.coffee-lab-step-tabs button { min-width: 0; display: grid; gap: 6px; justify-items: start; padding: 10px 8px 12px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #786658; text-align: left; cursor: pointer; transition: color .2s ease, border-color .2s ease, transform .2s ease; }
+.coffee-lab-step-tabs button:hover { color: var(--lab-ink); transform: translateY(-1px); }
+.coffee-lab-step-tabs button.is-active { color: var(--lab-ink); border-color: var(--lab-copper); }
+.coffee-lab-step-tabs button > span { font: 750 .62rem/1 var(--font-geist-mono); letter-spacing: .08em; color: #a44e2a; }
+.coffee-lab-step-tabs button.is-complete > span { width: 20px; height: 20px; display: grid; place-items: center; margin-top: -4px; border-radius: 50%; background: #78855c; color: #fff8ee; }
+.coffee-lab-step-tabs button > strong { width: 100%; overflow: hidden; text-overflow: ellipsis; font-size: .7rem; line-height: 1.2; white-space: nowrap; }
+.coffee-lab-controls fieldset { border: 0; padding: 0 0 34px; margin: 0 0 34px; border-bottom: 1px solid rgba(32,23,17,.14); }
+.coffee-lab-controls fieldset:last-child { border: 0; margin-bottom: 0; }
+.coffee-lab-controls fieldset[hidden] { display: none; }
+.coffee-lab-controls legend { font-size: 1.15rem; font-weight: 780; margin-bottom: 18px; }
+.coffee-lab-control-step { flex: 1; scroll-margin-top: 118px; animation: coffeeLabStepIn .28s cubic-bezier(.2,.8,.2,1); }
+@keyframes coffeeLabStepIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.coffee-lab-control-step legend { display: flex; align-items: center; gap: 10px; }
+.coffee-lab-control-step legend > span { width: 28px; height: 28px; display: inline-grid; place-items: center; border-radius: 50%; background: var(--lab-copper); color: #21140e; font: 800 .68rem/1 var(--font-geist-mono); }
+.coffee-lab-current-choice { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 9px; padding: 10px 13px; margin-bottom: 12px; background: #ddcdb7; border-radius: 12px; }
+.coffee-lab-current-choice span { font-size: .75rem; color: #705f52; }
+.coffee-lab-current-choice strong { font-size: .85rem; }
+.coffee-lab-model-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.coffee-lab-model-grid button { position: relative; text-align: left; min-height: 96px; display: grid; grid-template-columns: 72px 1fr; align-items: center; gap: 10px; padding: 8px; border: 1px solid rgba(32,23,17,.15); border-radius: 14px; background: rgba(255,255,255,.36); color: inherit; cursor: pointer; overflow: hidden; }
+.coffee-lab-model-grid button.is-active { border-color: var(--lab-copper); background: #fff9ef; box-shadow: inset 0 0 0 1px var(--lab-copper); }
+.coffee-lab-model-thumb { position: relative; width: 72px; height: 76px; border-radius: 10px; overflow: hidden; background: #e3d3bd; }
+.coffee-lab-model-thumb img { object-fit: cover; object-position: 70% center; }
+.coffee-lab-model-meta { display: grid; align-content: center; min-width: 0; }
+.coffee-lab-model-meta strong { font-weight: 800; }
+.coffee-lab-model-grid small { color: #756457; font-size: .7rem; }
+.coffee-lab-model-check { position: absolute; right: 8px; top: 8px; border-radius: 50%; padding: 2px; background: var(--lab-copper); color: #21140e; }
+.coffee-lab-layer-tabs, .coffee-lab-finish-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.coffee-lab-layer-tabs button, .coffee-lab-finish-row button { min-height: 38px; padding: 0 14px; border: 1px solid rgba(32,23,17,.16); background: transparent; border-radius: 999px; cursor: pointer; }
+.coffee-lab-layer-tabs button.is-active, .coffee-lab-finish-row button.is-active { background: var(--lab-ink); color: #fff8ee; border-color: var(--lab-ink); }
+.coffee-lab-swatches { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+.coffee-lab-swatches button { background: transparent; border: 0; padding: 0; color: inherit; cursor: pointer; display: grid; gap: 6px; justify-items: center; }
+.coffee-lab-swatches button > span { width: 38px; aspect-ratio: 1; border-radius: 50%; box-shadow: 0 0 0 1px rgba(32,23,17,.2); border: 3px solid #f2e5d3; }
+.coffee-lab-swatches button.is-active > span { box-shadow: 0 0 0 2px var(--lab-copper); }
+.coffee-lab-swatches small { font-size: .68rem; }
+.coffee-lab-custom-color { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin: 4px 0 18px; border-radius: 13px; background: #ddcdb7; }
+.coffee-lab-custom-color span { font-size: .76rem; font-weight: 750; }
+.coffee-lab-custom-color input { width: 46px; height: 34px; padding: 2px; border: 1px solid rgba(32,23,17,.2); border-radius: 8px; background: transparent; cursor: pointer; }
+.coffee-lab-custom-color strong { margin-left: auto; font: 700 .75rem/1 var(--font-geist-mono); }
+.coffee-lab-mobile-live-preview { display: none; }
+.coffee-lab-field-help { color: #756457; line-height: 1.5; font-size: .84rem; }
+.coffee-lab-upload-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.coffee-lab-upload-row input { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+.coffee-lab-upload-row label, .coffee-lab-upload-row button { min-height: 42px; display: inline-flex; align-items: center; gap: 8px; padding: 0 15px; border-radius: 999px; border: 1px solid rgba(32,23,17,.2); background: #fff8ee; cursor: pointer; font-weight: 700; }
+.coffee-lab-logo-controls { margin-top: 18px; display: grid; gap: 12px; }
+.coffee-lab-logo-controls label { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 12px; font-size: .78rem; }
+.coffee-lab-logo-controls input { accent-color: var(--lab-copper); }
+.coffee-lab-compact-accessories { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-height: 460px; padding-right: 4px; overflow-y: auto; scrollbar-color: var(--lab-copper) rgba(32,23,17,.08); }
+.coffee-lab-compact-accessories > button { min-width: 0; display: grid; grid-template-columns: 62px minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 8px 10px 8px 8px; border: 1px solid rgba(32,23,17,.13); border-radius: 14px; background: rgba(255,255,255,.35); color: var(--lab-ink); text-align: left; cursor: pointer; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+.coffee-lab-compact-accessories > button:hover { transform: translateY(-2px); border-color: rgba(219,107,50,.65); }
+.coffee-lab-compact-accessories > button.is-active { border-color: var(--lab-copper); background: #fff8ee; box-shadow: inset 0 0 0 1px var(--lab-copper); }
+.coffee-lab-compact-accessories > button > span { position: relative; width: 62px; aspect-ratio: 1; overflow: hidden; border-radius: 10px; background: #e5d4bd; }
+.coffee-lab-compact-accessories img { object-fit: contain; padding: 5px; }
+.coffee-lab-compact-accessories div { min-width: 0; display: grid; gap: 4px; }
+.coffee-lab-compact-accessories small { color: #9c4c2b; font: 700 .58rem/1.2 var(--font-geist-mono); text-transform: uppercase; letter-spacing: .05em; }
+.coffee-lab-compact-accessories strong { overflow: hidden; text-overflow: ellipsis; font-size: .78rem; line-height: 1.25; }
+.coffee-lab-inline-review { display: grid; gap: 7px; }
+.coffee-lab-inline-review > div { display: grid; grid-template-columns: 22px minmax(0,1fr) auto; align-items: center; gap: 8px; min-height: 44px; padding: 8px 11px; border-radius: 11px; background: rgba(255,255,255,.36); }
+.coffee-lab-inline-review > div:not(:has(i)) { grid-template-columns: minmax(0,1fr) auto; }
+.coffee-lab-inline-review i { width: 22px; aspect-ratio: 1; border: 1px solid rgba(32,23,17,.2); border-radius: 50%; }
+.coffee-lab-inline-review span { color: #776558; font-size: .7rem; }
+.coffee-lab-inline-review strong { font-size: .74rem; text-align: right; }
+.coffee-lab-review-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.coffee-lab-review-actions button { min-height: 42px; display: inline-flex; align-items: center; gap: 8px; padding: 0 15px; border: 1px solid rgba(32,23,17,.18); border-radius: 999px; background: var(--lab-ink); color: #fff8ee; font-weight: 750; cursor: pointer; }
+.coffee-lab-review-actions button + button { background: transparent; color: var(--lab-ink); }
+.coffee-lab-review-submit { width: 100%; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; margin-top: 10px; border-radius: 999px; background: var(--lab-copper); color: #21140e; font-weight: 800; }
+.coffee-lab-step-actions { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(32,23,17,.14); }
+.coffee-lab-step-actions button { min-height: 42px; border: 1px solid rgba(32,23,17,.2); border-radius: 999px; background: transparent; color: var(--lab-ink); font-weight: 760; cursor: pointer; }
+.coffee-lab-step-actions button:last-child { background: var(--lab-ink); color: #fff8ee; }
+.coffee-lab-step-actions button:disabled { opacity: .32; cursor: default; }
+.coffee-lab-step-actions span { color: #7b695b; font: 750 .68rem/1 var(--font-geist-mono); }
+
+.coffee-lab-accessory-section { padding: clamp(90px, 10vw, 150px) 0 30px; }
+.coffee-lab-accessory-section > div:first-child { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 36px; }
+.coffee-lab-accessory-section h3, .coffee-lab-submit-grid h3 { font-size: clamp(2rem, 4vw, 4.5rem); letter-spacing: -.055em; margin: 10px 0; }
+.coffee-lab-accessory-section > div:first-child > p { color: #6d5c50; }
+.coffee-lab-selection-status { display: grid; grid-template-columns: 52px 1fr; gap: 13px; align-items: center; max-width: 620px; margin: -16px 0 24px; padding: 13px 16px; border-radius: 16px; background: #e2cdb0; }
+.coffee-lab-selection-status > span { width: 44px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--lab-copper); font-size: 1.15rem; font-weight: 850; }
+.coffee-lab-selection-status > div { display: grid; min-width: 0; }
+.coffee-lab-selection-status small { color: #715f51; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.coffee-lab-accessory-grid { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(280px, 24vw); gap: 14px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x mandatory; padding-bottom: 16px; scrollbar-color: var(--lab-copper) rgba(32,23,17,.1); }
+.coffee-lab-accessory-grid article { scroll-snap-align: start; display: grid; grid-template-rows: 230px 1fr; background: #eadac4; border-radius: 24px; overflow: hidden; transition: transform .25s ease, background .25s ease; }
+.coffee-lab-accessory-grid article.is-selected { background: #d6ad82; transform: translateY(-4px); }
+.coffee-lab-accessory-image { position: relative; background: #f1e4d3; }
+.coffee-lab-accessory-image img { object-fit: contain; padding: 18px; }
+.coffee-lab-accessory-grid article > div:last-child { padding: 20px; display: grid; align-content: start; }
+.coffee-lab-accessory-grid small { text-transform: uppercase; letter-spacing: .08em; color: #9b4d2d; font: 700 .65rem/1.2 var(--font-geist-mono); }
+.coffee-lab-accessory-grid h4 { font-size: 1.2rem; margin: 10px 0; }
+.coffee-lab-accessory-grid p { color: #68584d; font-size: .85rem; line-height: 1.5; min-height: 3.8em; }
+.coffee-lab-accessory-grid button { margin-top: 18px; justify-self: start; border: 0; border-radius: 999px; background: var(--lab-ink); color: #fff8ee; padding: 10px 15px; display: inline-flex; align-items: center; gap: 7px; font-weight: 750; cursor: pointer; }
+.coffee-lab-accessory-grid article.is-selected button { background: #fff8ee; color: var(--lab-ink); }
+
+.coffee-lab-submit-grid { display: grid; grid-template-columns: .82fr 1.18fr; margin-top: clamp(80px, 10vw, 150px); background: #d56b36; border-radius: 40px; overflow: hidden; }
+.coffee-lab-configuration-card, .coffee-lab-inquiry-form { padding: clamp(28px, 5vw, 64px); }
+.coffee-lab-configuration-card { background: #2b1a13; color: #fff8ee; }
+.coffee-lab-configuration-card pre { white-space: pre-wrap; font: 400 .8rem/1.75 var(--font-geist-mono); color: rgba(255,248,238,.7); margin: 28px 0; }
+.coffee-lab-save-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.coffee-lab-save-actions button { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 15px; border-radius: 999px; border: 1px solid rgba(255,255,255,.24); background: transparent; color: #fff8ee; cursor: pointer; }
+.coffee-lab-concept-board { position: relative; margin-top: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,.14); border-radius: 20px; background: #f4e8d6; box-shadow: 0 20px 46px rgba(0,0,0,.2); }
+.coffee-lab-concept-board img { display: block; width: 100%; height: auto; }
+.coffee-lab-notice { display: flex; gap: 8px; align-items: flex-start; color: #d6c09e; font-size: .82rem; margin-top: 20px; }
+.coffee-lab-inquiry-form > div:first-child > p:last-child { max-width: 560px; }
+.coffee-lab-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 28px 0 14px; }
+.coffee-lab-inquiry-form label { display: grid; gap: 7px; font-size: .76rem; font-weight: 750; }
+.coffee-lab-inquiry-form input, .coffee-lab-inquiry-form select, .coffee-lab-inquiry-form textarea { width: 100%; border: 1px solid rgba(32,23,17,.22); background: rgba(255,248,238,.72); border-radius: 12px; min-height: 48px; padding: 10px 12px; color: var(--lab-ink); font: inherit; }
+.coffee-lab-inquiry-form textarea { min-height: 110px; resize: vertical; }
+.coffee-lab-submit { margin-top: 20px; min-height: 52px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--lab-ink); color: #fff8ee; display: inline-flex; align-items: center; gap: 9px; font-weight: 780; cursor: pointer; }
+.coffee-lab-submit:disabled { opacity: .58; cursor: wait; }
+.coffee-lab-response { padding: 13px 15px; border-radius: 12px; margin-top: 15px; font-size: .85rem; }
+.coffee-lab-response.is-success { background: #dbe5c9; }
+.coffee-lab-response.is-error { background: #f2c9b7; }
+.coffee-lab-honeypot { position: absolute !important; left: -9999px !important; }
+
+.coffee-lab-ecosystem { padding: clamp(100px, 12vw, 180px) max(5vw, 28px); background: #75855b; color: #16200f; }
+.coffee-lab-ecosystem > div:first-child { max-width: 900px; }
+.coffee-lab-ecosystem > div > p:last-child { color: rgba(22,32,15,.72); }
+.coffee-lab-scenario-flow { display: grid; grid-template-columns: auto 1fr auto 1fr auto; align-items: center; gap: 18px; margin-top: 70px; }
+.coffee-lab-scenario-flow span { display: flex; align-items: center; gap: 9px; font-weight: 800; }
+.coffee-lab-scenario-flow i { height: 1px; background: rgba(22,32,15,.32); position: relative; }
+.coffee-lab-scenario-flow i::after { content: ""; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-top: 1px solid; border-right: 1px solid; transform: rotate(45deg); }
+.coffee-lab-scenarios { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 44px; }
+.coffee-lab-scenarios span { border: 1px solid rgba(22,32,15,.26); border-radius: 999px; padding: 12px 18px; }
+.coffee-lab-process { padding: clamp(100px, 12vw, 180px) max(5vw, 28px); background: #ead8bc; }
+.coffee-lab-process ol { list-style: none; padding: 0; margin: 70px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); counter-reset: lab-step; }
+.coffee-lab-process li { min-height: 170px; padding: 22px; border-top: 1px solid rgba(32,23,17,.24); border-right: 1px solid rgba(32,23,17,.16); display: flex; flex-direction: column; justify-content: space-between; }
+.coffee-lab-process li span { font: 700 .7rem/1 var(--font-geist-mono); color: #a64d29; }
+.coffee-lab-process li strong { font-size: clamp(1rem, 1.5vw, 1.35rem); }
+.coffee-lab-process-note { color: #6a594d; max-width: 760px; margin-top: 30px; }
+
+@media (max-width: 1000px) {
+  .coffee-lab-hero { grid-template-columns: 1fr; padding-top: 86px; }
+  .coffee-lab-hero-copy h1 { max-width: none; font-size: clamp(4.4rem, 14vw, 8rem); }
+  .coffee-lab-hero-visual { height: 620px; }
+  .coffee-lab-workbench { grid-template-columns: 1fr; }
+  .coffee-lab-controls { max-height: none; }
+  .coffee-lab-step-tabs { position: sticky; top: 0; z-index: 10; background: #f2e5d3; }
+  .coffee-lab-mobile-live-preview { position: sticky; top: 88px; z-index: 12; display: grid; grid-template-columns: 170px minmax(0,1fr); align-items: center; min-height: 190px; margin: 16px 0 18px; border-radius: 22px; overflow: hidden; background: linear-gradient(135deg,#261914,#482b20); color: #fff8ee; box-shadow: 0 18px 36px rgba(43,26,19,.18); }
+  .coffee-lab-mobile-live-canvas { position: relative; width: 170px; aspect-ratio: 1; isolation: isolate; background: radial-gradient(circle,#d66d37 0 34%,transparent 35%); }
+  .coffee-lab-mobile-live-canvas > img { object-fit: contain; }
+  .coffee-lab-mobile-marker { position: absolute; width: 42px; aspect-ratio: 1; transform: translate(-50%,-50%); border: 2px solid #fff8ee; border-radius: 50%; box-shadow: 0 0 0 4px var(--marker-color), 0 8px 18px rgba(0,0,0,.28); transition: left .3s ease, top .3s ease; }
+  .coffee-lab-mobile-live-preview > div:last-child { display: grid; gap: 6px; padding: 18px; min-width: 0; }
+  .coffee-lab-mobile-live-preview span { color: rgba(255,248,238,.58); font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; }
+  .coffee-lab-mobile-live-preview strong { font-size: .9rem; line-height: 1.4; overflow-wrap: anywhere; }
+  .coffee-lab-mobile-live-preview small { color: rgba(255,248,238,.6); font-size: .66rem; line-height: 1.35; }
+  .coffee-lab-submit-grid { grid-template-columns: 1fr; }
+  .coffee-lab-principles { grid-template-columns: repeat(2, 1fr); }
+  .coffee-lab-process ol { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .coffee-lab-hero { min-height: auto; grid-template-columns: 1fr; padding: 58px 18px 26px; }
+  .coffee-lab-hero-copy h1 { max-width: none; font-size: clamp(3.55rem, 15vw, 5.8rem); line-height: .82; margin-block: 22px 26px; }
+  .coffee-lab-hero-copy h1 em { font-size: clamp(1.9rem, 8.5vw, 3.2rem); }
+  .coffee-lab-hero-visual { height: 390px; margin-top: 12px; }
+  .coffee-lab-floating-part { width: 64px; }
+  .coffee-lab-principles article { min-height: 112px; padding: 20px 16px; }
+}
+
+@media (max-width: 640px) {
+  .coffee-lab-page .site-header.detail-header { margin: 10px 10px 0; }
+  .coffee-lab-page .section-float-nav { margin-inline: 10px; }
+  .coffee-lab-hero { min-height: auto; padding: 76px 18px 34px; }
+  .coffee-lab-hero-copy h1 { font-size: clamp(3.5rem, 18vw, 5.5rem); line-height: .86; }
+  .coffee-lab-hero-copy h1 em { font-size: clamp(1.8rem, 9vw, 2.7rem); }
+  .coffee-lab-hero-copy > p:not(.eyebrow) { font-size: 1rem; }
+  .coffee-lab-hero-actions { display: grid; }
+  .coffee-lab-hero-visual { height: 440px; margin-inline: -20px; }
+  .coffee-lab-hero-disc { width: 78vw; }
+  .coffee-lab-floating-part { width: 66px; }
+  .coffee-lab-floating-part span { display: none; }
+  .coffee-lab-floating-part.part-1 { left: 8%; }
+  .coffee-lab-floating-part.part-2 { right: 8%; }
+  .coffee-lab-floating-part.part-3 { left: 4%; }
+  .coffee-lab-floating-part.part-4 { right: 9%; }
+  .coffee-lab-principles { grid-template-columns: 1fr 1fr; }
+  .coffee-lab-principles article { min-height: 112px; padding: 20px 16px; }
+  .coffee-lab-configurator { padding-inline: 12px; }
+  .coffee-lab-section-heading { padding-inline: 8px; }
+  .coffee-lab-workbench { border-radius: 26px; }
+  .coffee-lab-preview-head { display: grid; padding: 20px; }
+  .coffee-lab-preview-head small { text-align: left; }
+  .coffee-lab-machine-stage { min-height: 450px; }
+  .coffee-lab-real-variant-board { inset: 14px; border-radius: 20px; }
+  .coffee-lab-real-color-marker { width: 68px; }
+  .coffee-lab-product-canvas { width: 92%; }
+  .coffee-lab-layer-labels span { display: none; }
+  .coffee-lab-summary-strip > div { padding: 15px 10px; }
+  .coffee-lab-controls { padding: 26px 18px; }
+  .coffee-lab-step-tabs { grid-template-columns: repeat(5, 72px); margin-inline: -4px; overflow-x: auto; overscroll-behavior-inline: contain; }
+  .coffee-lab-step-tabs button { scroll-snap-align: start; }
+  .coffee-lab-step-tabs button > strong { font-size: .66rem; }
+  .coffee-lab-compact-accessories { grid-template-columns: 1fr; max-height: 420px; }
+  .coffee-lab-inline-review > div { grid-template-columns: 20px minmax(0,1fr); }
+  .coffee-lab-inline-review > div:not(:has(i)) { grid-template-columns: minmax(0,1fr); }
+  .coffee-lab-inline-review strong { grid-column: 2; text-align: left; }
+  .coffee-lab-inline-review > div:not(:has(i)) strong { grid-column: 1; }
+  .coffee-lab-mobile-live-preview { top: 76px; grid-template-columns: 132px minmax(0,1fr); min-height: 148px; border-radius: 18px; }
+  .coffee-lab-mobile-live-canvas { width: 132px; }
+  .coffee-lab-mobile-live-preview > div:last-child { padding: 12px; }
+  .coffee-lab-model-grid { grid-template-columns: repeat(2, 1fr); }
+  .coffee-lab-model-grid button { grid-template-columns: 1fr; min-height: 138px; }
+  .coffee-lab-model-thumb { width: 100%; height: 82px; }
+  .coffee-lab-model-meta { padding-inline: 4px; }
+  .coffee-lab-swatches { grid-template-columns: repeat(4, 1fr); }
+  .coffee-lab-accessory-section > div:first-child { display: block; padding-inline: 8px; }
+  .coffee-lab-accessory-grid { grid-auto-columns: 82vw; }
+  .coffee-lab-submit-grid { border-radius: 26px; }
+  .coffee-lab-configuration-card, .coffee-lab-inquiry-form { padding: 28px 20px; }
+  .coffee-lab-form-grid { grid-template-columns: 1fr; }
+  .coffee-lab-scenario-flow { grid-template-columns: 1fr; }
+  .coffee-lab-scenario-flow i { width: 1px; height: 26px; margin-left: 10px; }
+  .coffee-lab-scenario-flow i::after { display: none; }
+  .coffee-lab-process ol { grid-template-columns: 1fr; }
+  .coffee-lab-process li { min-height: 110px; border-right: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coffee-lab-floating-part { animation: none; }
+  .coffee-lab-hero-actions a, .coffee-lab-accessory-grid article { transition: none; }
+  .coffee-lab-control-step { animation: none; }
+}

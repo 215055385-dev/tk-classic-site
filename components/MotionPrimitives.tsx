@@ -128,10 +128,10 @@ export function RevealSection({ children, className, ...props }: MotionProps<"se
   return (
     <m.section
       className={className}
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 34 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: "some" }}
-      transition={{ duration: 0.72, ease: softEase }}
+      viewport={{ once: true, amount: 0.12, margin: "0px 0px -8% 0px" }}
+      transition={{ duration: 0.82, ease: softEase }}
       {...props}
     >
       {children}
@@ -145,12 +145,12 @@ export function RevealArticle({ children, className, ...props }: MotionProps<"ar
   return (
     <m.article
       className={className}
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 22, scale: 0.985 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
       whileHover={shouldReduceMotion ? undefined : { y: -4, scale: 1.015 }}
       whileTap={shouldReduceMotion ? undefined : { scale: 0.995 }}
-      viewport={{ once: true, amount: 0.18 }}
-      transition={{ duration: 0.58, ease: softEase }}
+      viewport={{ once: true, amount: 0.14, margin: "0px 0px -6% 0px" }}
+      transition={{ duration: 0.68, ease: softEase }}
       {...props}
     >
       {children}

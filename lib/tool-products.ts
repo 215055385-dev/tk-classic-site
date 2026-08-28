@@ -6,7 +6,6 @@ export function getInteractiveProducts(lang: Lang) {
     model: product.model,
     summary: product.summary[lang],
     featureLabel: localizeFeatureLabel(product.featureLabel, lang),
-    price: product.price,
     spec: {
       pressure: product.spec.pressure,
       battery: product.spec.battery,

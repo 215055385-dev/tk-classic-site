@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
+import { trackConversionEvent } from "@/lib/client-analytics";
 
 export type ProductVideo = {
   src: string;
@@ -50,6 +51,7 @@ export function ProductVideoShowcase({
   const showcaseRef = useRef<HTMLElement>(null);
   const playerRef = useRef<HTMLVideoElement>(null);
   const manuallyPausedRef = useRef(false);
+  const playTrackedRef = useRef(false);
   const shouldReduceMotion = useReducedMotion();
   const [shouldLoad, setShouldLoad] = useState(false);
   const [isInView, setIsInView] = useState(false);
@@ -144,10 +146,16 @@ export function ProductVideoShowcase({
             loop
             muted={isMuted}
             playsInline
-            preload="metadata"
+            preload="none"
             poster={video.poster}
             aria-label={`${video.label}: ${video.title}`}
-            onPlay={() => setIsPlaying(true)}
+            onPlay={() => {
+              setIsPlaying(true);
+              if (!playTrackedRef.current) {
+                playTrackedRef.current = true;
+                trackConversionEvent("video_play", { metadata: { title: video.title, label: video.label } });
+              }
+            }}
             onPause={() => setIsPlaying(false)}
             onVolumeChange={(event) => setIsMuted(event.currentTarget.muted)}
           >

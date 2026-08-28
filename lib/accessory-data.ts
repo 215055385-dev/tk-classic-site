@@ -6,6 +6,8 @@ export type AccessoryItem = {
   image: string;
   alt: string;
   note: string;
+  highlights?: string[];
+  modelSelectable?: boolean;
 };
 
 /**
@@ -68,21 +70,23 @@ export const accessories: AccessoryItem[] = [
     note: "Optional serving component",
   },
   {
-    slug: "acrylic-stand-panels",
-    title: "Acrylic stand panels",
-    category: "Display accessories",
-    description: "Clear acrylic panel set for retail display and product presentation.",
-    image: "/accessories/acrylic-stand-panels.png",
-    alt: "Clear acrylic coffee machine stand panels",
-    note: "Optional bundle display piece",
-  },
-  {
     slug: "acrylic-machine-stand",
     title: "Acrylic machine stand",
     category: "Display accessories",
     description: "Clear stand for elevating the machine and cup in a presentation setup.",
-    image: "/accessories/acrylic-machine-stand.png",
+    image: "/accessories/acrylic-machine-stand.webp",
     alt: "Clear acrylic stand for a portable coffee machine",
     note: "Optional bundle display piece",
+  },
+  {
+    slug: "cold-rolled-steel-coffee-stand",
+    title: "Cold-rolled steel stand",
+    category: "Machine stands",
+    description: "Cold-rolled carbon steel stand for holding a portable coffee machine above the serving cup.",
+    image: "/accessories/cold-rolled-steel-coffee-stand.webp",
+    alt: "Black cold-rolled carbon steel stand for a portable coffee machine",
+    note: "Optional coffee machine accessory",
+    highlights: ["Stable support", "Space-saving profile", "Anti-slip feet", "Easy setup"],
+    modelSelectable: false,
   },
 ];

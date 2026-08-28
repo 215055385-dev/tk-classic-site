@@ -1,0 +1,197 @@
+/*
+ * Shared visual continuity layer.
+ * Keeps supplied product photography intact while softening the hard boundary
+ * between image, light and surrounding scene.
+ */
+
+:root {
+  --scene-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --scene-cyan-glow: rgba(101, 203, 232, 0.11);
+  --scene-warm-glow: rgba(183, 110, 66, 0.09);
+}
+
+/* The hero photograph now dissolves into the black titanium stage instead of
+   reading as a square image pasted over a background. */
+.tech-product-stage {
+  isolation: isolate;
+}
+
+.tech-product-stage::before,
+.tech-product-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.tech-product-stage::before {
+  background:
+    linear-gradient(90deg, #05090d 0%, rgba(5, 9, 13, 0.84) 8%, transparent 25%, transparent 83%, rgba(5, 9, 13, 0.34) 100%),
+    linear-gradient(0deg, #05090d 0%, transparent 19%, transparent 86%, rgba(5, 9, 13, 0.48) 100%);
+}
+
+.tech-product-stage::after {
+  inset: auto 6% 8% 21%;
+  height: 26%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(37, 189, 242, 0.12), transparent 66%);
+  filter: blur(24px);
+  opacity: 0.72;
+}
+
+.tech-product-stage img {
+  animation:
+    scene-image-settle 1.05s var(--scene-ease) 0.12s both,
+    tech-stage-breathe 13s ease-in-out 1.25s infinite alternate;
+}
+
+.tech-stage-model {
+  z-index: 3;
+}
+
+/* Consistent image stage behavior across product, accessory, certification and
+   video surfaces. The overlays never intercept links or controls. */
+:is(
+  .product-image-link,
+  .product-hero-image,
+  .accessory-card-image,
+  .accessories-hero-media,
+  .accessories-hero-image,
+  .certification-overview,
+  .certification-editorial-preview,
+  .editorial-video-media
+) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+:is(
+  .product-image-link,
+  .product-hero-image,
+  .accessory-card-image,
+  .accessories-hero-media,
+  .accessories-hero-image,
+  .certification-overview,
+  .certification-editorial-preview,
+  .editorial-video-media
+)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 22%, transparent 74%, rgba(5, 9, 13, 0.2)),
+    radial-gradient(ellipse at 50% 40%, transparent 48%, rgba(5, 9, 13, 0.13) 100%);
+  opacity: 0.7;
+  pointer-events: none;
+  transition: opacity 0.6s var(--scene-ease);
+}
+
+:is(
+  .product-image-link,
+  .product-hero-image,
+  .accessory-card-image,
+  .accessories-hero-media,
+  .accessories-hero-image,
+  .certification-overview,
+  .certification-editorial-preview
+) img {
+  transition:
+    transform 0.75s var(--scene-ease),
+    filter 0.75s var(--scene-ease),
+    opacity 0.55s ease;
+}
+
+:is(
+  .product-card,
+  .accessory-card,
+  .accessories-hero-showcase,
+  .certification-overview,
+  .certification-editorial-preview
+):hover :is(.product-image-link, .accessory-card-image, .accessories-hero-media, img)::after {
+  opacity: 0.42;
+}
+
+.product-card:hover .product-image-link img,
+.accessory-card:hover .accessory-card-image img,
+.accessories-hero-media:hover img {
+  transform: scale(1.018);
+}
+
+/* Subtle atmospheric continuity between sections. This avoids visibly boxed,
+   abrupt background changes while preserving readable content contrast. */
+.home-shell > .section,
+.inner-page > .section {
+  box-shadow:
+    inset 0 80px 90px -110px var(--scene-cyan-glow),
+    inset 0 -80px 90px -110px var(--scene-warm-glow);
+}
+
+.home-shell > .section + .section,
+.inner-page > .section + .section {
+  border-top-color: rgba(203, 211, 218, 0.07) !important;
+}
+
+.editorial-video-media video {
+  transition: filter 0.65s var(--scene-ease), transform 0.85s var(--scene-ease);
+  filter: saturate(0.94) contrast(1.02);
+}
+
+.product-video-story:hover .editorial-video-media video {
+  transform: scale(1.008);
+  filter: saturate(1) contrast(1.035);
+}
+
+@keyframes scene-image-settle {
+  from {
+    opacity: 0;
+    transform: scale(1.035);
+    filter: blur(8px) contrast(0.94) brightness(0.78);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes tech-stage-breathe {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to { transform: scale(1.015) translate3d(-0.35%, -0.2%, 0); }
+}
+
+@media (max-width: 760px) {
+  .tech-product-stage::before {
+    background:
+      linear-gradient(90deg, #05090d 0%, transparent 14%, transparent 86%, #05090d 100%),
+      linear-gradient(0deg, #05090d 0%, transparent 22%, transparent 88%, rgba(5, 9, 13, 0.42) 100%);
+  }
+
+  .home-shell > .section,
+  .inner-page > .section {
+    box-shadow:
+      inset 0 54px 70px -88px var(--scene-cyan-glow),
+      inset 0 -54px 70px -88px var(--scene-warm-glow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-product-stage img {
+    animation: none !important;
+  }
+
+  :is(
+    .product-image-link,
+    .product-hero-image,
+    .accessory-card-image,
+    .accessories-hero-media,
+    .accessories-hero-image,
+    .certification-overview,
+    .certification-editorial-preview,
+    .editorial-video-media
+  ) img,
+  .editorial-video-media video {
+    transition: none !important;
+  }
+}

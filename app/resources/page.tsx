@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, BookOpen, ChevronRight, ShieldCheck } from "lucide-react";
+import { BookOpen, ChevronRight, ShieldCheck } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
@@ -10,10 +10,21 @@ import { copy, certifications, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { uiCopy } from "@/lib/localized-ui";
 import { certificationRequestCopy } from "@/lib/certification-copy";
+import { buyerGuides } from "@/lib/buyer-guides";
+import { brandTagline } from "@/lib/translation-copy";
+import { PrimaryNav } from "@/components/PrimaryNav";
 
 type ResourcesPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
-export const runtime = "edge";
+const readGuideCopy: Record<Lang, string> = {
+  en: "Read buyer guide",
+  es: "Leer la guía en inglés",
+  pt: "Ler o guia em inglês",
+  fr: "Lire le guide en anglais",
+  ar: "قراءة الدليل باللغة الإنجليزية",
+  zh: "阅读英文采购指南",
+  ru: "Читать руководство на английском",
+};
 
 function getLang(value: string | string[] | undefined): Lang {
   const code = Array.isArray(value) ? value[0] : value;
@@ -42,15 +53,31 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   const support = commercialCopy[lang];
   const dir = languages.find((language) => language.code === lang)?.dir ?? "ltr";
   const query = langQuery(lang);
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: t.faq.map((item) => ({
-      "@type": "Question",
-      name: item.q,
-      acceptedAnswer: { "@type": "Answer", text: item.a },
-    })),
-  };
+  const guideCards = lang === "en"
+    ? buyerGuides.map((guide) => [guide.title, guide.description] as [string, string])
+    : ui.blog.cards;
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: t.faq.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "TK Classic buyer guides",
+      itemListElement: buyerGuides.map((guide, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: guide.title,
+        url: `${localizedUrl(`/resources/${guide.slug}`, "en")}`,
+      })),
+    },
+  ];
 
   return (
     <main className="inner-page" dir={dir} lang={lang}>
@@ -59,21 +86,13 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <header className="site-header detail-header">
-        <Link className="brand" href={`/${query}`} aria-label="TK Classic home"><span className="brand-mark">TK</span><span><strong>TK Classic</strong><small>Portable coffee OEM</small></span></Link>
-        <nav aria-label="Resources navigation">
-          <Link href={`/products${query}`}>{t.nav.products}</Link>
-          <Link href={`/accessories${query}`}>{t.sectionTitles.accessories}</Link>
-          <Link href={`/oem-odm${query}`}>{t.nav.oem}</Link>
-          <Link href={`/factory${query}`}>{t.nav.factory}</Link>
-          <Link href={`/certifications${query}`}>{t.nav.certs}</Link>
-          <Link href={`/contact${query}`}>{t.nav.contact}</Link>
-        </nav>
+        <Link className="brand" href={`/${query}`} aria-label="TK Classic home"><span className="brand-mark">TK</span><span><strong>TK Classic</strong><small>{brandTagline[lang]}</small></span></Link>
+        <PrimaryNav lang={lang} current="resources" ariaLabel="Resources navigation" />
         <LanguageSwitcher currentLang={lang} hrefForLang={(language) => `/resources${language === "en" ? "" : `?lang=${language}`}`} />
       </header>
       <SectionFloatNav lang={lang} path="/resources" label={t.sectionTitles.blog} />
 
       <section className="inner-hero section">
-        <Link className="back-link" href={`/${query}`}><ArrowLeft size={17} aria-hidden="true" />{t.nav.home}</Link>
         <p className="eyebrow">{t.nav.blog}</p>
         <h1>{t.sectionTitles.blog}</h1>
         <p className="inner-hero-lead">{t.blogLead}</p>
@@ -89,7 +108,10 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
       <section id="guides" className="section blog-section">
         <div className="section-heading"><span>{ui.blog.cardPrefix}</span><h2>{t.sectionTitles.blog}</h2></div>
         <div className="blog-grid">
-          {ui.blog.cards.map(([title, summary], index) => <RevealArticle key={title} className="resource-guide-card"><BookOpen size={21} aria-hidden="true" /><span>{ui.blog.cardPrefix} 0{index + 1}</span><h3>{title}</h3><p>{summary}</p><Link href={`/${query}#contact`}>{t.hero.primaryCta}<ChevronRight size={16} aria-hidden="true" /></Link></RevealArticle>)}
+          {guideCards.map(([title, summary], index) => {
+            const guide = buyerGuides[index];
+            return <RevealArticle key={title} className="resource-guide-card"><BookOpen size={21} aria-hidden="true" /><span>{ui.blog.cardPrefix} 0{index + 1}</span><h3>{title}</h3><p>{summary}</p><Link href={guide ? `/resources/${guide.slug}` : `/contact${query}`}>{readGuideCopy[lang]}<ChevronRight size={16} aria-hidden="true" /></Link></RevealArticle>;
+          })}
         </div>
       </section>
 

@@ -1,62 +1,32 @@
-import type { Lang, ProductPrice } from "@/lib/site-data";
+import { MessageSquareQuote } from "lucide-react";
+import type { Lang } from "@/lib/site-data";
 
 type ProductPriceTagProps = {
   lang: Lang;
-  price: ProductPrice;
   compact?: boolean;
 };
 
-const priceLabels: Record<
-  Lang,
-  {
-    badge: string;
-    original: string;
-    promo: string;
-    unit: string;
-    save: string;
-    note: string;
-  }
-> = {
-  en: { badge: "Wholesale pricing", original: "List price", promo: "Wholesale from", unit: "/ unit", save: "Save", note: "Indicative wholesale price. Final quote depends on quantity, packaging and customization." },
-  es: { badge: "Precio mayorista", original: "Precio de lista", promo: "Mayorista desde", unit: "/ unidad", save: "Ahorro", note: "Precio mayorista orientativo. La cotización final depende de la cantidad, el embalaje y la personalización." },
-  pt: { badge: "Preço de atacado", original: "Preço de lista", promo: "Atacado desde", unit: "/ un.", save: "Economize", note: "Preço grossista indicativo. A cotação final depende da quantidade, embalagem e personalização." },
-  fr: { badge: "Tarif grossiste", original: "Prix catalogue", promo: "Grossiste dès", unit: "/ pièce", save: "Économie", note: "Prix de gros indicatif. Le devis final dépend de la quantité, de l’emballage et de la personnalisation." },
-  ar: { badge: "سعر الجملة", original: "سعر القائمة", promo: "سعر الجملة من", unit: "/ قطعة", save: "التوفير", note: "سعر جملة إرشادي. يعتمد العرض النهائي على الكمية والتغليف والتخصيص." },
-  zh: { badge: "批发价", original: "参考价", promo: "批发起订价", unit: "/ 台", save: "节省", note: "此为参考批发价，最终报价取决于采购数量、包装方案与定制要求。" },
-  ru: { badge: "Оптовая цена", original: "Цена по каталогу", promo: "Опт от", unit: "/ шт.", save: "Экономия", note: "Ориентировочная оптовая цена. Итоговое предложение зависит от количества, упаковки и персонализации." },
+const quoteLabels: Record<Lang, { badge: string; title: string; note: string }> = {
+  en: { badge: "Project quotation", title: "Pricing confirmed for your order", note: "Share the model, quantity, destination, packaging and branding requirements for a written quotation." },
+  es: { badge: "Cotización de proyecto", title: "Precio confirmado para su pedido", note: "Indique modelo, cantidad, destino, embalaje y personalización para recibir una cotización por escrito." },
+  pt: { badge: "Cotação do projeto", title: "Preço confirmado para o seu pedido", note: "Informe modelo, quantidade, destino, embalagem e personalização para receber uma cotação por escrito." },
+  fr: { badge: "Devis de projet", title: "Tarif confirmé pour votre commande", note: "Indiquez le modèle, la quantité, la destination, l'emballage et la personnalisation pour recevoir un devis écrit." },
+  ar: { badge: "عرض سعر للمشروع", title: "يتم تأكيد السعر حسب طلبك", note: "أرسل الطراز والكمية والوجهة والتغليف ومتطلبات العلامة التجارية للحصول على عرض سعر مكتوب." },
+  zh: { badge: "项目报价", title: "按实际订单确认价格", note: "提交型号、数量、目的市场、包装和品牌定制要求，获取书面报价。" },
+  ru: { badge: "Расчёт проекта", title: "Цена подтверждается для вашего заказа", note: "Укажите модель, объём, направление, упаковку и брендинг, чтобы получить письменное предложение." },
 };
 
-function formatUsd(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    currency: "USD",
-    maximumFractionDigits: 0,
-    style: "currency",
-  }).format(value);
-}
-
-export function ProductPriceTag({ lang, price, compact = false }: ProductPriceTagProps) {
-  const labels = priceLabels[lang];
-  const saving = price.regular - price.sale;
+export function ProductPriceTag({ lang, compact = false }: ProductPriceTagProps) {
+  const labels = quoteLabels[lang];
 
   return (
-    <div className={compact ? "price-tag is-compact" : "price-tag"}>
-      <div className="price-head">
+    <div className={compact ? "quote-scope-card is-compact" : "quote-scope-card"}>
+      <MessageSquareQuote size={compact ? 17 : 20} aria-hidden="true" />
+      <div>
         <span>{labels.badge}</span>
-        <small>
-          {labels.save} {formatUsd(saving)}
-        </small>
+        <strong>{labels.title}</strong>
+        {!compact ? <p>{labels.note}</p> : null}
       </div>
-      <div className="price-values" aria-label={`${labels.original} ${formatUsd(price.regular)}, ${labels.promo} ${formatUsd(price.sale)}`}>
-        <span>
-          {labels.original}
-          <del>{formatUsd(price.regular)}</del>
-        </span>
-        <strong>
-          {formatUsd(price.sale)}
-          <small>{labels.unit}</small>
-        </strong>
-      </div>
-      {!compact ? <p className="price-note">{labels.note}</p> : null}
     </div>
   );
 }

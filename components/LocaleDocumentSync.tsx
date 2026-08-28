@@ -1,7 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import type { Lang } from "@/lib/site-data";
 
 const localeDirections: Record<string, "ltr" | "rtl"> = {
   en: "ltr",
@@ -13,15 +14,21 @@ const localeDirections: Record<string, "ltr" | "rtl"> = {
   ru: "ltr",
 };
 
-export function LocaleDocumentSync() {
+export function LocaleDocumentSync({ lang }: { lang: Lang }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const lang = new URLSearchParams(window.location.search).get("lang") ?? "en";
-    const safeLang = localeDirections[lang] ? lang : "en";
+    const pathLocale = pathname.split("/").filter(Boolean)[0];
+    const queryLocale = new URLSearchParams(window.location.search).get("lang");
+    const requestedLang = queryLocale && localeDirections[queryLocale]
+      ? queryLocale
+      : pathLocale && localeDirections[pathLocale]
+        ? pathLocale
+        : lang;
+    const safeLang = localeDirections[requestedLang] ? requestedLang : "en";
     document.documentElement.lang = safeLang;
     document.documentElement.dir = localeDirections[safeLang];
-  }, [pathname]);
+  }, [lang, pathname]);
 
   return null;
 }
