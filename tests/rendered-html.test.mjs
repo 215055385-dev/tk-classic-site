@@ -399,12 +399,16 @@ test("Resources navigation has one clear menu with a direct hub destination", as
 });
 
 test("admin navigation exposes real module labels and uses the unified titanium UI", async () => {
-  const [shell, styles] = await Promise.all([
+  const [shell, dashboard, styles] = await Promise.all([
     readProjectFile("components/admin/AdminShell.tsx"),
+    readProjectFile("components/AdminDashboard.tsx"),
     readProjectFile("app/admin/admin.css"),
   ]);
   assert.match(shell, /const resolvedTitle/);
   assert.match(shell, /aria-label=\{item\.label\}/);
+  assert.match(shell, /复制后台地址/);
+  assert.match(dashboard, /复制后台网址/);
+  assert.match(dashboard, /Ctrl \+ D/);
   assert.doesNotMatch(shell, /<Menu className="admin-cms-menu-icon"/);
   assert.match(styles, /2026 admin UI consolidation/);
   assert.match(styles, /\.cms-primary:hover/);

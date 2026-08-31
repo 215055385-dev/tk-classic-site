@@ -128,6 +128,35 @@
 .admin-cms-content { padding: 28px; }
 .admin-dashboard-content { min-width: 0; }
 
+.admin-login-shortcuts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(23, 35, 43, 0.12);
+}
+.admin-login-shortcuts button,
+.admin-login-shortcuts a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(23, 35, 43, 0.14);
+  border-radius: 9px;
+  color: #24404d;
+  background: rgba(255,255,255,.78);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+}
+.admin-login-shortcuts button:hover,
+.admin-login-shortcuts a:hover { border-color: rgba(20,127,157,.35); background: #eef8fa; }
+.admin-login-shortcuts small { grid-column: 1 / -1; color: #667884; font-size: 11px; line-height: 1.55; }
+
 .admin-module-page { max-width: 1180px; margin: 0 auto; }
 .admin-module-heading {
   display: flex;
@@ -190,10 +219,18 @@
   .admin-cms-sidebar nav a[aria-current="page"] { box-shadow: inset 0 -3px #bd6b4c; }
   .admin-cms-topbar { padding-inline: 16px; }
   .admin-cms-topbar small,
-  .admin-cms-top-actions a { display: none; }
+  .admin-cms-top-actions a span,
+  .admin-cms-top-actions button span { display: none; }
+  .admin-cms-top-actions a,
+  .admin-cms-top-actions button { width: 38px; padding: 0; }
   .admin-cms-menu-icon { display: block; }
   .admin-cms-content { padding: 22px 14px 96px; }
   .admin-module-icon { display: none; }
+}
+
+@media (max-width: 420px) {
+  .admin-login-shortcuts { grid-template-columns: 1fr; }
+  .admin-login-shortcuts small { grid-column: auto; }
 }
 
 .cms-manager { display: grid; gap: 20px; }

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { AdminShell } from "@/components/admin/AdminShell";
 import type { AdminInquiry, AdminStats, InquiryStatus } from "@/lib/admin-service";
 
@@ -71,6 +72,7 @@ export function AdminDashboard({
   const [username, setUsername] = useState("215055385");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [adminUrlCopied, setAdminUrlCopied] = useState(false);
   const [rows, setRows] = useState<Inquiry[]>(initialData?.inquiries ?? []);
   const [stats, setStats] = useState<Stats>(initialData?.stats ?? emptyStats);
   const [loading, setLoading] = useState(initialAuthenticated && !initialData);
@@ -131,6 +133,15 @@ export function AdminDashboard({
     await loadData();
   }
 
+  async function copyAdminUrl() {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/admin`);
+      setAdminUrlCopied(true);
+    } catch {
+      setLoginError("无法自动复制，请直接收藏当前页面。");
+    }
+  }
+
   async function updateRow(row: Inquiry, status: Status, adminNote: string) {
     const response = await fetch("/api/admin/inquiries", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: row.id, status, adminNote }) });
     const data = await response.json().catch(() => ({}));
@@ -162,7 +173,7 @@ export function AdminDashboard({
     const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = `tk-classic-inquiries-${new Date().toISOString().slice(0, 10)}.csv`; link.click(); URL.revokeObjectURL(url);
   }
 
-  if (authenticated === false) return <main className="admin-shell admin-login-shell"><section className="admin-login-card"><span className="admin-kicker">TK CLASSIC / PRIVATE AREA</span><h1>中文内容管理后台</h1><p>登录后管理产品、首页内容、媒体、文章与客户询盘。本页面不会被搜索引擎收录。</p><form onSubmit={handleLogin}><label htmlFor="admin-username">管理员用户名</label><input id="admin-username" type="text" value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" required /><label htmlFor="admin-password">管理员密码</label><input id="admin-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required />{loginError ? <small className="admin-error">{loginError}</small> : null}<button className="admin-primary-button" type="submit">登录后台</button></form></section></main>;
+  if (authenticated === false) return <main className="admin-shell admin-login-shell"><section className="admin-login-card"><span className="admin-kicker">TK CLASSIC / PRIVATE AREA</span><h1>中文内容管理后台</h1><p>登录后管理产品、首页内容、媒体、文章与客户询盘。本页面不会被搜索引擎收录。</p><form onSubmit={handleLogin}><label htmlFor="admin-username">管理员用户名</label><input id="admin-username" type="text" value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" required /><label htmlFor="admin-password">管理员密码</label><input id="admin-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required />{loginError ? <small className="admin-error">{loginError}</small> : null}<button className="admin-primary-button" type="submit">登录后台</button></form><div className="admin-login-shortcuts"><button type="button" onClick={() => void copyAdminUrl()}>{adminUrlCopied ? "后台网址已复制" : "复制后台网址"}</button><Link href="/">返回网站首页</Link><small>快捷进入：收藏本页（Ctrl + D），或使用桌面的“TK Classic 后台”快捷方式。</small></div></section></main>;
   return <AdminShell title="询盘与访问数据" description="真实访问、转化与客户跟进数据">
     <div className="admin-dashboard-content">
     <header className="admin-header"><div><span className="admin-kicker">TK CLASSIC / PRIVATE AREA</span><h1>询盘与访问数据</h1><p>集中查看客户需求、热门产品和网站访问趋势。</p></div><div className="admin-header-actions"><button className="admin-quiet-button" onClick={() => void loadData()}>刷新数据</button></div></header>

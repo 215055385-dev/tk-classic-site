@@ -206,4 +206,15 @@ test.describe("TK Classic buyer journey", () => {
     await expect(page).toHaveURL(/\/factory#exhibitions$/);
     await expect(page.locator("#exhibitions")).toBeVisible();
   });
+
+  test("admin login provides secure quick access without bypassing authentication", async ({ page }) => {
+    await page.goto("/admin");
+    await expect(page.getByRole("heading", { name: "中文内容管理后台" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "复制后台网址" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "返回网站首页" })).toHaveAttribute("href", "/");
+    await expect(page.getByLabel("管理员密码")).toHaveAttribute("type", "password");
+    await expect(page.locator(".admin-cms-shell")).toHaveCount(0);
+    const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+  });
 });
