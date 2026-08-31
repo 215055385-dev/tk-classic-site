@@ -346,7 +346,7 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
             <div className="coffee-lab-orbit orbit-one" aria-hidden="true" />
             <div className="coffee-lab-orbit orbit-two" aria-hidden="true" />
             <div className="coffee-lab-real-variant-board is-cmf-reference">
-              <Image src={selectedModel.variantBoard} alt={`${selectedModel.model} real product color references`} fill priority sizes="(max-width: 900px) 92vw, 620px" />
+              <Image src={selectedModel.variantBoard} alt={`${selectedModel.model} real product color references`} fill loading="eager" fetchPriority="high" sizes="(max-width: 900px) 92vw, 620px" />
               <span className="coffee-lab-photo-badge">{boardCopy.photo}</span>
               {logoUrl ? <div className="coffee-lab-board-logo" aria-label="Customer logo concept reference" style={{ backgroundImage: `url(${logoUrl})` }} /> : null}
             </div>
@@ -378,7 +378,7 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
             <legend><span>01</span>{copy.machine}</legend>
             <div className="coffee-lab-current-choice"><Check size={16} /><span>{copy.preview}</span><strong>{selectedModel.model}</strong></div>
             <div className="coffee-lab-model-grid">
-              {catalog.models.map((item) => <button type="button" key={item.model} className={model === item.model ? "is-active" : ""} onClick={() => setModel(item.model)} aria-pressed={model === item.model}><span className="coffee-lab-model-thumb"><Image src={item.image} alt="" fill sizes="110px" /></span><span className="coffee-lab-model-meta"><strong>{item.model}</strong><small>{item.role === "value" ? copy.value : item.role === "premium" ? copy.premium : copy.standard}</small></span>{model === item.model ? <Check className="coffee-lab-model-check" size={15} /> : null}</button>)}
+              {catalog.models.map((item) => <button type="button" key={item.model} className={model === item.model ? "is-active" : ""} onClick={() => setModel(item.model)} aria-pressed={model === item.model}><span className="coffee-lab-model-thumb"><Image src={item.image} alt="" fill sizes="110px" loading="eager" /></span><span className="coffee-lab-model-meta"><strong>{item.model}</strong><small>{item.role === "value" ? copy.value : item.role === "premium" ? copy.premium : copy.standard}</small></span>{model === item.model ? <Check className="coffee-lab-model-check" size={15} /> : null}</button>)}
             </div>
           </fieldset>
 

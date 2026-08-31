@@ -24,7 +24,7 @@ export function GlobalLanguageSwitcher({ currentLang }: { currentLang: Lang }) {
 
   return (
     <div className="global-language-dock">
-      <details ref={rootRef} className="language-switcher">
+      <details ref={rootRef} className="language-switcher" suppressHydrationWarning>
         <summary aria-label="Change language">
           <Globe2 size={18} aria-hidden="true" />
           <span>{current.label}</span>

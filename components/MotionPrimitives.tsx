@@ -125,11 +125,14 @@ export function MotionCta({ children, ...props }: MotionProps<"a">) {
 export function RevealSection({ children, className, ...props }: MotionProps<"section">) {
   const shouldReduceMotion = useReducedMotion();
 
+  // Keep large sections visible before IntersectionObserver runs. The
+  // restrained vertical motion preserves the reveal without making the
+  // content depend on JavaScript timing for visibility.
   return (
     <m.section
       className={className}
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={shouldReduceMotion ? false : { y: 24 }}
+      whileInView={{ y: 0 }}
       viewport={{ once: true, amount: 0.12, margin: "0px 0px -8% 0px" }}
       transition={{ duration: 0.82, ease: softEase }}
       {...props}
@@ -145,8 +148,8 @@ export function RevealArticle({ children, className, ...props }: MotionProps<"ar
   return (
     <m.article
       className={className}
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 22, scale: 0.985 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      initial={shouldReduceMotion ? false : { y: 18, scale: 0.99 }}
+      whileInView={{ y: 0, scale: 1 }}
       whileHover={shouldReduceMotion ? undefined : { y: -4, scale: 1.015 }}
       whileTap={shouldReduceMotion ? undefined : { scale: 0.995 }}
       viewport={{ once: true, amount: 0.14, margin: "0px 0px -6% 0px" }}

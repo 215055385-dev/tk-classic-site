@@ -325,8 +325,8 @@ export function CylindricalGallery({
                   alt={image.alt}
                   fill
                   sizes="(max-width: 720px) 72vw, 40vw"
-                  priority={priorityFirst && index === 0}
-                  loading={priorityFirst && index === 0 ? "eager" : "lazy"}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={priorityFirst && index === 0 ? "high" : "auto"}
                   draggable={false}
                 />
                 <span className={styles.imageIndex}>{String(index + 1).padStart(2, "0")}</span>
@@ -348,7 +348,7 @@ export function CylindricalGallery({
           <button className={styles.iconButton} type="button" aria-label={controls.previous} onClick={() => setLightboxIndex(modulo(lightboxIndex - 1, images.length))}><ChevronLeft aria-hidden="true" /></button>
           <figure className={styles.lightboxFigure}>
             <div className={styles.lightboxMedia}>
-              <Image className={styles.lightboxImage} src={images[lightboxIndex].src} alt={images[lightboxIndex].alt} fill sizes="90vw" priority />
+              <Image className={styles.lightboxImage} src={images[lightboxIndex].src} alt={images[lightboxIndex].alt} fill sizes="90vw" loading="eager" fetchPriority="high" />
             </div>
             <figcaption className={styles.lightboxCaption}><strong>{images[lightboxIndex].title}</strong><span>{lightboxIndex + 1} / {images.length}</span></figcaption>
           </figure>

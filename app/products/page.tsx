@@ -95,7 +95,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <div className="product-collection-stage" aria-label={t.sectionTitles.products}>
           {cmsProducts.slice(0, 3).map((product, index) => (
             <Link className={`product-collection-item item-${index + 1}`} href={`/products/${product.slug}${query}`} key={product.model}>
-              <Image src={product.hero} alt={getProductGeo(product, lang).primaryAlt} width={720} height={720} sizes="(max-width: 720px) 42vw, 24vw" priority={index === 0} />
+              <Image
+                src={product.hero}
+                alt={getProductGeo(product, lang).primaryAlt}
+                width={720}
+                height={720}
+                sizes="(max-width: 720px) 42vw, 24vw"
+                loading="eager"
+                fetchPriority={index === 0 ? "high" : "auto"}
+              />
               <span>{product.model}</span>
             </Link>
           ))}
@@ -115,7 +123,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   width={900}
                   height={900}
                   sizes="(max-width: 720px) 100vw, (max-width: 1040px) 50vw, 33vw"
-                  priority={index === 0}
+                  loading={index < 3 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "auto"}
                 />
               </Link>
               <div className="product-card-body">

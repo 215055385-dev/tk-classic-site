@@ -18,6 +18,11 @@ test.describe("TK Classic buyer journey", () => {
   });
 
   test("language switching keeps the page, document language, and chat copy synchronized", async ({ page }) => {
+    const hydrationErrors: string[] = [];
+    page.on("console", (message) => {
+      const text = message.text();
+      if (/hydration|hydrated/i.test(text) && message.type() === "error") hydrationErrors.push(text);
+    });
     await page.goto("/zh/products");
     await page.locator("header .language-switcher summary").click();
     await page.locator("header .language-menu a[href='/fr/products']").click();
@@ -33,6 +38,7 @@ test.describe("TK Classic buyer journey", () => {
     await expect(page.locator("html")).toHaveAttribute("lang", "ar");
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(page.locator(".site-chat-launcher")).toContainText("تحدث مع المبيعات");
+    expect(hydrationErrors).toEqual([]);
   });
 
   test("language menu opens above navigation on every main inner page", async ({ page }) => {
@@ -98,6 +104,13 @@ test.describe("TK Classic buyer journey", () => {
 
     const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+
+    const ecosystemLead = page.locator(".coffee-lab-ecosystem > div > p:last-child");
+    await expect(ecosystemLead).toBeVisible();
+    await expect(ecosystemLead).toHaveCSS("color", "rgb(159, 170, 180)");
+    const submit = configurator.locator(".coffee-lab-submit");
+    await expect(submit).toHaveCSS("background-color", "rgb(101, 203, 232)");
+    await expect(submit).toHaveCSS("color", "rgb(8, 11, 15)");
   });
 
   test("public sections share the outdoor-coffee navigation palette and compact accessory label", async ({ page }) => {
@@ -135,6 +148,19 @@ test.describe("TK Classic buyer journey", () => {
     await expect(accessoryShowcase.locator("img")).toHaveCount(3);
     await expect.poll(() => accessoryShowcase.locator("img").evaluateAll((images) => images.every((image) => (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
     await expect.poll(() => accessoryShowcase.evaluate((element) => element.getBoundingClientRect().height <= 600)).toBe(true);
+    await expect(page.locator(".accessory-card-body small").first()).toHaveCSS("color", "rgb(156, 231, 245)");
+    await expect(page.locator(".accessory-card-highlights li").first()).toHaveCSS("color", "rgb(243, 246, 248)");
+
+    await page.goto("/oem-odm");
+    await expect(page.locator(".oem-qc-copy > span")).toHaveCSS("color", "rgb(156, 231, 245)");
+  });
+
+  test("product collection keeps visible content rendered and eagerly loads its hero stage", async ({ page }) => {
+    await page.goto("/products");
+    await expect(page.locator("#product-catalog")).toBeVisible();
+    await expect.poll(() => page.locator("#product-catalog").evaluate((element) => getComputedStyle(element).opacity)).toBe("1");
+    await expect(page.locator(".product-collection-stage img")).toHaveCount(3);
+    await expect.poll(() => page.locator(".product-collection-stage img").evaluateAll((images) => images.every((image) => (image as HTMLImageElement).loading === "eager"))).toBe(true);
   });
 
   test("global navigation exposes Home and a compact Resources hub", async ({ page }) => {
@@ -171,6 +197,7 @@ test.describe("TK Classic buyer journey", () => {
     await expect(page.locator("#exhibitions")).toBeVisible();
     await expect(page.locator("#factory-gallery img")).toHaveCount(7);
     await expect(page.locator("#exhibitions img")).toHaveCount(7);
+    await expect(page.locator(".gallery-truth-note > p:not(.eyebrow)")).toHaveCSS("color", "rgb(203, 211, 218)");
 
     await page.goto("/exhibitions");
     await expect(page).toHaveURL(/\/factory#exhibitions$/);

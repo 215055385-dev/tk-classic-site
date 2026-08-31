@@ -805,6 +805,14 @@ body {
   background: var(--tk-space) !important;
 }
 
+.gallery-truth-note h2 {
+  color: var(--tk-copy);
+}
+
+.gallery-truth-note > p:not(.eyebrow) {
+  color: var(--tk-silver);
+}
+
 /* Coffee Lab: same technology palette, while preserving real-photo configuration logic. */
 .coffee-lab-page {
   --lab-ink: var(--tk-copy);
@@ -858,6 +866,13 @@ body {
     radial-gradient(circle at 90% 10%, rgba(101, 203, 232, 0.04), transparent 22rem),
     linear-gradient(180deg, var(--tk-graphite), var(--tk-space));
   color: var(--tk-copy);
+}
+
+.coffee-lab-section-heading > p:last-child,
+.coffee-lab-ecosystem > div > p:last-child,
+.coffee-lab-process .coffee-lab-section-heading > p:last-child,
+.coffee-lab-process-note {
+  color: var(--tk-copy-muted);
 }
 
 .coffee-lab-workbench {
@@ -931,6 +946,18 @@ body {
   border-color: rgba(203, 211, 218, 0.16);
   background: rgba(8, 11, 15, 0.7);
   color: var(--tk-copy);
+}
+
+.coffee-lab-submit {
+  border: 1px solid rgba(101, 203, 232, 0.56);
+  background: var(--tk-aurora);
+  color: var(--tk-space);
+  box-shadow: 0 14px 34px rgba(101, 203, 232, 0.16);
+}
+
+.coffee-lab-submit:hover:not(:disabled) {
+  background: var(--tk-aurora-soft);
+  box-shadow: 0 18px 42px rgba(101, 203, 232, 0.24);
 }
 
 .coffee-lab-process li {
@@ -1436,6 +1463,42 @@ html:has(body > main.tool-page-shell) {
   color: var(--tk-aurora) !important;
 }
 
+/* Accessories keep their real white-background product photography, while
+   every supporting label belongs to the shared titanium interface palette. */
+.inner-page.accessories-page :is(.accessories-catalog, .accessory-matrix-section) {
+  background:
+    radial-gradient(circle at 88% 12%, rgba(101, 203, 232, 0.05), transparent 24rem),
+    linear-gradient(180deg, var(--tk-graphite), var(--tk-space)) !important;
+  color: var(--tk-copy);
+}
+
+.inner-page.accessories-page .accessory-card-body h3 {
+  color: var(--tk-copy);
+}
+
+.inner-page.accessories-page .accessory-card-body > p:not(.card-label) {
+  color: var(--tk-silver);
+}
+
+.inner-page.accessories-page .accessory-card-body small {
+  color: var(--tk-aurora-soft);
+}
+
+.inner-page.accessories-page .accessory-card-highlights li {
+  border: 1px solid rgba(101, 203, 232, 0.18);
+  background: rgba(101, 203, 232, 0.08);
+  color: var(--tk-copy);
+}
+
+.inner-page.accessories-page .accessory-matrix-scroll {
+  border: 1px solid rgba(203, 211, 218, 0.11);
+  background: var(--tk-titanium);
+}
+
+.inner-page.accessories-page .accessory-matrix th:first-child {
+  background: rgba(101, 203, 232, 0.11);
+}
+
 /* OEM/ODM route follows the same restrained technology bands. */
 .inner-page.oem-page :is(
   .oem-process-section,
@@ -1475,6 +1538,18 @@ html:has(body > main.tool-page-shell) {
   .oem-final-cta
 ) :is(p, li, figcaption, small) {
   color: var(--tk-silver) !important;
+}
+
+.inner-page.oem-page :is(
+  .oem-process-section,
+  .procurement-section,
+  .oem-quality-section,
+  .oem-guide-callout,
+  .oem-evidence-section,
+  .oem-qc-evidence,
+  .oem-final-cta
+) span {
+  color: var(--tk-aurora-soft) !important;
 }
 
 .inner-page .procurement-contact-section,

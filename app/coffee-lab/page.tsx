@@ -70,7 +70,14 @@ export default async function CoffeeLabPage({ searchParams }: PageProps) {
         <div className="coffee-lab-hero-visual">
           <div className="coffee-lab-hero-disc" aria-hidden="true" />
           <div className="coffee-lab-hero-contour" aria-hidden="true" />
-          <Image src={dq010.image} alt="Real DQ-010 portable coffee machine featured in Coffee Lab Studio" fill priority sizes="(max-width: 800px) 90vw, 52vw" />
+          <Image
+            src={dq010.image}
+            alt="Real DQ-010 portable coffee machine featured in Coffee Lab Studio"
+            fill
+            loading="eager"
+            fetchPriority="high"
+            sizes="(max-width: 800px) 90vw, 52vw"
+          />
           {catalog.accessories.slice(0, 4).map((accessory, index) => <div className={`coffee-lab-floating-part part-${index + 1}`} key={accessory.slug}><Image src={accessory.image} alt="" fill sizes="120px" /><span>{accessory.title}</span></div>)}
           <div className="coffee-lab-model-stamp"><span>BASE MODEL</span><strong>DQ-010</strong></div>
         </div>

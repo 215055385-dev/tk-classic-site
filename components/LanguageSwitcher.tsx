@@ -34,7 +34,7 @@ export function LanguageSwitcher({ currentLang, hrefForLang }: LanguageSwitcherP
   };
 
   return (
-    <details className="language-switcher">
+    <details className="language-switcher" suppressHydrationWarning>
       <summary aria-label={switcherLabel[currentLang]}>
         <Globe2 size={18} aria-hidden="true" />
         <span>{current.label}</span>
