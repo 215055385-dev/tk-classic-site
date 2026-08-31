@@ -392,6 +392,7 @@ test("Resources navigation has one clear menu with a direct hub destination", as
   assert.match(nav, /navigationPath\("\/resources", lang\)/);
   assert.match(nav, /return `\/en\$\{normalizedPath\}`/);
   assert.match(nav, /className="resources-nav-panel"/);
+  assert.match(nav, /resources", lang\)\}#guides/);
   assert.doesNotMatch(nav, /key: "coffee-lab"/);
   assert.match(redirect, /permanentRedirect/);
   assert.match(redirect, /"\/oem-odm"/);

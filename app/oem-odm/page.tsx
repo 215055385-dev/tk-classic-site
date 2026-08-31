@@ -23,6 +23,7 @@ import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { brandTagline } from "@/lib/translation-copy";
 import { PrimaryNav } from "@/components/PrimaryNav";
 import { OemCoffeeLab } from "@/components/OemCoffeeLab";
+import { coffeeLabCopy } from "@/lib/coffee-lab-data";
 
 type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
@@ -73,9 +74,10 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const params = await searchParams;
   const lang = getLang(params?.lang);
   const t = copy[lang];
+  const lab = coffeeLabCopy[lang];
   return {
-    title: { absolute: `${t.sectionTitles.oem} | TK Classic` },
-    description: t.oem.join(" "),
+    title: { absolute: `${t.sectionTitles.oem} · ${lab.title} | TK Classic` },
+    description: `${lab.subtitle} ${t.oem.join(" ")}`,
     keywords: ["portable coffee machine OEM", "portable espresso ODM", "private label coffee machine", "custom coffee machine packaging"],
     alternates: { canonical: localizedUrl("/oem-odm", lang), languages: languageAlternates("/oem-odm") },
   };
@@ -86,6 +88,7 @@ export default async function OemOdmPage({ searchParams }: PageProps) {
   const lang = getLang(params?.lang);
   const query = queryFor(lang);
   const t = copy[lang];
+  const lab = coffeeLabCopy[lang];
   const support = commercialCopy[lang];
   const local = pageCopy[lang];
   const qualityEvidence = qualityEvidenceCopy[lang];
@@ -122,7 +125,10 @@ export default async function OemOdmPage({ searchParams }: PageProps) {
         <p className="eyebrow">{t.nav.oem}</p>
         <h1>{t.sectionTitles.oem}</h1>
         <p className="inner-hero-lead">{t.contactLead}</p>
-        <Link className="primary-action" href={`/contact${query}#inquiry-form`}>{t.hero.primaryCta}<ArrowUpRight size={17} aria-hidden="true" /></Link>
+        <div className="factory-exhibition-actions">
+          <a className="primary-action" href="#coffee-lab">{lab.start}<ArrowUpRight size={17} aria-hidden="true" /></a>
+          <Link className="secondary-action" href={`/contact${query}#inquiry-form`}>{t.hero.primaryCta}<ArrowUpRight size={17} aria-hidden="true" /></Link>
+        </div>
       </section>
 
       <OemCoffeeLab lang={lang} />

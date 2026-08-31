@@ -170,7 +170,7 @@ test.describe("TK Classic buyer journey", () => {
       await header.locator(".resources-nav-menu summary").click();
       const panel = header.locator(".resources-nav-panel");
       await expect(panel.getByRole("link", { name: "Resources hub" })).toHaveAttribute("href", "/en/resources");
-      await expect(panel.getByRole("link", { name: "Buyer guides" })).toHaveAttribute("href", "/en/resources");
+      await expect(panel.getByRole("link", { name: "Buyer guides" })).toHaveAttribute("href", "/en/resources#guides");
       await expect(panel.getByRole("link", { name: "Use scenarios" })).toHaveAttribute("href", "/en/solutions");
       await expect(panel.getByRole("link", { name: "USA wholesale" })).toHaveAttribute("href", "/en/wholesale/usa");
       await panel.getByRole("link", { name: "Resources hub" }).click();

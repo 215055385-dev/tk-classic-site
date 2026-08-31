@@ -57,7 +57,7 @@ export function PrimaryNav({ lang, current, ariaLabel = "Main navigation" }: Pri
           </summary>
           <div className="resources-nav-panel">
             <Link href={navigationPath("/resources", lang)}><span>{resources.overview[0]}</span><small>{resources.overview[1]}</small></Link>
-            <Link href={navigationPath("/resources", lang)}><span>{resources.guides[0]}</span><small>{resources.guides[1]}</small></Link>
+            <Link href={`${navigationPath("/resources", lang)}#guides`}><span>{resources.guides[0]}</span><small>{resources.guides[1]}</small></Link>
             <Link href={navigationPath("/solutions", lang)}><span>{resources.scenarios[0]}</span><small>{resources.scenarios[1]}</small></Link>
             <Link href={navigationPath("/wholesale/usa", lang)}><span>{resources.wholesale[0]}</span><small>{resources.wholesale[1]}</small></Link>
           </div>
