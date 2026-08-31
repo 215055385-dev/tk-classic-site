@@ -414,3 +414,19 @@ test("admin navigation exposes real module labels and uses the unified titanium 
   assert.match(styles, /\.cms-primary:hover/);
   assert.match(styles, /box-shadow: inset 0 -3px #65cbe8/);
 });
+
+test("admin dashboard preserves lead ownership and exposes operational shortcuts", async () => {
+  const [dashboard, styles] = await Promise.all([
+    readProjectFile("components/AdminDashboard.tsx"),
+    readProjectFile("app/admin/admin.css"),
+  ]);
+  assert.match(dashboard, /assignedTo: row\.assignedTo/);
+  assert.match(dashboard, /今日运营中心/);
+  assert.match(dashboard, /进入询盘跟进/);
+  assert.match(dashboard, /href="\/admin\/products"/);
+  assert.match(dashboard, /href="\/admin\/media"/);
+  assert.match(dashboard, /href="\/admin\/articles"/);
+  assert.match(dashboard, /href="\/admin\/chats"/);
+  assert.match(styles, /\.admin-operations/);
+  assert.match(styles, /\.admin-task-grid/);
+});
