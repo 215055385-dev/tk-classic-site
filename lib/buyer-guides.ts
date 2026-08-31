@@ -18,6 +18,7 @@ export type BuyerGuide = {
   heroAlt: string;
   keyTakeaways: string[];
   directAnswer?: string;
+  directAnswerTitle?: string;
   keywords?: string[];
   relatedLinks?: Array<{ href: string; label: string }>;
   sections: BuyerGuideSection[];
@@ -242,6 +243,109 @@ const sourcingGuides: BuyerGuide[] = [
       {
         question: "When is the final packaging price confirmed?",
         answer: "It is confirmed in the quotation after the model, accessories, branding, packaging structure, quantity and destination are reviewed.",
+      },
+    ],
+  },
+  {
+    slug: "portable-espresso-machine-sample-approval-checklist",
+    title: "Portable espresso machine sample approval checklist for US buyers",
+    description:
+      "A model-specific sample inspection checklist for US importers reviewing DQ-001 or DQ-010 before a wholesale, private-label or OEM order.",
+    eyebrow: "US importer sample checklist",
+    readTime: "7 minute read",
+    publishedAt: "2026-08-31",
+    updatedAt: "2026-08-31",
+    heroImage: "/optimized/product-scenes/dq-010-1.webp",
+    heroAlt: "Official TK Classic DQ-010 portable coffee machine photograph for the sample approval checklist",
+    keyTakeaways: [
+      "Approve one exact model, color and coffee-format configuration rather than a general product family.",
+      "Test DQ-001 and DQ-010 against their own published controls, adapters, cup and charging information.",
+      "Record included accessories, artwork versions and requested compliance files with the approved sample.",
+      "Use the signed sample record and formal quotation as the reference for the bulk-order configuration.",
+    ],
+    directAnswerTitle: "How should a US importer approve a portable espresso machine sample?",
+    directAnswer:
+      "Approve the sample as a complete, model-specific configuration: record the model and color, test every required coffee format using the supplied components, verify the published controls and charging workflow, photograph the included accessories, and attach the approved logo, packaging and document requests. For DQ-001, check the capsule and ground-coffee adapters. For DQ-010, separately check the N-series, Dolce Gusto, ground-coffee and documented portable drip-cup formats, together with the LCD information. Final quantity, MOQ and commercial terms remain part of the written quotation.",
+    keywords: [
+      "portable espresso machine sample approval checklist",
+      "coffee machine sample inspection",
+      "OEM coffee machine sample order",
+      "DQ-001 sample",
+      "DQ-010 sample",
+      "portable coffee machine US importer",
+    ],
+    relatedLinks: [
+      { href: "/wholesale/usa", label: "US wholesale sourcing path" },
+      { href: "/products/dq-001", label: "Review DQ-001 published data" },
+      { href: "/products/dq-010", label: "Review DQ-010 published data" },
+      { href: "/tools/inquiry-builder", label: "Prepare a sourcing brief" },
+    ],
+    sections: [
+      {
+        title: "1. Freeze the exact sample configuration",
+        paragraphs: [
+          "Write the model, color, cup, coffee formats, adapters, charging component and optional accessories into one sample record before testing begins. A photograph of the machine alone is not enough because similar-looking configurations can include different components.",
+          "The current TK Classic sample policy uses charged samples. The sample fee may be refunded or credited after a bulk order is placed and shipped, subject to the confirmed order terms. Sample orders are planned for dispatch within seven days; courier transit and the exact sample charge are confirmed separately.",
+        ],
+        bullets: [
+          "Model and color reference",
+          "Coffee formats and matching components",
+          "Cup, charging component and optional accessories",
+          "Sample order, dispatch and courier reference",
+        ],
+      },
+      {
+        title: "2. Test the published workflow for the selected model",
+        paragraphs: [
+          "DQ-001 is the value-led starting model. Its current record lists capsule and ground-coffee adapters, a 25 bar platform, a 9600mAh / 30Wh battery and USB Type-C charging. Test both required coffee formats with the components supplied in the sample and record the operating sequence used.",
+          "DQ-010 is the premium LCD model. Its current record lists a 325 mL cup, N-series capsules, Dolce Gusto capsules, ground coffee and a documented portable drip-cup format. Review each required format separately and confirm that the LCD presents the published temperature, battery-level and extraction-mode information.",
+        ],
+      },
+      {
+        title: "3. Connect the sample to branding and compliance review",
+        paragraphs: [
+          "If the project includes a logo or custom packaging, identify the artwork version, logo position, application method and packaging files reviewed with the sample. Do not approve the machine and the packaging as unrelated records.",
+          "Request the available certification and test documents for the selected model and US destination after inquiry. The website shows a compliance overview, but applicable files are supplied according to the model and market rather than offered as unrestricted public downloads.",
+        ],
+        bullets: [
+          "Approved logo artwork and position",
+          "Packaging artwork, inserts, labels and manual",
+          "Included accessory list",
+          "Model- and market-specific document request",
+        ],
+      },
+      {
+        title: "4. Build a bulk-order approval record",
+        paragraphs: [
+          "Keep dated photographs, the configuration list, test notes, artwork versions and requested document list together. This creates a practical reference for the quotation and reduces ambiguity when the project moves from the sample to a bulk order.",
+          "The formal quotation should confirm the selected model, quantity, destination, branding, packaging, accessories, MOQ, payment and production arrangements. The sample checklist supports that quotation; it does not replace it.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: "Are TK Classic portable espresso machine samples free?",
+        answer: "No. Samples are charged. The sample fee may be refunded or credited after a bulk order is placed and shipped, subject to the confirmed order terms.",
+      },
+      {
+        question: "How quickly is a sample order dispatched?",
+        answer: "The current policy plans sample dispatch within seven days of the sample order. Courier transit time, destination charges and the exact sample arrangement are confirmed separately.",
+      },
+      {
+        question: "What should a buyer test on a DQ-001 sample?",
+        answer: "Test the capsule and ground-coffee configurations supplied with the sample, then record the operating sequence, cup, charging component and included accessories against the DQ-001 product record.",
+      },
+      {
+        question: "What should a buyer test on a DQ-010 sample?",
+        answer: "Review the required N-series, Dolce Gusto, ground-coffee and documented portable drip-cup formats separately, and confirm the published LCD information, cup and charging workflow against the DQ-010 product record.",
+      },
+      {
+        question: "When should a US buyer request compliance documents?",
+        answer: "Request the available model- and market-specific documents during the inquiry and sample review so the applicable set can be confirmed for the selected product and destination.",
+      },
+      {
+        question: "How does a sample approval carry into a bulk order?",
+        answer: "Keep the approved model, color, components, accessories, artwork versions, packaging and document requests in one dated record, then reference that record in the formal quotation and order confirmation.",
       },
     ],
   },

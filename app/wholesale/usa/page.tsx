@@ -16,6 +16,7 @@ const relatedGuideSlugs = [
   "portable-espresso-machine-private-label-buying-guide",
   "25-bar-portable-coffee-machine-buying-checklist",
   "oem-packaging-checklist-portable-coffee-gift-sets",
+  "portable-espresso-machine-sample-approval-checklist",
 ];
 const relatedGuides = relatedGuideSlugs
   .map((slug) => buyerGuides.find((guide) => guide.slug === slug))
@@ -60,7 +61,7 @@ export default function UsaWholesalePage() {
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "WebPage", name: "Portable Espresso Machine Wholesale for US Importers", description: "A verified factory-direct comparison of DQ-001 and DQ-010 for US wholesale, retail and private-label sourcing.", url: `${company.siteUrl}/wholesale/usa`, inLanguage: "en-US", dateModified: "2026-08-25", audience: { "@type": "BusinessAudience", audienceType: "US importers, wholesalers and private-label buyers" }, about: [dq001.model, dq010.model], isPartOf: { "@id": `${company.siteUrl}#website` }, publisher: { "@id": `${company.siteUrl}#organization` }, subjectOf: relatedGuides.map((guide) => ({ "@type": "Article", name: guide.title, url: `${company.siteUrl}/resources/${guide.slug}` })) },
+      { "@type": "WebPage", name: "Portable Espresso Machine Wholesale for US Importers", description: "A verified factory-direct comparison of DQ-001 and DQ-010 for US wholesale, retail and private-label sourcing.", url: `${company.siteUrl}/wholesale/usa`, inLanguage: "en-US", dateModified: "2026-08-31", audience: { "@type": "BusinessAudience", audienceType: "US importers, wholesalers and private-label buyers" }, about: [dq001.model, dq010.model], isPartOf: { "@id": `${company.siteUrl}#website` }, publisher: { "@id": `${company.siteUrl}#organization` }, subjectOf: relatedGuides.map((guide) => ({ "@type": "Article", name: guide.title, url: `${company.siteUrl}/resources/${guide.slug}` })) },
       { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: company.siteUrl }, { "@type": "ListItem", position: 2, name: "US Wholesale", item: `${company.siteUrl}/wholesale/usa` }] },
       { "@type": "FAQPage", mainEntity: faqs.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: item.a } })) },
       { "@type": "ItemList", name: "Portable espresso machines for US wholesale review", numberOfItems: 2, itemListElement: [dq001, dq010].map((product, index) => ({ "@type": "ListItem", position: index + 1, url: `${company.siteUrl}/products/${product.slug}`, item: { "@type": "Product", name: `${product.model} portable espresso machine`, model: product.model, image: `${company.siteUrl}${product.hero}`, description: product.summary.en, brand: { "@type": "Brand", name: company.brand } } })) },

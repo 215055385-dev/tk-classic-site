@@ -58,6 +58,12 @@ export default async function BuyerGuidePage({ params }: GuidePageProps) {
   if (!guide) notFound();
 
   const url = `${company.siteUrl}/resources/${guide.slug}`;
+  const publishedLabel = new Intl.DateTimeFormat("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${guide.publishedAt}T00:00:00Z`));
   const structuredData = [
     {
       "@context": "https://schema.org",
@@ -111,7 +117,7 @@ export default async function BuyerGuidePage({ params }: GuidePageProps) {
           <h1>{guide.title}</h1>
           <p className="buyer-guide-deck">{guide.description}</p>
           <div className="buyer-guide-meta" aria-label="Article information">
-            <span><CalendarDays size={16} aria-hidden="true" /><time dateTime={guide.publishedAt}>Published 4 August 2026</time></span>
+            <span><CalendarDays size={16} aria-hidden="true" /><time dateTime={guide.publishedAt}>Published {publishedLabel}</time></span>
             <span><Clock3 size={16} aria-hidden="true" />{guide.readTime}</span>
             <span><BookOpenCheck size={16} aria-hidden="true" />Reviewed by TK Classic</span>
           </div>
@@ -133,7 +139,7 @@ export default async function BuyerGuidePage({ params }: GuidePageProps) {
             {guide.directAnswer ? (
               <section className="buyer-guide-direct-answer" aria-labelledby="buyer-guide-direct-answer-title">
                 <p className="eyebrow">Short answer</p>
-                <h2 id="buyer-guide-direct-answer-title">How should a buyer choose?</h2>
+                <h2 id="buyer-guide-direct-answer-title">{guide.directAnswerTitle ?? "How should a buyer choose?"}</h2>
                 <p><strong>{guide.directAnswer}</strong></p>
               </section>
             ) : null}

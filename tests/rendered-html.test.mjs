@@ -50,6 +50,7 @@ test("buyer guides are indexable, evidence-led, and linked into discovery files"
     "portable-espresso-machine-private-label-buying-guide",
     "25-bar-portable-coffee-machine-buying-checklist",
     "oem-packaging-checklist-portable-coffee-gift-sets",
+    "portable-espresso-machine-sample-approval-checklist",
   ]) {
     assert.match(guides, new RegExp(`slug: "${slug}"`));
   }
