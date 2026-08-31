@@ -1,18 +1,18 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BookOpen, ChevronRight, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, BookOpen, Building2, ChevronRight, Compass, ShieldCheck } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SectionFloatNav } from "@/components/SectionFloatNav";
 import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { commercialCopy } from "@/lib/support-page-data";
-import { copy, certifications, languages, type Lang } from "@/lib/site-data";
-import { languageAlternates, localizedUrl } from "@/lib/seo";
+import { copy, languages, type Lang } from "@/lib/site-data";
+import { languageAlternates, localizedPath, localizedUrl } from "@/lib/seo";
 import { uiCopy } from "@/lib/localized-ui";
 import { certificationRequestCopy } from "@/lib/certification-copy";
 import { buyerGuides } from "@/lib/buyer-guides";
 import { brandTagline } from "@/lib/translation-copy";
-import { PrimaryNav } from "@/components/PrimaryNav";
+import { PrimaryNav, resourcesCopy } from "@/components/PrimaryNav";
 
 type ResourcesPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
@@ -56,6 +56,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   const guideCards = lang === "en"
     ? buyerGuides.map((guide) => [guide.title, guide.description] as [string, string])
     : ui.blog.cards;
+  const resources = resourcesCopy[lang];
   const structuredData = [
     {
       "@context": "https://schema.org",
@@ -98,10 +99,12 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         <p className="inner-hero-lead">{t.blogLead}</p>
       </section>
 
-      <RevealSection id="certifications" className="section cert-section">
-        <div className="section-heading align-left"><span>{t.nav.certs}</span><h2>{t.sectionTitles.certs}</h2><p>{t.certs.join(" ")}</p></div>
-        <div className="cert-grid">
-          {certifications.map((cert) => <div key={cert.name}><ShieldCheck size={22} aria-hidden="true" /><span>{cert.name}</span><small>{certificationRequestCopy[lang]}</small></div>)}
+      <RevealSection className="section resource-start-section" aria-labelledby="resource-start-title">
+        <div className="section-heading align-left"><span>{resources.label}</span><h2 id="resource-start-title">{resources.overview[0]}</h2><p>{resources.overview[1]}</p></div>
+        <div className="resource-start-grid">
+          <Link href="#guides"><BookOpen size={23} aria-hidden="true" /><span>01</span><h3>{resources.guides[0]}</h3><p>{resources.guides[1]}</p><strong><ArrowUpRight size={16} aria-hidden="true" /></strong></Link>
+          <Link href={localizedPath("/solutions", lang)}><Compass size={23} aria-hidden="true" /><span>02</span><h3>{resources.scenarios[0]}</h3><p>{resources.scenarios[1]}</p><strong><ArrowUpRight size={16} aria-hidden="true" /></strong></Link>
+          <Link href={localizedPath("/wholesale/usa", lang)}><Building2 size={23} aria-hidden="true" /><span>03</span><h3>{resources.wholesale[0]}</h3><p>{resources.wholesale[1]}</p><strong><ArrowUpRight size={16} aria-hidden="true" /></strong></Link>
         </div>
       </RevealSection>
 
@@ -119,6 +122,12 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         <div className="section-heading align-left"><span>{t.nav.faq}</span><h2>{t.sectionTitles.faq}</h2></div>
         <div className="faq-list">{t.faq.map((item) => <details key={item.q}><summary>{item.q}</summary><p>{item.a}</p></details>)}</div>
       </RevealSection>
+
+      <section className="section resource-evidence-bar">
+        <ShieldCheck size={25} aria-hidden="true" />
+        <div><span>{t.nav.certs}</span><h2>{t.sectionTitles.certs}</h2><p>{certificationRequestCopy[lang]}</p></div>
+        <Link href={localizedPath("/certifications", lang)}>{t.nav.certs}<ArrowUpRight size={16} aria-hidden="true" /></Link>
+      </section>
 
       <section className="section commercial-section">
         <div className="section-heading"><span>{support.proofTitle}</span><h2>{support.proofLead}</h2></div>

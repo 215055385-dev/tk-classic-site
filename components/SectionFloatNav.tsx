@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { copy, type Lang } from "@/lib/site-data";
 import { localizedPath, localizedUrl } from "@/lib/seo";
-import { coffeeLabNav } from "@/lib/coffee-lab-data";
 
 type SectionFloatNavProps = {
   lang: Lang;
@@ -30,7 +29,6 @@ export function SectionFloatNav({ lang, path, label }: SectionFloatNavProps) {
         <Link href={localizedPath("/", lang)}>{t.nav.home}</Link>
         <Link href={localizedPath("/products", lang)}>{t.nav.products}</Link>
         <Link href={localizedPath("/accessories", lang)}>{accessories}</Link>
-        <Link href={localizedPath("/coffee-lab", lang)}>{coffeeLabNav[lang]}</Link>
         <Link href={localizedPath("/oem-odm", lang)}>{t.nav.oem}</Link>
         <Link href={localizedPath("/factory", lang)}>{t.nav.factory}</Link>
         <Link href={localizedPath("/resources", lang)}>{resources}</Link>

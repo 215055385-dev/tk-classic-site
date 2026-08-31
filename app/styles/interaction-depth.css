@@ -458,29 +458,24 @@
     animation: none !important;
   }
 }
-/* Resources is a real destination first, with a compact secondary menu.
-   Keeping the label as a Link avoids the previous dead-end summary control. */
+/* Resources uses one predictable desktop target. The summary opens a panel
+   whose first item is the resource hub, avoiding the old split link/arrow UI. */
 .resources-nav-group {
   position: relative;
-  display: inline-flex;
+  display: block;
   align-items: center;
   flex: 0 0 auto;
 }
 
-.site-header .resources-nav-direct {
-  padding-right: 5px !important;
-  white-space: nowrap;
-}
-
 .resources-nav-group .resources-nav-menu {
-  position: static;
+  position: relative;
   flex: 0 0 auto;
 }
 
 .resources-nav-group .resources-nav-menu summary {
-  min-width: 28px;
-  padding-right: 9px !important;
-  padding-left: 5px !important;
+  min-width: unset;
+  padding: 10px 12px !important;
+  white-space: nowrap;
 }
 
 .resources-nav-group .resources-nav-panel {
@@ -494,16 +489,8 @@
   z-index: 170;
 }
 
-.resources-nav-direct[aria-current="page"] {
-  color: var(--tk-copy) !important;
-}
-
 @media (max-width: 720px) {
   .resources-nav-group .resources-nav-menu {
     display: none;
-  }
-
-  .site-header .resources-nav-direct {
-    padding-right: 10px !important;
   }
 }

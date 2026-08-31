@@ -42,7 +42,7 @@ test.describe("TK Classic buyer journey", () => {
   });
 
   test("language menu opens above navigation on every main inner page", async ({ page }) => {
-    for (const path of ["/accessories", "/coffee-lab", "/oem-odm", "/factory", "/resources", "/contact"]) {
+    for (const path of ["/accessories", "/oem-odm", "/factory", "/resources", "/contact"]) {
       await page.goto(path);
       const switcher = page.locator("header.site-header .language-switcher");
       await switcher.locator("summary").click();
@@ -87,8 +87,9 @@ test.describe("TK Classic buyer journey", () => {
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
   });
 
-  test("Coffee Lab guides buyers through a real-product configuration without overflow", async ({ page }) => {
-    await page.goto("/zh/coffee-lab");
+  test("OEM and ODM includes the Coffee Lab configuration workflow without overflow", async ({ page }) => {
+    await page.goto("/zh/oem-odm#coffee-lab");
+    await expect(page.locator("#oem-lab-title")).toContainText("OEM / ODM");
     await expect(page.getByRole("heading", { name: "创建你的配置" })).toBeVisible();
 
     const configurator = page.locator("#configurator");
@@ -105,9 +106,6 @@ test.describe("TK Classic buyer journey", () => {
     const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
 
-    const ecosystemLead = page.locator(".coffee-lab-ecosystem > div > p:last-child");
-    await expect(ecosystemLead).toBeVisible();
-    await expect(ecosystemLead).toHaveCSS("color", "rgb(159, 170, 180)");
     const submit = configurator.locator(".coffee-lab-submit");
     await expect(submit).toHaveCSS("background-color", "rgb(101, 203, 232)");
     await expect(submit).toHaveCSS("color", "rgb(8, 11, 15)");
@@ -123,7 +121,6 @@ test.describe("TK Classic buyer journey", () => {
       "/products/dq-001",
       "/resources",
       "/accessories",
-      "/coffee-lab",
       "/oem-odm",
       "/camping-coffee-machine",
       "/wholesale/usa",
@@ -172,10 +169,11 @@ test.describe("TK Classic buyer journey", () => {
     if ((page.viewportSize()?.width ?? 0) > 720) {
       await header.locator(".resources-nav-menu summary").click();
       const panel = header.locator(".resources-nav-panel");
+      await expect(panel.getByRole("link", { name: "Resources hub" })).toHaveAttribute("href", "/en/resources");
       await expect(panel.getByRole("link", { name: "Buyer guides" })).toHaveAttribute("href", "/en/resources");
       await expect(panel.getByRole("link", { name: "Use scenarios" })).toHaveAttribute("href", "/en/solutions");
       await expect(panel.getByRole("link", { name: "USA wholesale" })).toHaveAttribute("href", "/en/wholesale/usa");
-      await panel.getByRole("link", { name: "Buyer guides" }).click();
+      await panel.getByRole("link", { name: "Resources hub" }).click();
     } else {
       const mobileMenu = header.locator(".mobile-primary-nav");
       await mobileMenu.locator("summary").click();
@@ -185,10 +183,15 @@ test.describe("TK Classic buyer journey", () => {
     }
     await expect(page).toHaveURL(/\/(?:en\/)?resources$/);
     await expect(page.locator(".resource-guide-card").first()).toBeVisible();
+    await expect(page.locator(".resource-start-grid > a")).toHaveCount(3);
+
+    await page.goto("/coffee-lab");
+    await expect(page).toHaveURL(/\/oem-odm#coffee-lab$/);
 
     await page.goto("/accessories");
     await expect(page.locator(".accessories-hero .back-link")).toHaveCount(0);
     await expect(page.locator("header.site-header .primary-nav > a").first()).toHaveAttribute("href", "/en");
+    await expect(page.locator("header.site-header .primary-nav")).not.toContainText("Coffee Lab");
   });
 
   test("factory and exhibition photography share one continuous page", async ({ page }) => {

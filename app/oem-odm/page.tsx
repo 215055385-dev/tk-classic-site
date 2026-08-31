@@ -22,6 +22,7 @@ import { company, copy, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { brandTagline } from "@/lib/translation-copy";
 import { PrimaryNav } from "@/components/PrimaryNav";
+import { OemCoffeeLab } from "@/components/OemCoffeeLab";
 
 type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
@@ -123,6 +124,8 @@ export default async function OemOdmPage({ searchParams }: PageProps) {
         <p className="inner-hero-lead">{t.contactLead}</p>
         <Link className="primary-action" href={`/contact${query}#inquiry-form`}>{t.hero.primaryCta}<ArrowUpRight size={17} aria-hidden="true" /></Link>
       </section>
+
+      <OemCoffeeLab lang={lang} />
 
       <RevealSection className="section oem-evidence-section" aria-labelledby="oem-evidence-title">
         <div className="section-heading align-left"><span>{local.evidenceEyebrow}</span><h2 id="oem-evidence-title">{local.evidenceTitle}</h2><p>{local.evidenceLead}</p></div>

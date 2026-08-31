@@ -382,12 +382,19 @@ test("organic acquisition reporting and SEO release checks remain available", as
   assert.match(auditScript, /Expected one H1/);
 });
 
-test("Resources navigation has a direct destination and preserves explicit English routes", async () => {
-  const nav = await readProjectFile("components/PrimaryNav.tsx");
-  assert.match(nav, /className="resources-nav-direct"/);
-  assert.match(nav, /href=\{navigationPath\("\/resources", lang\)\}/);
+test("Resources navigation has one clear menu with a direct hub destination", async () => {
+  const [nav, redirect] = await Promise.all([
+    readProjectFile("components/PrimaryNav.tsx"),
+    readProjectFile("app/coffee-lab/page.tsx"),
+  ]);
+  assert.match(nav, /className="resources-nav-menu"/);
+  assert.match(nav, /resources\.overview\[0\]/);
+  assert.match(nav, /navigationPath\("\/resources", lang\)/);
   assert.match(nav, /return `\/en\$\{normalizedPath\}`/);
   assert.match(nav, /className="resources-nav-panel"/);
+  assert.doesNotMatch(nav, /key: "coffee-lab"/);
+  assert.match(redirect, /permanentRedirect/);
+  assert.match(redirect, /"\/oem-odm"/);
 });
 
 test("admin navigation exposes real module labels and uses the unified titanium UI", async () => {

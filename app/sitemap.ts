@@ -85,12 +85,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: localized("/bundles"),
     },
     {
-      url: `${company.siteUrl}/coffee-lab`,
-      changeFrequency: "monthly",
-      priority: 0.85,
-      alternates: localized("/coffee-lab"),
-    },
-    {
       url: `${company.siteUrl}/contact`,
       changeFrequency: "monthly",
       priority: 0.8,
