@@ -81,7 +81,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   ];
 
   return (
-    <main className="inner-page" dir={dir} lang={lang}>
+    <main className="inner-page resources-page" dir={dir} lang={lang}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -93,23 +93,21 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
       </header>
       <SectionFloatNav lang={lang} path="/resources" label={t.sectionTitles.blog} />
 
-      <section className="inner-hero section">
-        <p className="eyebrow">{t.nav.blog}</p>
-        <h1>{t.sectionTitles.blog}</h1>
-        <p className="inner-hero-lead">{t.blogLead}</p>
-      </section>
-
-      <RevealSection className="section resource-start-section" aria-labelledby="resource-start-title">
-        <div className="section-heading align-left"><span>{resources.label}</span><h2 id="resource-start-title">{resources.overview[0]}</h2><p>{resources.overview[1]}</p></div>
-        <div className="resource-start-grid">
+      <section className="inner-hero section resources-hero">
+        <div className="resources-hero-copy">
+          <p className="eyebrow">{t.nav.blog}</p>
+          <h1>{t.sectionTitles.blog}</h1>
+          <p className="inner-hero-lead">{t.blogLead}</p>
+        </div>
+        <nav className="resources-hero-shortcuts" aria-label={resources.overview[0]}>
           <Link href="#guides"><BookOpen size={23} aria-hidden="true" /><span>01</span><h3>{resources.guides[0]}</h3><p>{resources.guides[1]}</p><strong><ArrowUpRight size={16} aria-hidden="true" /></strong></Link>
           <Link href={localizedPath("/solutions", lang)}><Compass size={23} aria-hidden="true" /><span>02</span><h3>{resources.scenarios[0]}</h3><p>{resources.scenarios[1]}</p><strong><ArrowUpRight size={16} aria-hidden="true" /></strong></Link>
           <Link href={localizedPath("/wholesale/usa", lang)}><Building2 size={23} aria-hidden="true" /><span>03</span><h3>{resources.wholesale[0]}</h3><p>{resources.wholesale[1]}</p><strong><ArrowUpRight size={16} aria-hidden="true" /></strong></Link>
-        </div>
-      </RevealSection>
+        </nav>
+      </section>
 
       <section id="guides" className="section blog-section">
-        <div className="section-heading"><span>{ui.blog.cardPrefix}</span><h2>{t.sectionTitles.blog}</h2></div>
+        <div className="section-heading"><span>{ui.blog.cardPrefix}</span><h2>{resources.guides[0]}</h2></div>
         <div className="blog-grid">
           {guideCards.map(([title, summary], index) => {
             const guide = buyerGuides[index];

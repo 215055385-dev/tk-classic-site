@@ -632,14 +632,16 @@ export default async function Home({ searchParams }: HomeProps) {
         <div className="tech-hero-console">
           <div className="tech-series-list">
             <span className="tech-series-title">{heroTech.series}</span>
-            <Link className="tech-series-featured" href={`/products/dq-001${langQuery(lang)}`}>
-              <span><strong>DQ-001</strong><small>{t.nav.products}</small></span>
+            <Link className="tech-series-featured" href={`/products/dq-010${langQuery(lang)}`}>
+              <span><strong>DQ-010</strong><small>{heroTech.model}</small></span>
               <Image
-                src={productLine.find((product) => product.model === "DQ-001")!.hero}
-                alt={getProductGeo(productLine.find((product) => product.model === "DQ-001")!, lang).primaryAlt}
+                src={productLine.find((product) => product.model === "DQ-010")!.hero}
+                alt={getProductGeo(productLine.find((product) => product.model === "DQ-010")!, lang).primaryAlt}
                 width={180}
                 height={180}
                 sizes="160px"
+                loading="eager"
+                fetchPriority="high"
               />
               <ChevronRight size={20} aria-hidden="true" />
             </Link>

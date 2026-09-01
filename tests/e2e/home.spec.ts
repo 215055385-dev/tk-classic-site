@@ -156,8 +156,9 @@ test.describe("TK Classic buyer journey", () => {
     await page.goto("/products");
     await expect(page.locator("#product-catalog")).toBeVisible();
     await expect.poll(() => page.locator("#product-catalog").evaluate((element) => getComputedStyle(element).opacity)).toBe("1");
-    await expect(page.locator(".product-collection-stage img")).toHaveCount(3);
-    await expect.poll(() => page.locator(".product-collection-stage img").evaluateAll((images) => images.every((image) => (image as HTMLImageElement).loading === "eager"))).toBe(true);
+    await expect(page.locator(".product-collection-feature img")).toHaveCount(1);
+    await expect(page.locator(".product-collection-model-links > a")).toHaveCount(6);
+    await expect.poll(() => page.locator(".product-collection-feature img").evaluate((image) => (image as HTMLImageElement).loading)).toBe("eager");
   });
 
   test("global navigation exposes Home and a compact Resources hub", async ({ page }) => {
@@ -183,7 +184,7 @@ test.describe("TK Classic buyer journey", () => {
     }
     await expect(page).toHaveURL(/\/(?:en\/)?resources$/);
     await expect(page.locator(".resource-guide-card").first()).toBeVisible();
-    await expect(page.locator(".resource-start-grid > a")).toHaveCount(3);
+    await expect(page.locator(".resources-hero-shortcuts > a")).toHaveCount(3);
 
     await page.goto("/coffee-lab");
     await expect(page).toHaveURL(/\/oem-odm#coffee-lab$/);

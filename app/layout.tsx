@@ -27,6 +27,7 @@ import "./styles/titanium-aurora.css";
 import "./styles/home-tech-stage.css";
 import "./styles/scene-transitions.css";
 import "./styles/interaction-depth.css";
+import "./styles/front-refinement.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(company.siteUrl),

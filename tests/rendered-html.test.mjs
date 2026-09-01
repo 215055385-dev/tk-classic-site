@@ -430,3 +430,25 @@ test("admin dashboard preserves lead ownership and exposes operational shortcuts
   assert.match(styles, /\.admin-operations/);
   assert.match(styles, /\.admin-task-grid/);
 });
+
+test("front-end refinement keeps featured products consistent and buyer paths visible", async () => {
+  const [home, productsPage, resourcesPage, styles, layout] = await Promise.all([
+    readProjectFile("app/page.tsx"),
+    readProjectFile("app/products/page.tsx"),
+    readProjectFile("app/resources/page.tsx"),
+    readProjectFile("app/styles/front-refinement.css"),
+    readProjectFile("app/layout.tsx"),
+  ]);
+  assert.match(home, /tech-series-featured[\s\S]*products\/dq-010/);
+  assert.match(home, /<strong>DQ-010<\/strong>/);
+  assert.match(productsPage, /product-collection-feature/);
+  assert.match(productsPage, /product-scenes\/dq-010-1\.webp/);
+  assert.match(productsPage, /product-collection-model-links/);
+  assert.doesNotMatch(productsPage, /product-collection-item item-/);
+  assert.match(resourcesPage, /className="inner-page resources-page"/);
+  assert.match(resourcesPage, /resources-hero-shortcuts/);
+  assert.doesNotMatch(resourcesPage, /resource-start-section/);
+  assert.match(styles, /\.product-collection-feature/);
+  assert.match(styles, /\.resources-hero-shortcuts/);
+  assert.match(layout, /front-refinement\.css/);
+});

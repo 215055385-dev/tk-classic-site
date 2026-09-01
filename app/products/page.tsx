@@ -58,6 +58,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const t = copy[lang];
   const query = langQuery(lang);
   const dir = languages.find((language) => language.code === lang)?.dir ?? "ltr";
+  const featuredProduct = cmsProducts.find((product) => product.model === "DQ-010") ?? cmsProducts[0];
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -93,20 +94,20 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           <a className="primary-action" href="#product-catalog">{t.nav.products}<ChevronRight size={17} aria-hidden="true" /></a>
         </div>
         <div className="product-collection-stage" aria-label={t.sectionTitles.products}>
-          {cmsProducts.slice(0, 3).map((product, index) => (
-            <Link className={`product-collection-item item-${index + 1}`} href={`/products/${product.slug}${query}`} key={product.model}>
-              <Image
-                src={product.hero}
-                alt={getProductGeo(product, lang).primaryAlt}
-                width={720}
-                height={720}
-                sizes="(max-width: 720px) 42vw, 24vw"
-                loading="eager"
-                fetchPriority={index === 0 ? "high" : "auto"}
-              />
-              <span>{product.model}</span>
-            </Link>
-          ))}
+          <Link className="product-collection-feature" href={`/products/${featuredProduct.slug}${query}`}>
+            <Image
+              src="/optimized/product-scenes/dq-010-1.webp"
+              alt={getProductGeo(featuredProduct, lang).primaryAlt}
+              fill
+              sizes="(max-width: 720px) 92vw, 52vw"
+              priority
+              loading="eager"
+            />
+            <span><small>{localizeFeatureLabel(featuredProduct.featureLabel, lang)}</small><strong>{featuredProduct.model}</strong><ChevronRight size={18} aria-hidden="true" /></span>
+          </Link>
+          <nav className="product-collection-model-links" aria-label={t.sectionTitles.products}>
+            {cmsProducts.map((product) => <Link href={`/products/${product.slug}${query}`} key={product.model} aria-current={product.model === featuredProduct.model ? "page" : undefined}>{product.model}</Link>)}
+          </nav>
         </div>
       </section>
 
