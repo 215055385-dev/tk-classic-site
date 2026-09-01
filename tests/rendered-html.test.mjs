@@ -538,3 +538,20 @@ test("failed inquiry emails can be retried safely from the authenticated CRM", a
   assert.match(workspace, /最后尝试/);
   assert.match(adminCss, /\.inquiry-email-actions/);
 });
+
+test("admin surfaces Resend domain health before inquiry delivery fails", async () => {
+  const health = await readProjectFile("lib/email-health.ts");
+  const systemRoute = await readProjectFile("app/api/admin/system/route.ts");
+  const inquiries = await readProjectFile("components/admin/InquiryWorkspace.tsx");
+  const settings = await readProjectFile("components/admin/SystemWorkspace.tsx");
+
+  assert.match(health, /resend\.domains\.list\(\)/);
+  assert.match(health, /domainStatus === "verified"/);
+  assert.match(health, /senderDomain === siteDomain/);
+  assert.match(health, /recipientCount > 0/);
+  assert.match(systemRoute, /mode === "email-health"/);
+  assert.match(systemRoute, /Cache-Control": "private, no-store"/);
+  assert.match(inquiries, /邮件服务运行正常/);
+  assert.match(inquiries, /邮件服务需要检查/);
+  assert.match(settings, /询盘邮件基础设施/);
+});

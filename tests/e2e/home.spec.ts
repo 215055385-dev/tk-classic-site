@@ -222,6 +222,8 @@ test.describe("TK Classic buyer journey", () => {
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
     const retryResponse = await page.request.post("/api/admin/inquiries/00000000-0000-4000-8000-000000000000/resend", { data: { target: "failed" } });
     expect(retryResponse.status()).toBe(401);
+    const healthResponse = await page.request.get("/api/admin/system?mode=email-health");
+    expect(healthResponse.status()).toBe(401);
   });
 
   test("long pages expose lightweight reading progress while admin stays distraction free", async ({ page }) => {

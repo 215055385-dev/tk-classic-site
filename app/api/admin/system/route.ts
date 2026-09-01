@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { adminErrorResponse, requireAdmin } from "@/lib/admin-permissions";
+import { getEmailHealth } from "@/lib/email-health";
 import { getPrisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -8,8 +9,13 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     await requireAdmin();
-    const db = getPrisma();
     const mode = request.nextUrl.searchParams.get("mode") ?? "overview";
+    if (mode === "email-health") {
+      return Response.json({ ok: true, emailHealth: await getEmailHealth() }, {
+        headers: { "Cache-Control": "private, no-store" },
+      });
+    }
+    const db = getPrisma();
     if (mode === "backup") {
       const [productCategories, products, mediaFolders, media, videos, homepage, heroSlides, factory, exhibitions, certifications, articleCategories, articles, seo, settings, inquiries, chats, siteVisits, siteEvents, auditLogs] = await Promise.all([
         db.productCategory.findMany({ include: { translations: true }, orderBy: { sortOrder: "asc" } }),
@@ -45,9 +51,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const [logs, counts] = await Promise.all([
+    const [logs, counts, emailHealth] = await Promise.all([
       db.auditLog.findMany({ take: 100, orderBy: { createdAt: "desc" }, include: { actor: { select: { username: true, displayName: true } } } }),
       Promise.all([db.product.count(), db.mediaAsset.count({ where: { deletedAt: null } }), db.article.count(), db.inquiry.count(), db.auditLog.count()]),
+      getEmailHealth(),
     ]);
     const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() ?? "";
     const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID?.trim() ?? "";
@@ -67,6 +74,7 @@ export async function GET(request: NextRequest) {
         inquiryTracking: true,
         readyForPaidTraffic: ga4 && googleAds && leadConversion,
       },
+      emailHealth,
       logs: logs.map((log) => ({ ...log, createdAt: log.createdAt.toISOString() })),
     });
   } catch (error) { return adminErrorResponse(error); }

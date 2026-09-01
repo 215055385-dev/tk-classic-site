@@ -1011,3 +1011,58 @@
   opacity: .55;
   cursor: wait;
 }
+
+.inquiry-email-health,
+.system-email-health {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px 17px;
+  border: 1px solid;
+  border-radius: 12px;
+}
+
+.inquiry-email-health.is-ready,
+.system-email-health.is-ready {
+  border-color: rgba(45, 145, 102, .2);
+  color: #267353;
+  background: rgba(225, 246, 237, .72);
+}
+
+.inquiry-email-health.is-warning,
+.system-email-health.is-warning {
+  border-color: rgba(181, 102, 54, .22);
+  color: #9a5130;
+  background: #fff4e9;
+}
+
+.inquiry-email-health > div,
+.system-email-health > div { min-width: 0; }
+
+.inquiry-email-health strong,
+.system-email-health strong { display: block; font-size: 13px; }
+
+.inquiry-email-health p,
+.system-email-health p {
+  margin: 3px 0 0;
+  color: #45616d;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.inquiry-email-health span,
+.system-email-health small {
+  display: block;
+  margin-top: 6px;
+  color: #6d8088;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.system-email-health { margin-top: 14px; }
+.system-email-health > div > span { margin: 0 0 3px; text-transform: uppercase; letter-spacing: .08em; }
+
+@media (max-width: 620px) {
+  .inquiry-email-health,
+  .system-email-health { padding: 13px; }
+}

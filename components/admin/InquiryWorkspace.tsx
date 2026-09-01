@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, ExternalLink, Mail, MessageCircle, RefreshCw, Search, Send } from "lucide-react";
+import { CheckCircle2, CircleAlert, Download, ExternalLink, Mail, MessageCircle, RefreshCw, Search, Send } from "lucide-react";
 
 type Status = "new" | "contacted" | "qualified" | "sample_discussion" | "sample_sent" | "quoted" | "negotiating" | "won" | "closed";
 type Inquiry = {
@@ -12,6 +12,7 @@ type Inquiry = {
   customerEmailSent: boolean | null; emailError: string; emailLastAttemptAt: string;
   assignedTo: "Bowie" | "Leo" | "";
 };
+type EmailHealth = { ready: boolean; apiKeyConfigured: boolean; senderConfigured: boolean; senderAddress: string; siteDomain: string; domainStatus: string; recipientCount: number; checkedAt: string; error: string };
 
 const statuses: Array<{ value: Status; label: string }> = [
   { value: "new", label: "新询盘" }, { value: "contacted", label: "已联系" },
@@ -43,32 +44,48 @@ export function InquiryWorkspace() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [retrying, setRetrying] = useState("");
+  const [emailHealth, setEmailHealth] = useState<EmailHealth | null>(null);
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState({ status: "", product: "", country: "" });
 
   const load = useCallback(async () => {
     setLoading(true); setMessage("");
     try {
-      const response = await fetch("/api/admin/inquiries", { cache: "no-store" });
-      const body = await response.json();
+      const [response, healthResponse] = await Promise.all([
+        fetch("/api/admin/inquiries", { cache: "no-store" }),
+        fetch("/api/admin/system?mode=email-health", { cache: "no-store" }),
+      ]);
+      const [body, healthBody] = await Promise.all([response.json(), healthResponse.json()]);
       if (!response.ok || !body.ok) throw new Error(body.message || "询盘数据加载失败。");
       setRows(body.inquiries || []);
+      if (healthResponse.ok && healthBody.ok) setEmailHealth(healthBody.emailHealth);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "询盘数据加载失败。");
     } finally { setLoading(false); }
   }, []);
 
   useEffect(() => {
-    let active = true;
-    fetch("/api/admin/inquiries", { cache: "no-store" })
-      .then(async (response) => ({ response, body: await response.json() }))
-      .then(({ response, body }) => {
+    const controller = new AbortController();
+    Promise.all([
+      fetch("/api/admin/inquiries", { cache: "no-store", signal: controller.signal }),
+      fetch("/api/admin/system?mode=email-health", { cache: "no-store", signal: controller.signal }),
+    ])
+      .then(async ([response, healthResponse]) => ({
+        response,
+        healthResponse,
+        body: await response.json(),
+        healthBody: await healthResponse.json(),
+      }))
+      .then(({ response, healthResponse, body, healthBody }) => {
         if (!response.ok || !body.ok) throw new Error(body.message || "询盘数据加载失败。");
-        if (active) setRows(body.inquiries || []);
+        setRows(body.inquiries || []);
+        if (healthResponse.ok && healthBody.ok) setEmailHealth(healthBody.emailHealth);
       })
-      .catch((error: unknown) => { if (active) setMessage(error instanceof Error ? error.message : "询盘数据加载失败。"); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
+      .catch((error: unknown) => {
+        if (error instanceof Error && error.name !== "AbortError") setMessage(error.message);
+      })
+      .finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const products = useMemo(() => Array.from(new Set(rows.map((row) => row.product).filter(Boolean))), [rows]);
@@ -124,6 +141,7 @@ export function InquiryWorkspace() {
 
   return <section className="inquiry-workspace">
     <header className="cms-page-heading"><div><span>客户关系管理</span><h1>客户询盘</h1><p>集中处理真实询盘、联系客户、记录进度并导出数据。</p></div><button className="cms-primary" onClick={exportCsv} disabled={!visibleRows.length}><Download size={17}/>导出当前结果</button></header>
+    {emailHealth ? <div className={`inquiry-email-health ${emailHealth.ready ? "is-ready" : "is-warning"}`} role="status">{emailHealth.ready ? <CheckCircle2 size={21}/> : <CircleAlert size={21}/>}<div><strong>{emailHealth.ready ? "邮件服务运行正常" : "邮件服务需要检查"}</strong><p>{emailHealth.ready ? `${emailHealth.siteDomain} 已通过 Resend 验证，询盘通知可以发送。` : emailHealth.error || `域名状态：${emailHealth.domainStatus}；请检查发件地址和域名验证。`}</p><span>发件：{emailHealth.senderAddress || "未配置自定义地址"} · 销售收件人：{emailHealth.recipientCount} 个 · 检查时间：{formatDate(emailHealth.checkedAt)}</span></div></div> : null}
     <div className="inquiry-summary-strip">
       <div><strong>{rows.length}</strong><span>当前询盘</span></div>
       <div><strong>{rows.filter((x) => x.status === "new").length}</strong><span>待处理</span></div>
