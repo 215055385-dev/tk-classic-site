@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
       });
     }
     const db = getPrisma();
+    await db.$executeRaw`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS deleted_at timestamptz`;
     if (mode === "backup") {
       const [productCategories, products, mediaFolders, media, videos, homepage, heroSlides, factory, exhibitions, certifications, articleCategories, articles, seo, settings, inquiries, chats, siteVisits, siteEvents, auditLogs] = await Promise.all([
         db.productCategory.findMany({ include: { translations: true }, orderBy: { sortOrder: "asc" } }),
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
 
     const [logs, counts, emailHealth] = await Promise.all([
       db.auditLog.findMany({ take: 100, orderBy: { createdAt: "desc" }, include: { actor: { select: { username: true, displayName: true } } } }),
-      Promise.all([db.product.count(), db.mediaAsset.count({ where: { deletedAt: null } }), db.article.count(), db.inquiry.count(), db.auditLog.count()]),
+      Promise.all([db.product.count(), db.mediaAsset.count({ where: { deletedAt: null } }), db.article.count(), db.inquiry.count({ where: { deletedAt: null } }), db.auditLog.count()]),
       getEmailHealth(),
     ]);
     const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() ?? "";

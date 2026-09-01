@@ -20,6 +20,7 @@ export async function GET(request: Request) {
       country: url.searchParams.get("country") ?? "",
       from: url.searchParams.get("from") ?? "",
       to: url.searchParams.get("to") ?? "",
+      archived: url.searchParams.get("archived") ?? "",
     });
     return NextResponse.json({ ok: true, ...data, generatedAt: new Date().toISOString() }, {
       headers: { "Cache-Control": "no-store" },

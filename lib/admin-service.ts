@@ -29,6 +29,7 @@ export type AdminInquiry = {
   customerEmailSent: boolean | null;
   emailError: string;
   emailLastAttemptAt: string;
+  deletedAt: string;
 };
 
 export const conversionEventNames = [
@@ -105,7 +106,8 @@ async function initializeAdminSchema() {
       sales_email_sent boolean,
       customer_email_sent boolean,
       email_error text,
-      email_last_attempt_at timestamptz
+      email_last_attempt_at timestamptz,
+      deleted_at timestamptz
     )
   `;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS accessories text`;
@@ -119,6 +121,7 @@ async function initializeAdminSchema() {
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_email_sent boolean`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_error text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_last_attempt_at timestamptz`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS deleted_at timestamptz`;
   await sql`
     CREATE TABLE IF NOT EXISTS site_visits (
       id uuid PRIMARY KEY,
@@ -175,6 +178,7 @@ export async function listAdminData(filters: {
   country?: string;
   from?: string;
   to?: string;
+  archived?: string;
 }) {
   await ensureAdminSchema();
   const sql = getDatabase();
@@ -198,24 +202,26 @@ export async function listAdminData(filters: {
     sql`
       SELECT id, created_at, name, email, company, phone, country, product, accessories,
         quantity, branding, message, lang, source, source_page, referrer, attachments, status, admin_note, assigned_to,
-        sales_email_sent, customer_email_sent, email_error, email_last_attempt_at
+        sales_email_sent, customer_email_sent, email_error, email_last_attempt_at, deleted_at
       FROM inquiries
       ORDER BY created_at DESC
       LIMIT 500
     `,
     sql`
       SELECT
-        COUNT(*) AS total,
-        COUNT(*) FILTER (WHERE COALESCE(status, 'new') = 'new') AS new_count,
-        COUNT(*) FILTER (WHERE COALESCE(status, 'new') = 'quoted') AS quoted_count,
-        COUNT(*) FILTER (WHERE COALESCE(status, 'new') = 'won') AS won_count,
+        COUNT(*) FILTER (WHERE deleted_at IS NULL) AS total,
+        COUNT(*) FILTER (WHERE deleted_at IS NULL AND COALESCE(status, 'new') = 'new') AS new_count,
+        COUNT(*) FILTER (WHERE deleted_at IS NULL AND COALESCE(status, 'new') = 'quoted') AS quoted_count,
+        COUNT(*) FILTER (WHERE deleted_at IS NULL AND COALESCE(status, 'new') = 'won') AS won_count,
         COUNT(*) FILTER (
-          WHERE sales_email_sent = false
-             OR (customer_email_sent = false AND COALESCE(source, '') <> 'website-chat')
+          WHERE deleted_at IS NULL AND (
+            sales_email_sent = false
+            OR (customer_email_sent = false AND COALESCE(source, '') <> 'website-chat')
+          )
         ) AS email_delivery_issues
       FROM inquiries
     `,
-    sql`SELECT product, COUNT(*) AS total FROM inquiries GROUP BY product ORDER BY total DESC LIMIT 8`,
+    sql`SELECT product, COUNT(*) AS total FROM inquiries WHERE deleted_at IS NULL GROUP BY product ORDER BY total DESC LIMIT 8`,
     sql`SELECT path, COUNT(*) AS total FROM site_visits GROUP BY path ORDER BY total DESC LIMIT 8`,
     sql`SELECT COALESCE(NULLIF(referrer, ''), 'Direct / none') AS referrer, COUNT(*) AS total FROM site_visits GROUP BY 1 ORDER BY total DESC LIMIT 8`,
     sql`SELECT COALESCE(NULLIF(lang, ''), 'en') AS lang, COUNT(*) AS total FROM site_visits GROUP BY 1 ORDER BY total DESC LIMIT 8`,
@@ -225,7 +231,7 @@ export async function listAdminData(filters: {
     sql`SELECT name, COUNT(*) AS total FROM site_events GROUP BY name ORDER BY total DESC`,
     sql`SELECT COUNT(*) AS total FROM site_events WHERE occurred_at >= now() - interval '7 days'`,
     sql`SELECT COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '30 days' AND COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)'`,
-    sql`SELECT COUNT(*) AS total FROM inquiries WHERE created_at >= now() - interval '30 days' AND (COALESCE(source, '') ~* '(google|bing|yahoo|duckduckgo|ecosia|yandex|baidu)' OR COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)')`,
+    sql`SELECT COUNT(*) AS total FROM inquiries WHERE deleted_at IS NULL AND created_at >= now() - interval '30 days' AND (COALESCE(source, '') ~* '(google|bing|yahoo|duckduckgo|ecosia|yandex|baidu)' OR COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)')`,
     sql`SELECT path, COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '30 days' AND COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)' GROUP BY path ORDER BY total DESC LIMIT 8`,
     sql`SELECT CASE WHEN referrer ~* 'google[.]' THEN 'Google' WHEN referrer ~* 'bing[.]com' THEN 'Bing' WHEN referrer ~* 'search[.]yahoo[.]com' THEN 'Yahoo' WHEN referrer ~* 'duckduckgo[.]com' THEN 'DuckDuckGo' WHEN referrer ~* 'ecosia[.]org' THEN 'Ecosia' WHEN referrer ~* 'yandex[.]' THEN 'Yandex' WHEN referrer ~* 'baidu[.]com' THEN 'Baidu' ELSE 'Other search' END AS engine, COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '30 days' AND COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)' GROUP BY 1 ORDER BY total DESC`,
   ]);
@@ -260,12 +266,14 @@ export async function listAdminData(filters: {
       customerEmailSent: nullableBoolean(row.customer_email_sent),
       emailError: String(row.email_error ?? ""),
       emailLastAttemptAt: row.email_last_attempt_at ? new Date(String(row.email_last_attempt_at)).toISOString() : "",
+      deletedAt: row.deleted_at ? new Date(String(row.deleted_at)).toISOString() : "",
     }))
     .filter((row) => !filters.status || row.status === filters.status)
     .filter((row) => !filters.product || row.product === filters.product)
     .filter((row) => !filters.country || row.country.toLowerCase().includes(filters.country.toLowerCase()))
     .filter((row) => from === undefined || new Date(row.createdAt).getTime() >= from)
     .filter((row) => to === undefined || new Date(row.createdAt).getTime() <= to);
+  const visibleInquiries = inquiries.filter((row) => filters.archived === "only" ? Boolean(row.deletedAt) : !row.deletedAt);
 
   const summary = summaryRows[0] ?? {};
   const organicVisitsLast30Days = toNumber(organicVisitRows[0]?.total);
@@ -293,7 +301,23 @@ export async function listAdminData(filters: {
     conversionEvents: conversionRows.map((row) => ({ label: String(row.name), value: toNumber(row.total) })),
   };
 
-  return { inquiries, stats };
+  return { inquiries: visibleInquiries, stats };
+}
+
+export async function setInquiryArchived(id: string, archived: boolean) {
+  await ensureAdminSchema();
+  const sql = getDatabase();
+  const rows = await sql`
+    UPDATE inquiries
+    SET deleted_at = ${archived ? new Date().toISOString() : null}::timestamptz
+    WHERE id = ${id}::uuid
+    RETURNING id, deleted_at
+  `;
+  if (!rows[0]) throw new Error("Inquiry not found");
+  return {
+    id: String(rows[0].id),
+    deletedAt: rows[0].deleted_at ? new Date(String(rows[0].deleted_at)).toISOString() : "",
+  };
 }
 
 export async function updateInquiryStatus(id: string, status: string, adminNote: string, assignedTo: string) {

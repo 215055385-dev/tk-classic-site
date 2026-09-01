@@ -193,7 +193,8 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
       sales_email_sent boolean,
       customer_email_sent boolean,
       email_error text,
-      email_last_attempt_at timestamptz
+      email_last_attempt_at timestamptz,
+      deleted_at timestamptz
     )
   `;
 
@@ -208,6 +209,7 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_email_sent boolean`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_error text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_last_attempt_at timestamptz`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS deleted_at timestamptz`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_id uuid`;
   await sql`CREATE INDEX IF NOT EXISTS inquiries_created_at_idx ON inquiries (created_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS inquiries_customer_id_idx ON inquiries (customer_id)`;
@@ -301,6 +303,7 @@ export async function getInquiryEmailRetryRecord(id: string): Promise<InquiryEma
       sales_email_sent, customer_email_sent, email_error, email_last_attempt_at
     FROM inquiries
     WHERE id = ${id}::uuid
+      AND deleted_at IS NULL
     LIMIT 1
   `;
   const row = rows[0];

@@ -555,3 +555,22 @@ test("admin surfaces Resend domain health before inquiry delivery fails", async 
   assert.match(inquiries, /邮件服务需要检查/);
   assert.match(settings, /询盘邮件基础设施/);
 });
+
+test("inquiries use a recoverable admin-only recycle bin instead of destructive deletion", async () => {
+  const archiveRoute = await readProjectFile("app/api/admin/inquiries/[id]/route.ts");
+  const adminService = await readProjectFile("lib/admin-service.ts");
+  const inquiryService = await readProjectFile("lib/inquiry-service.ts");
+  const workspace = await readProjectFile("components/admin/InquiryWorkspace.tsx");
+  const schema = await readProjectFile("prisma/schema.prisma");
+
+  assert.match(archiveRoute, /requireAdmin\(true, request\)/);
+  assert.match(archiveRoute, /export async function DELETE/);
+  assert.match(archiveRoute, /export async function POST/);
+  assert.match(adminService, /setInquiryArchived/);
+  assert.match(adminService, /deleted_at/);
+  assert.match(inquiryService, /AND deleted_at IS NULL/);
+  assert.match(workspace, /查看回收站/);
+  assert.match(workspace, /确认移除/);
+  assert.match(workspace, /恢复询盘/);
+  assert.match(schema, /deletedAt\s+DateTime\?/);
+});

@@ -1066,3 +1066,70 @@
   .inquiry-email-health,
   .system-email-health { padding: 13px; }
 }
+
+.inquiry-toolbar > button.is-active {
+  border-color: rgba(176, 79, 63, .3);
+  color: #9b463a;
+  background: #fff0ed;
+}
+
+.inquiry-crm-card.is-archived {
+  border-color: rgba(114, 128, 136, .2);
+  background: #f5f7f8;
+}
+
+.inquiry-crm-card.is-archived .inquiry-crm-head {
+  background: #e8edef;
+}
+
+.inquiry-archive-actions {
+  margin-top: 5px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(19, 35, 44, .1);
+}
+
+.inquiry-archive-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 7px 10px;
+  border: 1px solid rgba(19, 35, 44, .14);
+  border-radius: 8px;
+  color: #62747d;
+  background: #fff;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 760;
+  cursor: pointer;
+}
+
+.inquiry-archive-actions button.is-archive,
+.inquiry-archive-actions button.is-confirm {
+  border-color: rgba(169, 71, 59, .24);
+  color: #a9473b;
+  background: #fff3f1;
+}
+
+.inquiry-archive-actions button.is-restore {
+  border-color: rgba(38, 115, 83, .22);
+  color: #267353;
+  background: #edf8f3;
+}
+
+.inquiry-archive-actions button:disabled { opacity: .56; cursor: wait; }
+
+.inquiry-archive-confirm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.inquiry-archive-confirm p {
+  grid-column: 1 / -1;
+  margin: 0 0 3px;
+  color: #794b43;
+  font-size: 10px;
+  line-height: 1.45;
+}
