@@ -441,7 +441,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
               width={900}
               height={900}
               sizes="(max-width: 720px) 100vw, 50vw"
-              loading={index === 0 ? "eager" : "lazy"}
+              loading="lazy"
             />
           ))}
         </div>

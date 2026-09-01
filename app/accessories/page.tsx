@@ -99,7 +99,7 @@ export default async function AccessoriesPage({ searchParams }: AccessoriesPageP
             return (
             <RevealArticle className="accessory-card" key={accessory.slug}>
               <div className="accessory-card-image">
-                <Image src={accessory.image} alt={accessory.alt} fill loading={accessory.slug === "cold-rolled-steel-coffee-stand" ? "eager" : "lazy"} sizes="(max-width: 720px) 100vw, (max-width: 1040px) 50vw, 33vw" />
+                <Image src={accessory.image} alt={accessory.alt} fill loading="lazy" sizes="(max-width: 720px) 100vw, (max-width: 1040px) 50vw, 33vw" />
                 <span>0{index + 1}</span>
               </div>
               <div className="accessory-card-body">

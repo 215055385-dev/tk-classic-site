@@ -345,7 +345,7 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
           <div className={`coffee-lab-machine-stage finish-${finishes.body.toLowerCase()}`}>
             <div className="coffee-lab-orbit orbit-one" aria-hidden="true" />
             <div className="coffee-lab-orbit orbit-two" aria-hidden="true" />
-            <div className="coffee-lab-real-variant-board is-cmf-reference">
+            <div className="coffee-lab-real-variant-board is-cmf-reference" style={{ position: "absolute" }}>
               <Image src={selectedModel.variantBoard} alt={`${selectedModel.model} real product color references`} fill loading="eager" fetchPriority="high" sizes="(max-width: 900px) 92vw, 620px" />
               <span className="coffee-lab-photo-badge">{boardCopy.photo}</span>
               {logoUrl ? <div className="coffee-lab-board-logo" aria-label="Customer logo concept reference" style={{ backgroundImage: `url(${logoUrl})` }} /> : null}

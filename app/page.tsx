@@ -640,8 +640,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 width={180}
                 height={180}
                 sizes="160px"
-                loading="eager"
-                fetchPriority="high"
+                priority
               />
               <ChevronRight size={20} aria-hidden="true" />
             </Link>

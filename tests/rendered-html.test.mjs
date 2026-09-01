@@ -454,13 +454,14 @@ test("front-end refinement keeps featured products consistent and buyer paths vi
 });
 
 test("conversion typography reduces visible copy without removing SEO content", async () => {
-  const [layout, typography, resourcesPage, oemPage, oemLab, guides] = await Promise.all([
+  const [layout, typography, resourcesPage, oemPage, oemLab, guides, footer] = await Promise.all([
     readProjectFile("app/layout.tsx"),
     readProjectFile("app/styles/conversion-typography.css"),
     readProjectFile("app/resources/page.tsx"),
     readProjectFile("app/oem-odm/page.tsx"),
     readProjectFile("components/OemCoffeeLab.tsx"),
     readProjectFile("components/FeaturedBuyerGuides.tsx"),
+    readProjectFile("components/SiteFooter.tsx"),
   ]);
   assert.match(layout, /conversion-typography\.css/);
   assert.match(typography, /-webkit-line-clamp: 3/);
@@ -472,4 +473,9 @@ test("conversion typography reduces visible copy without removing SEO content", 
   assert.match(oemPage, /local\.heroLead/);
   assert.match(oemLab, /<h2 id="oem-lab-title">\{copy\.title\}<\/h2>/);
   assert.match(guides, /Buyer guides, made practical\./);
+  assert.match(footer, /className="footer-intro"/);
+  assert.match(footer, /className="footer-company"/);
+  assert.match(footer, /className="footer-resources"/);
+  assert.match(typography, /grid-template-columns: minmax\(230px, 1\.2fr\) repeat\(3/);
+  assert.match(typography, /\.inner-page\.accessories-page \.accessory-card-body/);
 });

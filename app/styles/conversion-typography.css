@@ -154,6 +154,96 @@
   text-wrap: pretty;
 }
 
+/* The footer is a compact navigation map, not another long content section. */
+:where(.home-shell, .inner-page) .site-footer {
+  grid-template-columns: minmax(230px, 1.2fr) repeat(3, minmax(120px, .7fr));
+  gap: clamp(24px, 3.5vw, 56px);
+  padding-block: 42px 28px;
+}
+
+:where(.home-shell, .inner-page) .site-footer .footer-intro > p {
+  max-width: 34ch;
+  margin-top: 14px;
+  color: var(--tk-reading) !important;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+:where(.home-shell, .inner-page) .site-footer nav {
+  gap: 7px;
+}
+
+:where(.home-shell, .inner-page) .site-footer h2 {
+  margin-bottom: 4px;
+  font-size: 11px;
+  letter-spacing: .08em !important;
+}
+
+:where(.home-shell, .inner-page) .site-footer nav a {
+  font-size: 12px;
+  font-weight: 540;
+  line-height: 1.45;
+}
+
+.footer-direct {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+:where(.home-shell, .inner-page) .footer-direct a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--tk-cyan) 24%, transparent);
+  border-radius: 999px;
+  color: var(--tk-copy);
+  font-size: 11px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+:where(.home-shell, .inner-page) .footer-direct a:hover {
+  border-color: color-mix(in srgb, var(--tk-cyan) 52%, transparent);
+  background: color-mix(in srgb, var(--tk-cyan) 8%, transparent);
+}
+
+/* Accessories remain image-led while becoming much faster to scan. */
+.inner-page.accessories-page .accessory-grid {
+  gap: clamp(14px, 1.7vw, 22px);
+}
+
+.inner-page.accessories-page .accessory-card-image {
+  aspect-ratio: 1 / .82;
+}
+
+.inner-page.accessories-page .accessory-card-body {
+  gap: 7px;
+  padding: clamp(15px, 1.55vw, 20px) !important;
+}
+
+.inner-page.accessories-page .accessory-card-body h3 {
+  min-height: 2.1em;
+  font-size: clamp(20px, 1.75vw, 27px) !important;
+}
+
+.inner-page.accessories-page .accessory-card-body > p:not(.card-label) {
+  -webkit-line-clamp: 2;
+  font-size: 13px !important;
+  line-height: 1.55;
+}
+
+.inner-page.accessories-page .accessory-card-highlights {
+  gap: 6px;
+}
+
+.inner-page.accessories-page .accessory-card-highlights li {
+  padding: 5px 8px;
+  font-size: 10px;
+}
+
 @media (max-width: 720px) {
   [dir="rtl"] .site-header .language-menu,
   [dir="rtl"] .detail-header .language-menu {
@@ -197,6 +287,29 @@
 
   :where(.home-shell, .inner-page) :where(.product-card-body h3, .resource-guide-card h3, .accessory-card-body h3) {
     font-size: clamp(23px, 7vw, 30px) !important;
+  }
+
+  :where(.home-shell, .inner-page) .site-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 18px;
+    padding-top: 34px;
+  }
+
+  :where(.home-shell, .inner-page) .site-footer .footer-intro,
+  :where(.home-shell, .inner-page) .site-footer .footer-bottom {
+    grid-column: 1 / -1;
+  }
+
+  :where(.home-shell, .inner-page) .site-footer nav a {
+    font-size: 11px;
+  }
+
+  .inner-page.accessories-page .accessory-card-image {
+    aspect-ratio: 1 / .78;
+  }
+
+  .inner-page.accessories-page .accessory-card-body h3 {
+    min-height: auto;
   }
 }
 
