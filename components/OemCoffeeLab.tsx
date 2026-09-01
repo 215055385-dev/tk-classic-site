@@ -28,7 +28,7 @@ export async function OemCoffeeLab({ lang }: { lang: Lang }) {
       <section className="section oem-lab-suite" id="coffee-lab" aria-labelledby="oem-lab-title">
         <div className="oem-lab-intro">
           <p className="eyebrow">{suite.eyebrow}</p>
-          <h2 id="oem-lab-title">OEM / ODM · {copy.title}</h2>
+          <h2 id="oem-lab-title">{copy.title}</h2>
           <p>{copy.subtitle}</p>
           <a href="#configurator">{copy.start}<ArrowDown size={17} aria-hidden="true" /></a>
         </div>

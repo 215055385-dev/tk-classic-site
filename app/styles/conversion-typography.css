@@ -1,0 +1,205 @@
+/* Conversion typography: calmer hierarchy, shorter visible summaries and easier scanning. */
+
+:where(.home-shell, .inner-page) {
+  --tk-reading: #aab6bd;
+  --tk-reading-soft: #87949c;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Keep the anti-spam field inert without pushing RTL documents thousands of pixels wide. */
+.inner-page .coffee-lab-honeypot {
+  position: absolute !important;
+  inset: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+
+:where(.home-shell, .inner-page) :where(h1, h2, h3, p) {
+  text-wrap: pretty;
+}
+
+:where(.home-shell, .inner-page) :where(h1, h2, h3) {
+  font-family: var(--font-geist-sans), Arial, sans-serif !important;
+  font-weight: 620 !important;
+  letter-spacing: -.042em !important;
+}
+
+:where(.home-shell, .inner-page) :where(p, li, dd) {
+  line-height: 1.66;
+}
+
+:where(.home-shell, .inner-page) :where(
+  .inner-hero-lead,
+  .hero-lead,
+  .section-heading > p,
+  .product-card-body > p,
+  .proof-card > p,
+  .resource-guide-card > p,
+  .procurement-term-card > p,
+  .oem-qc-copy > p
+) {
+  color: var(--tk-reading) !important;
+  font-size: clamp(14px, 1.08vw, 17px) !important;
+}
+
+:where(.home-shell, .inner-page) :where(.inner-hero-lead, .hero-lead, .section-heading > p) {
+  max-width: 54ch !important;
+}
+
+:where(.home-shell, .inner-page) :where(
+  .eyebrow,
+  .card-label,
+  .section-heading > span,
+  .coffee-lab-section-heading > .eyebrow,
+  .oem-qc-copy > span
+) {
+  font-family: var(--font-geist-sans), Arial, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 720 !important;
+  letter-spacing: .075em !important;
+}
+
+:where(.home-shell, .inner-page) .site-header :where(a, summary, button) {
+  font-weight: 610 !important;
+  letter-spacing: -.012em;
+}
+
+:where(.home-shell, .inner-page) :where(.primary-action, .secondary-action, .card-link, .quote-link) {
+  font-weight: 680 !important;
+  letter-spacing: -.015em;
+}
+
+/* Keep brand statements strong without oversized, dense blocks. */
+.home-shell .hero-title {
+  max-width: 18ch !important;
+  font-size: clamp(44px, 4.35vw, 60px) !important;
+  font-weight: 540 !important;
+  line-height: .98 !important;
+}
+
+.inner-page :where(.inner-hero h1, .certification-editorial-copy h1, .scenario-hero h1, .buyer-guide-hero h1) {
+  max-width: 16ch !important;
+  font-size: clamp(42px, 4.55vw, 64px) !important;
+  line-height: .99 !important;
+}
+
+:where(.home-shell, .inner-page) .section-heading h2,
+.inner-page :where(.oem-qc-copy h2, .scenario-type-copy h2, .scenario-closing-cta h2),
+.home-shell :where(.launch-system-intro h2, .home-contact-promo h2) {
+  max-width: 19ch;
+  font-size: clamp(32px, 3.65vw, 52px) !important;
+  line-height: 1.02 !important;
+}
+
+/* Coffee Lab remains editorial, but no longer overwhelms the configuration task. */
+.inner-page .coffee-lab-hero-copy h1 {
+  max-width: 11ch !important;
+  font-size: clamp(48px, 5.4vw, 72px) !important;
+  font-weight: 590 !important;
+  line-height: .92 !important;
+}
+
+.inner-page .coffee-lab-hero-copy h1 em {
+  font-size: clamp(24px, 2.8vw, 38px) !important;
+  font-weight: 560 !important;
+}
+
+.inner-page :where(.coffee-lab-section-heading h2, .coffee-lab-ecosystem h2, .coffee-lab-process h2) {
+  max-width: 18ch;
+  font-size: clamp(34px, 4vw, 56px) !important;
+  line-height: 1 !important;
+}
+
+/* Listing cards should answer one question at a glance. Full details remain on destination pages. */
+:where(.home-shell, .inner-page) :where(
+  .product-card-body > p:not(.card-label),
+  .resource-guide-card > p,
+  .accessory-card-body > p,
+  .featured-guide-card > p
+) {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+:where(.home-shell, .inner-page) :where(.product-card-body h3, .resource-guide-card h3, .accessory-card-body h3) {
+  font-size: clamp(24px, 2.5vw, 36px) !important;
+  line-height: 1.06 !important;
+}
+
+.resources-page .resource-guide-card > p { -webkit-line-clamp: 2; }
+
+.resources-page .resources-hero-shortcuts p {
+  max-width: 22ch;
+  color: #a3b0b8;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.resources-page .resources-hero-shortcuts h3 {
+  font-weight: 610 !important;
+}
+
+.inner-page :where(.proof-card, .process-card, .procurement-term-card, .resource-guide-card) {
+  text-wrap: pretty;
+}
+
+@media (max-width: 720px) {
+  [dir="rtl"] .site-header .language-menu,
+  [dir="rtl"] .detail-header .language-menu {
+    right: auto !important;
+    left: 0 !important;
+  }
+
+  .inner-page .coffee-lab-step-tabs {
+    grid-template-columns: repeat(5, minmax(56px, 1fr));
+    width: 100%;
+    margin-inline: 0;
+    overflow: hidden;
+  }
+
+  .home-shell .hero-title,
+  .inner-page :where(.inner-hero h1, .certification-editorial-copy h1, .scenario-hero h1, .buyer-guide-hero h1) {
+    max-width: 16ch !important;
+    font-size: clamp(38px, 10.8vw, 48px) !important;
+    line-height: 1 !important;
+  }
+
+  .inner-page .coffee-lab-hero-copy h1 {
+    max-width: 14ch !important;
+    font-size: clamp(36px, 10.5vw, 44px) !important;
+    line-height: .96 !important;
+  }
+
+  :where(.home-shell, .inner-page) .section-heading h2,
+  .inner-page :where(.coffee-lab-section-heading h2, .coffee-lab-ecosystem h2, .coffee-lab-process h2, .oem-qc-copy h2),
+  .home-shell :where(.launch-system-intro h2, .home-contact-promo h2) {
+    max-width: 17ch;
+    font-size: clamp(30px, 8.7vw, 40px) !important;
+    line-height: 1.04 !important;
+  }
+
+  :where(.home-shell, .inner-page) :where(.inner-hero-lead, .hero-lead, .section-heading > p) {
+    max-width: 36ch !important;
+    font-size: 15px !important;
+    line-height: 1.62 !important;
+  }
+
+  :where(.home-shell, .inner-page) :where(.product-card-body h3, .resource-guide-card h3, .accessory-card-body h3) {
+    font-size: clamp(23px, 7vw, 30px) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.home-shell, .inner-page) { text-rendering: optimizeSpeed; }
+}

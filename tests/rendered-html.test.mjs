@@ -452,3 +452,24 @@ test("front-end refinement keeps featured products consistent and buyer paths vi
   assert.match(styles, /\.resources-hero-shortcuts/);
   assert.match(layout, /front-refinement\.css/);
 });
+
+test("conversion typography reduces visible copy without removing SEO content", async () => {
+  const [layout, typography, resourcesPage, oemPage, oemLab, guides] = await Promise.all([
+    readProjectFile("app/layout.tsx"),
+    readProjectFile("app/styles/conversion-typography.css"),
+    readProjectFile("app/resources/page.tsx"),
+    readProjectFile("app/oem-odm/page.tsx"),
+    readProjectFile("components/OemCoffeeLab.tsx"),
+    readProjectFile("components/FeaturedBuyerGuides.tsx"),
+  ]);
+  assert.match(layout, /conversion-typography\.css/);
+  assert.match(typography, /-webkit-line-clamp: 3/);
+  assert.match(typography, /font-weight: 620/);
+  assert.match(typography, /coffee-lab-honeypot/);
+  assert.match(typography, /clip-path: inset\(50%\)/);
+  assert.match(resourcesPage, /resources\.overview\[0\]/);
+  assert.match(resourcesPage, /resources\.overview\[1\]/);
+  assert.match(oemPage, /local\.heroLead/);
+  assert.match(oemLab, /<h2 id="oem-lab-title">\{copy\.title\}<\/h2>/);
+  assert.match(guides, /Buyer guides, made practical\./);
+});

@@ -96,8 +96,8 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
       <section className="inner-hero section resources-hero">
         <div className="resources-hero-copy">
           <p className="eyebrow">{t.nav.blog}</p>
-          <h1>{t.sectionTitles.blog}</h1>
-          <p className="inner-hero-lead">{t.blogLead}</p>
+          <h1>{resources.overview[0]}</h1>
+          <p className="inner-hero-lead">{resources.overview[1]}</p>
         </div>
         <nav className="resources-hero-shortcuts" aria-label={resources.overview[0]}>
           <Link href="#guides"><BookOpen size={23} aria-hidden="true" /><span>01</span><h3>{resources.guides[0]}</h3><p>{resources.guides[1]}</p><strong><ArrowUpRight size={16} aria-hidden="true" /></strong></Link>

@@ -89,7 +89,7 @@ test.describe("TK Classic buyer journey", () => {
 
   test("OEM and ODM includes the Coffee Lab configuration workflow without overflow", async ({ page }) => {
     await page.goto("/zh/oem-odm#coffee-lab");
-    await expect(page.locator("#oem-lab-title")).toContainText("OEM / ODM");
+    await expect(page.locator("#oem-lab-title")).toContainText("Coffee Lab");
     await expect(page.getByRole("heading", { name: "创建你的配置" })).toBeVisible();
 
     const configurator = page.locator("#configurator");
@@ -109,6 +109,9 @@ test.describe("TK Classic buyer journey", () => {
     const submit = configurator.locator(".coffee-lab-submit");
     await expect(submit).toHaveCSS("background-color", "rgb(101, 203, 232)");
     await expect(submit).toHaveCSS("color", "rgb(8, 11, 15)");
+
+    await page.goto("/ar/oem-odm");
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBe(true);
   });
 
   test("public sections share the outdoor-coffee navigation palette and compact accessory label", async ({ page }) => {

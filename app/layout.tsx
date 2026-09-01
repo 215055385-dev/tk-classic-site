@@ -28,6 +28,7 @@ import "./styles/home-tech-stage.css";
 import "./styles/scene-transitions.css";
 import "./styles/interaction-depth.css";
 import "./styles/front-refinement.css";
+import "./styles/conversion-typography.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(company.siteUrl),

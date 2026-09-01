@@ -3,13 +3,13 @@ import { ArrowUpRight, BookOpenText, PackageCheck, TentTree } from "lucide-react
 import type { Lang } from "@/lib/site-data";
 
 const copy: Record<Lang, { eyebrow: string; title: string; lead: string; read: string }> = {
-  en: { eyebrow: "Buyer resources", title: "Three practical guides for a clearer buying decision.", lead: "Short, evidence-based guidance for product selection, outdoor use and private label planning.", read: "Read guide" },
-  es: { eyebrow: "Recursos para compradores", title: "Tres guías prácticas para decidir con claridad.", lead: "Orientación basada en información real sobre selección, uso al aire libre y marca propia.", read: "Leer guía" },
-  pt: { eyebrow: "Recursos para compradores", title: "Três guias práticos para uma decisão mais clara.", lead: "Orientação objetiva sobre seleção, uso ao ar livre e planejamento de marca própria.", read: "Ler guia" },
-  fr: { eyebrow: "Ressources acheteurs", title: "Trois guides pratiques pour décider clairement.", lead: "Des conseils factuels sur la sélection, l’usage en extérieur et la marque privée.", read: "Lire le guide" },
-  ar: { eyebrow: "موارد المشترين", title: "ثلاثة أدلة عملية لاتخاذ قرار شراء أوضح.", lead: "إرشادات مبنية على معلومات فعلية للاختيار والاستخدام الخارجي والتخطيط للعلامة الخاصة.", read: "قراءة الدليل" },
-  zh: { eyebrow: "采购资源", title: "3 篇精选指南，帮助买家更快做出判断。", lead: "围绕产品选型、户外使用和私牌采购，提供基于真实资料的简明内容。", read: "阅读指南" },
-  ru: { eyebrow: "Материалы для покупателей", title: "Три практических руководства для уверенного выбора.", lead: "Проверенная информация о выборе, использовании на природе и private label.", read: "Читать" },
+  en: { eyebrow: "Buyer resources", title: "Buyer guides, made practical.", lead: "Product selection, outdoor use and private-label planning.", read: "Read guide" },
+  es: { eyebrow: "Recursos para compradores", title: "Guías prácticas para compradores.", lead: "Selección, uso exterior y planificación de marca propia.", read: "Leer guía" },
+  pt: { eyebrow: "Recursos para compradores", title: "Guias práticos para compradores.", lead: "Seleção, uso outdoor e planejamento de marca própria.", read: "Ler guia" },
+  fr: { eyebrow: "Ressources acheteurs", title: "Des guides d’achat pratiques.", lead: "Sélection, usage extérieur et marque privée.", read: "Lire le guide" },
+  ar: { eyebrow: "موارد المشترين", title: "أدلة عملية للمشترين.", lead: "الاختيار والاستخدام الخارجي وتخطيط العلامة الخاصة.", read: "قراءة الدليل" },
+  zh: { eyebrow: "采购资源", title: "实用采购指南。", lead: "产品选型、户外使用与私牌规划。", read: "阅读指南" },
+  ru: { eyebrow: "Материалы для покупателей", title: "Практические руководства.", lead: "Выбор, использование на природе и private label.", read: "Читать" },
 };
 
 const guideCopy: Record<Lang, [string, string, string]> = {
