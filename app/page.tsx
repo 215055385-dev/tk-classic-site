@@ -625,6 +625,8 @@ export default async function Home({ searchParams }: HomeProps) {
               alt={getProductGeo(productLine.find((product) => product.model === "DQ-010")!, lang).primaryAlt}
               fill
               priority
+              loading="eager"
+              fetchPriority="high"
               sizes="(max-width: 820px) 100vw, 62vw"
             />
           </Link>
@@ -641,6 +643,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 height={180}
                 sizes="160px"
                 priority
+                loading="eager"
               />
               <ChevronRight size={20} aria-hidden="true" />
             </Link>

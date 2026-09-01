@@ -518,3 +518,23 @@ test("front progress and admin shortcuts improve long-page operations without ch
   assert.match(adminStyles, /2026 operations polish/);
   assert.match(adminStyles, /\.cms-toolbar kbd/);
 });
+
+test("failed inquiry emails can be retried safely from the authenticated CRM", async () => {
+  const retryRoute = await readProjectFile("app/api/admin/inquiries/[id]/resend/route.ts");
+  const inquiryService = await readProjectFile("lib/inquiry-service.ts");
+  const workspace = await readProjectFile("components/admin/InquiryWorkspace.tsx");
+  const adminCss = await readProjectFile("app/admin/admin.css");
+
+  assert.match(retryRoute, /requireAdmin\(true, request\)/);
+  assert.match(retryRoute, /claimInquiryEmailRetry/);
+  assert.match(retryRoute, /Retry-After/);
+  assert.match(retryRoute, /salesEmailSent === true/);
+  assert.match(retryRoute, /customerEmailSent === true/);
+  assert.match(inquiryService, /interval '15 seconds'/);
+  assert.match(retryRoute, /manual-/);
+  assert.match(workspace, /重发销售通知/);
+  assert.match(workspace, /重发客户回执/);
+  assert.match(workspace, /全部重发/);
+  assert.match(workspace, /最后尝试/);
+  assert.match(adminCss, /\.inquiry-email-actions/);
+});

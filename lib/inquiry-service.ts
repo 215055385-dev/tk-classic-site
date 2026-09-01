@@ -52,6 +52,33 @@ export type InquiryDeliveryStatus = {
   emailError: string;
 };
 
+export type InquiryEmailMessage = {
+  id: string;
+  name: string;
+  email: string;
+  company: string;
+  phone: string;
+  country: string;
+  product: string;
+  accessories: string;
+  quantity: string;
+  branding: string;
+  message: string;
+  lang: string;
+  source: string;
+  sourcePage: string;
+  referrer: string;
+  assignedTo: string;
+  attachmentFiles?: InquiryEmailAttachment[];
+};
+
+export type InquiryEmailRetryRecord = InquiryEmailMessage & {
+  salesEmailSent: boolean | null;
+  customerEmailSent: boolean | null;
+  emailError: string;
+  emailLastAttemptAt: string;
+};
+
 let resendClient: Resend | null = null;
 
 function requiredEnv(name: string) {
@@ -251,6 +278,58 @@ export async function updateInquiryDeliveryStatus(id: string, delivery: InquiryD
   `;
 }
 
+export async function claimInquiryEmailRetry(id: string) {
+  const sql = getDatabase();
+  const rows = await sql`
+    UPDATE inquiries
+    SET email_last_attempt_at = now()
+    WHERE id = ${id}::uuid
+      AND (
+        email_last_attempt_at IS NULL
+        OR email_last_attempt_at < now() - interval '15 seconds'
+      )
+    RETURNING id
+  `;
+  return rows.length > 0;
+}
+
+export async function getInquiryEmailRetryRecord(id: string): Promise<InquiryEmailRetryRecord | null> {
+  const sql = getDatabase();
+  const rows = await sql`
+    SELECT id, name, email, company, phone, country, product, accessories, quantity,
+      branding, message, lang, source, source_page, referrer, assigned_to,
+      sales_email_sent, customer_email_sent, email_error, email_last_attempt_at
+    FROM inquiries
+    WHERE id = ${id}::uuid
+    LIMIT 1
+  `;
+  const row = rows[0];
+  if (!row) return null;
+
+  return {
+    id: String(row.id),
+    name: String(row.name ?? ""),
+    email: String(row.email ?? ""),
+    company: String(row.company ?? ""),
+    phone: String(row.phone ?? ""),
+    country: String(row.country ?? ""),
+    product: String(row.product ?? ""),
+    accessories: String(row.accessories ?? ""),
+    quantity: String(row.quantity ?? ""),
+    branding: String(row.branding ?? ""),
+    message: String(row.message ?? ""),
+    lang: String(row.lang ?? "en"),
+    source: String(row.source ?? "website"),
+    sourcePage: String(row.source_page ?? ""),
+    referrer: String(row.referrer ?? ""),
+    assignedTo: String(row.assigned_to ?? ""),
+    salesEmailSent: typeof row.sales_email_sent === "boolean" ? row.sales_email_sent : null,
+    customerEmailSent: typeof row.customer_email_sent === "boolean" ? row.customer_email_sent : null,
+    emailError: String(row.email_error ?? ""),
+    emailLastAttemptAt: row.email_last_attempt_at ? new Date(String(row.email_last_attempt_at)).toISOString() : "",
+  };
+}
+
 function salesRecipients() {
   const configured = process.env.INQUIRY_TO_EMAILS?.trim();
   return (configured || `${company.emailBowie},${company.emailLeo}`)
@@ -263,7 +342,7 @@ function sender() {
   return process.env.INQUIRY_FROM_EMAIL?.trim() || "TK Classic Website <onboarding@resend.dev>";
 }
 
-export async function sendInquiryEmail(inquiry: SavedInquiry) {
+export async function sendInquiryEmail(inquiry: InquiryEmailMessage, attemptKey = "") {
   const resend = getResend();
   const attachments = inquiry.attachmentFiles?.map((file) => ({
     filename: file.filename,
@@ -304,12 +383,12 @@ export async function sendInquiryEmail(inquiry: SavedInquiry) {
       html,
       ...(attachments?.length ? { attachments } : {}),
     },
-    { headers: { "Idempotency-Key": `tk-inquiry-${inquiry.id}` } },
+    { headers: { "Idempotency-Key": `tk-inquiry-${inquiry.id}${attemptKey ? `-${attemptKey}` : ""}` } },
   );
   if (error) throw new Error(error.message);
 }
 
-export async function sendInquiryConfirmationEmail(inquiry: SavedInquiry) {
+export async function sendInquiryConfirmationEmail(inquiry: InquiryEmailMessage, attemptKey = "") {
   const resend = getResend();
   const { error } = await resend.emails.send(
     {
@@ -326,7 +405,7 @@ export async function sendInquiryConfirmationEmail(inquiry: SavedInquiry) {
         </div>
       `,
     },
-    { headers: { "Idempotency-Key": `tk-inquiry-confirmation-${inquiry.id}` } },
+    { headers: { "Idempotency-Key": `tk-inquiry-confirmation-${inquiry.id}${attemptKey ? `-${attemptKey}` : ""}` } },
   );
   if (error) throw new Error(error.message);
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, ExternalLink, Mail, MessageCircle, RefreshCw, Search } from "lucide-react";
+import { Download, ExternalLink, Mail, MessageCircle, RefreshCw, Search, Send } from "lucide-react";
 
 type Status = "new" | "contacted" | "qualified" | "sample_discussion" | "sample_sent" | "quoted" | "negotiating" | "won" | "closed";
 type Inquiry = {
@@ -42,6 +42,7 @@ export function InquiryWorkspace() {
   const [rows, setRows] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [retrying, setRetrying] = useState("");
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState({ status: "", product: "", country: "" });
 
@@ -92,6 +93,28 @@ export function InquiryWorkspace() {
     setMessage("询盘跟进信息已保存。");
   }
 
+  async function retryEmail(row: Inquiry, target: "sales" | "customer" | "failed") {
+    const operation = `${row.id}:${target}`;
+    setRetrying(operation);
+    setMessage("");
+    try {
+      const response = await fetch(`/api/admin/inquiries/${encodeURIComponent(row.id)}/resend`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target }),
+      });
+      const body = await response.json();
+      if (body.inquiry) {
+        setRows((current) => current.map((item) => item.id === row.id ? { ...item, ...body.inquiry } : item));
+      }
+      setMessage(body.message || (response.ok ? "邮件已重新发送。" : "邮件重新发送失败。"));
+    } catch {
+      setMessage("网络异常，邮件未重新发送，请稍后再试。");
+    } finally {
+      setRetrying("");
+    }
+  }
+
   function exportCsv() {
     const header = ["时间", "负责人", "姓名", "公司", "邮箱", "电话", "国家", "产品", "数量", "配件", "品牌需求", "留言", "状态", "内部备注"];
     const lines = visibleRows.map((row) => [formatDate(row.createdAt), row.assignedTo, row.name, row.company, row.email, row.phone, row.country, row.product, row.quantity, row.accessories, row.branding, row.message, row.status, row.adminNote].map(csvCell).join(","));
@@ -121,7 +144,7 @@ export function InquiryWorkspace() {
         <div className="inquiry-crm-grid">
           <div><small>客户</small><h2>{row.name || "未填写姓名"}</h2><p>{row.company || "未填写公司"} · {row.country || "未填写市场"}</p><div className="inquiry-contact-actions"><a href={`mailto:${row.email.replace(/[\r\n]/g, "")}`}><Mail size={15}/>邮件</a>{row.phone ? <a href={whatsappLink(row.phone)} target="_blank" rel="noreferrer"><MessageCircle size={15}/>WhatsApp</a> : null}{safeSourceHref(row.sourcePage) ? <a href={safeSourceHref(row.sourcePage)} target="_blank" rel="noreferrer"><ExternalLink size={15}/>来源页面</a> : null}</div></div>
           <div><small>采购需求</small><p>{row.message || "—"}</p>{row.branding ? <p><b>定制：</b>{row.branding}</p> : null}{row.accessories ? <p><b>配件：</b>{row.accessories}</p> : null}</div>
-          <div><small>邮件状态</small><p>销售通知：{row.salesEmailSent === null ? "未记录" : row.salesEmailSent ? "已发送" : "发送失败"}</p><p>客户回执：{row.source === "website-chat" ? "不适用（站内聊天）" : row.customerEmailSent === null ? "未记录" : row.customerEmailSent ? "已发送" : "发送失败"}</p>{row.emailError ? <em>{row.emailError}</em> : null}</div>
+          <div className="inquiry-email-delivery"><small>邮件状态</small><p>销售通知：<b className={row.salesEmailSent ? "is-sent" : "is-failed"}>{row.salesEmailSent === null ? "未记录" : row.salesEmailSent ? "已发送" : "发送失败"}</b></p><p>客户回执：<b className={row.source === "website-chat" ? "is-muted" : row.customerEmailSent ? "is-sent" : "is-failed"}>{row.source === "website-chat" ? "不适用（站内聊天）" : row.customerEmailSent === null ? "未记录" : row.customerEmailSent ? "已发送" : "发送失败"}</b></p>{row.emailLastAttemptAt ? <time>最后尝试：{formatDate(row.emailLastAttemptAt)}</time> : null}{row.emailError ? <em>{row.emailError}</em> : null}<div className="inquiry-email-actions">{row.salesEmailSent !== true ? <button type="button" disabled={Boolean(retrying)} onClick={() => void retryEmail(row, "sales")}><Send size={13}/>{retrying === `${row.id}:sales` ? "发送中…" : "重发销售通知"}</button> : null}{row.source !== "website-chat" && row.customerEmailSent !== true ? <button type="button" disabled={Boolean(retrying)} onClick={() => void retryEmail(row, "customer")}><Send size={13}/>{retrying === `${row.id}:customer` ? "发送中…" : "重发客户回执"}</button> : null}{row.salesEmailSent !== true && row.source !== "website-chat" && row.customerEmailSent !== true ? <button className="is-primary" type="button" disabled={Boolean(retrying)} onClick={() => void retryEmail(row, "failed")}><RefreshCw size={13}/>{retrying === `${row.id}:failed` ? "发送中…" : "全部重发"}</button> : null}</div></div>
           <div className="inquiry-followup"><label><span>负责人</span><select value={row.assignedTo} onChange={(e) => void update(row, row.status, row.adminNote, e.target.value as Inquiry["assignedTo"])}><option value="">未分配</option><option value="Bowie">Bowie</option><option value="Leo">Leo</option></select></label><label><span>跟进状态</span><select value={row.status} onChange={(e) => void update(row, e.target.value as Status, row.adminNote)}>{statuses.map((x) => <option key={x.value} value={x.value}>{x.label}</option>)}</select></label><label><span>内部备注</span><textarea defaultValue={row.adminNote} placeholder="记录报价、样品、下一次联系时间…" onBlur={(e) => { if (e.target.value !== row.adminNote) void update(row, row.status, e.target.value); }}/></label></div>
         </div>
       </article>)}

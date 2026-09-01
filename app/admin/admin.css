@@ -959,3 +959,55 @@
   .cms-form-grid { grid-template-columns: 1fr; padding: 16px; }
   .cms-field.is-wide { grid-column: auto; }
 }
+
+.inquiry-email-delivery > time {
+  display: block;
+  margin: 8px 0;
+  color: #6e818a;
+  font-size: 10px;
+}
+
+.inquiry-email-delivery b { font-weight: 760; }
+.inquiry-email-delivery b.is-sent { color: #267353; }
+.inquiry-email-delivery b.is-failed { color: #a9473b; }
+.inquiry-email-delivery b.is-muted { color: #71828a; }
+
+.inquiry-email-actions {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.inquiry-email-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 7px 9px;
+  border: 1px solid rgba(20, 127, 157, .2);
+  border-radius: 8px;
+  color: #17677d;
+  background: #f3fafb;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 760;
+  cursor: pointer;
+  transition: border-color .16s ease, background-color .16s ease, color .16s ease;
+}
+
+.inquiry-email-actions button:hover:not(:disabled) {
+  border-color: rgba(20, 127, 157, .42);
+  background: #e8f6f9;
+}
+
+.inquiry-email-actions button.is-primary {
+  border-color: #147f9d;
+  color: #fff;
+  background: #147f9d;
+}
+
+.inquiry-email-actions button:disabled {
+  opacity: .55;
+  cursor: wait;
+}

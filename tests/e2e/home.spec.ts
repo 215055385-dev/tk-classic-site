@@ -220,6 +220,8 @@ test.describe("TK Classic buyer journey", () => {
     await expect(page.locator(".admin-cms-shell")).toHaveCount(0);
     const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+    const retryResponse = await page.request.post("/api/admin/inquiries/00000000-0000-4000-8000-000000000000/resend", { data: { target: "failed" } });
+    expect(retryResponse.status()).toBe(401);
   });
 
   test("long pages expose lightweight reading progress while admin stays distraction free", async ({ page }) => {
