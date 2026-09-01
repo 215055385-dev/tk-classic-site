@@ -574,3 +574,23 @@ test("inquiries use a recoverable admin-only recycle bin instead of destructive 
   assert.match(workspace, /恢复询盘/);
   assert.match(schema, /deletedAt\s+DateTime\?/);
 });
+
+test("customer management supports secure sales follow-up without changing source records", async () => {
+  const service = await readProjectFile("lib/customer-service.ts");
+  const route = await readProjectFile("app/api/admin/customers/route.ts");
+  const workspace = await readProjectFile("components/admin/CustomerWorkspace.tsx");
+  const adminCss = await readProjectFile("app/admin/admin.css");
+
+  assert.match(service, /customerStatuses = \["new", "contacted", "follow_up", "qualified", "won", "inactive"\]/);
+  assert.match(service, /next_follow_up_at/);
+  assert.match(service, /export async function updateCrmCustomer/);
+  assert.match(route, /export async function PATCH/);
+  assert.match(route, /requireAdmin\(true, request\)/);
+  assert.match(workspace, /只看待跟进/);
+  assert.match(workspace, /管理客户/);
+  assert.match(workspace, /保存跟进信息/);
+  assert.match(workspace, /Bowie/);
+  assert.match(workspace, /Leo/);
+  assert.match(adminCss, /\.customer-manage-panel/);
+  assert.match(adminCss, /\.customer-crm-status\.is-won/);
+});

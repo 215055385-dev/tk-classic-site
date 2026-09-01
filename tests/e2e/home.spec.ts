@@ -228,6 +228,10 @@ test.describe("TK Classic buyer journey", () => {
     expect(archiveResponse.status()).toBe(401);
     const restoreResponse = await page.request.post("/api/admin/inquiries/00000000-0000-4000-8000-000000000000");
     expect(restoreResponse.status()).toBe(401);
+    const customerUpdate = await page.request.patch("/api/admin/customers", {
+      data: { id: "00000000-0000-4000-8000-000000000000", status: "new" },
+    });
+    expect(customerUpdate.status()).toBe(401);
   });
 
   test("long pages expose lightweight reading progress while admin stays distraction free", async ({ page }) => {

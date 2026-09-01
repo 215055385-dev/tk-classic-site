@@ -1133,3 +1133,175 @@
   font-size: 10px;
   line-height: 1.45;
 }
+
+/* Customer follow-up workspace */
+.customer-toolbar > select {
+  min-height: 40px;
+  padding: 0 34px 0 11px;
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  color: var(--admin-text);
+  background: #fff;
+  font: inherit;
+  font-size: 11px;
+}
+
+.customer-toolbar > button.is-active {
+  color: #0f6f8a;
+  background: #e4f5f9;
+  box-shadow: inset 0 0 0 1px rgba(20, 127, 157, .2);
+}
+
+.customer-list article {
+  grid-template-columns: 1.3fr .72fr .9fr 1fr auto;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.customer-list article.is-editing {
+  border-color: rgba(20, 127, 157, .38);
+  box-shadow: 0 14px 35px rgba(20, 54, 68, .09);
+}
+
+.customer-list p {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.customer-list strong.is-due { color: #a9473b; }
+
+.customer-crm-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: #52656e;
+  background: #edf1f2;
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.customer-crm-status.is-new { color: #286781; background: #e7f3f8; }
+.customer-crm-status.is-contacted { color: #17677d; background: #e2f5f7; }
+.customer-crm-status.is-follow_up { color: #9a5b29; background: #fff0df; }
+.customer-crm-status.is-qualified { color: #675199; background: #f0ebfa; }
+.customer-crm-status.is-won { color: #267353; background: #e3f5ec; }
+.customer-crm-status.is-inactive { color: #697980; background: #edf0f1; }
+
+.customer-tags {
+  max-width: 100%;
+  color: #6b5964 !important;
+  overflow-wrap: anywhere;
+}
+
+.customer-row-actions {
+  display: flex;
+  justify-content: center;
+  padding-inline: 12px !important;
+}
+
+.customer-row-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid rgba(20, 127, 157, .2);
+  border-radius: 8px;
+  color: #17677d;
+  background: #f3fafb;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 760;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.customer-row-actions button:hover {
+  border-color: rgba(20, 127, 157, .42);
+  background: #e8f6f9;
+}
+
+.customer-manage-panel {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: 12px;
+  padding: 18px !important;
+  border-top: 1px solid rgba(20, 127, 157, .16);
+  border-right: 0 !important;
+  background: linear-gradient(135deg, #f6fbfc, #f9faf8);
+}
+
+.customer-manage-panel label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.customer-manage-panel label > span {
+  color: #536871;
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.customer-manage-panel input,
+.customer-manage-panel select,
+.customer-manage-panel textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  border: 1px solid #d7e1e4;
+  border-radius: 8px;
+  outline: 0;
+  color: var(--admin-text);
+  background: #fff;
+  font: inherit;
+  font-size: 11px;
+}
+
+.customer-manage-panel textarea {
+  min-height: 88px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.customer-manage-panel input:focus,
+.customer-manage-panel select:focus,
+.customer-manage-panel textarea:focus {
+  border-color: #58acc1;
+  box-shadow: 0 0 0 3px rgba(20, 127, 157, .1);
+}
+
+.customer-manage-panel .is-wide { grid-column: 1 / -1; }
+
+.customer-manage-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (max-width: 1100px) {
+  .customer-list article { grid-template-columns: 1fr 1fr; }
+  .customer-list article > div { border-bottom: 1px solid #eee9e4; }
+  .customer-list article > div:nth-child(2n) { border-right: 0; }
+  .customer-row-actions { grid-column: 1 / -1; justify-content: flex-end; border-right: 0 !important; }
+  .customer-manage-panel { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 720px) {
+  .customer-toolbar > select { flex: 1 1 calc(50% - 6px); min-width: 0; }
+  .customer-toolbar > button { flex-basis: 100%; }
+  .customer-list article { grid-template-columns: 1fr; }
+  .customer-list article > div { border-right: 0; }
+  .customer-row-actions { grid-column: auto; }
+  .customer-row-actions button { width: 100%; }
+  .customer-manage-panel { grid-column: auto; grid-template-columns: 1fr; }
+  .customer-manage-panel .is-wide,
+  .customer-manage-actions { grid-column: auto; }
+  .customer-manage-actions { display: grid; grid-template-columns: 1fr 1fr; }
+}
