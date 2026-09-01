@@ -1,0 +1,174 @@
+/*
+ * Coffee art direction
+ * Editorial display type and quiet coffee symbols layered over the titanium UI.
+ * Functional copy, specifications and controls remain in Geist for clarity.
+ */
+
+:root {
+  --coffee-display: "Cormorant Garamond Variable", "Iowan Old Style", "Baskerville", Georgia, serif;
+  --coffee-copper: #d8915f;
+  --coffee-copper-soft: rgba(216, 145, 95, .28);
+  --coffee-cream: #f3e9d8;
+}
+
+/* Use the expressive face only where its language coverage is dependable. */
+:is(html[lang="en"], html[lang="es"], html[lang="pt"], html[lang="fr"], html[lang="ru"]) :where(
+  .home-shell .hero-title,
+  .inner-page .inner-hero h1,
+  .inner-page .scenario-hero h1,
+  .inner-page .buyer-guide-hero h1,
+  .home-shell .section-heading h2,
+  .inner-page .section-heading h2,
+  .inner-page .scenario-type-copy h2,
+  .inner-page .scenario-closing-cta h2,
+  .home-shell .launch-system-intro h2,
+  .home-shell .home-contact-promo h2
+) {
+  font-family: var(--coffee-display) !important;
+  font-variation-settings: "wght" 560;
+  font-weight: 560 !important;
+  letter-spacing: -.035em !important;
+}
+
+:is(html[lang="en"], html[lang="es"], html[lang="pt"], html[lang="fr"], html[lang="ru"]) .home-shell .hero-title {
+  max-width: 15ch !important;
+  font-size: clamp(54px, 5.15vw, 76px) !important;
+  font-style: italic;
+  line-height: .88 !important;
+  letter-spacing: -.048em !important;
+  text-wrap: balance;
+}
+
+/* Chinese display copy gets a restrained editorial Song face without affecting UI. */
+html[lang="zh"] :where(
+  .home-shell .hero-title,
+  .home-shell .section-heading h2,
+  .inner-page .section-heading h2
+) {
+  font-family: "Songti SC", SimSun, serif !important;
+  font-weight: 600 !important;
+  letter-spacing: -.045em !important;
+}
+
+/* A cup-rim print makes every major chapter feel related to the coffee ritual. */
+:where(.home-shell, .inner-page) .section-heading {
+  position: relative;
+  isolation: isolate;
+}
+
+:where(.home-shell, .inner-page) .section-heading::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: clamp(-20px, -1.6vw, -8px);
+  right: clamp(-48px, -3vw, -16px);
+  width: clamp(76px, 8vw, 118px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(216, 145, 95, .15);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 48%, rgba(216, 145, 95, .08) 49% 51%, transparent 52%),
+    conic-gradient(from 14deg, transparent 0 67%, rgba(101, 203, 232, .16) 68% 71%, transparent 72%);
+  filter: blur(.1px);
+  opacity: .82;
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+
+/* Tiny bean-shaped chapter mark. Existing semantic icons remain untouched. */
+:where(.home-shell, .inner-page) .section-heading > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+:where(.home-shell, .inner-page) .section-heading > span:not(:has(svg))::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 10px;
+  height: 14px;
+  border: 1px solid color-mix(in srgb, var(--coffee-copper) 78%, transparent);
+  border-radius: 60% 42% 60% 42%;
+  background:
+    linear-gradient(73deg, transparent 44%, rgba(243, 233, 216, .56) 46% 51%, transparent 53%),
+    linear-gradient(145deg, rgba(216, 145, 95, .36), rgba(101, 203, 232, .08));
+  box-shadow: 0 0 16px rgba(216, 145, 95, .12);
+  transform: rotate(28deg);
+}
+
+/* Steam is rendered as a mask, so it stays crisp and adds no image request. */
+:where(.tech-hero-visual, .product-hero-image)::before {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  top: 8%;
+  right: 28%;
+  width: clamp(94px, 12vw, 176px);
+  height: clamp(120px, 16vw, 228px);
+  background: linear-gradient(180deg, rgba(243, 233, 216, .62), rgba(101, 203, 232, .12) 62%, transparent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 240'%3E%3Cg fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M48 226C8 172 87 153 43 102C18 73 62 52 52 13'/%3E%3Cpath d='M92 222C61 177 128 151 91 111C61 79 112 55 99 20'/%3E%3Cpath d='M132 226C105 188 158 158 131 126C108 98 149 72 141 40'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 240'%3E%3Cg fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M48 226C8 172 87 153 43 102C18 73 62 52 52 13'/%3E%3Cpath d='M92 222C61 177 128 151 91 111C61 79 112 55 99 20'/%3E%3Cpath d='M132 226C105 188 158 158 131 126C108 98 149 72 141 40'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: .34;
+  filter: blur(.35px) drop-shadow(0 0 12px rgba(216, 145, 95, .12));
+  transform-origin: 50% 100%;
+  animation: coffee-art-steam 7.5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.product-hero-image::before {
+  top: 3%;
+  right: 34%;
+  opacity: .24;
+}
+
+/* Coffee crema glints connect image-led cards without turning them into boxes. */
+:where(.home-shell, .inner-page) :where(.product-image-link, .accessory-card-image)::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  right: 8%;
+  bottom: 7%;
+  width: clamp(34px, 4vw, 58px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(216, 145, 95, .16);
+  border-radius: 50%;
+  background: radial-gradient(circle at 42% 38%, rgba(243, 233, 216, .12), transparent 44%);
+  box-shadow: inset 0 0 0 5px rgba(216, 145, 95, .025), 0 0 24px rgba(216, 145, 95, .07);
+  opacity: .68;
+  pointer-events: none;
+}
+
+@keyframes coffee-art-steam {
+  0% { opacity: .18; transform: translate3d(-3px, 8px, 0) scale(.96) rotate(-1deg); }
+  55% { opacity: .38; }
+  100% { opacity: .24; transform: translate3d(5px, -9px, 0) scale(1.04) rotate(1.5deg); }
+}
+
+@media (max-width: 720px) {
+  :is(html[lang="en"], html[lang="es"], html[lang="pt"], html[lang="fr"], html[lang="ru"]) .home-shell .hero-title {
+    max-width: 13ch !important;
+    font-size: clamp(44px, 13.2vw, 60px) !important;
+    line-height: .9 !important;
+  }
+
+  :where(.home-shell, .inner-page) .section-heading::after {
+    right: -12px;
+    width: 72px;
+    opacity: .56;
+  }
+
+  :where(.tech-hero-visual, .product-hero-image)::before {
+    top: 4%;
+    right: 24%;
+    width: 88px;
+    height: 120px;
+    opacity: .24;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.tech-hero-visual, .product-hero-image)::before {
+    animation: none;
+    opacity: .2;
+  }
+}

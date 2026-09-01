@@ -479,3 +479,19 @@ test("conversion typography reduces visible copy without removing SEO content", 
   assert.match(typography, /grid-template-columns: minmax\(230px, 1\.2fr\) repeat\(3/);
   assert.match(typography, /\.inner-page\.accessories-page \.accessory-card-body/);
 });
+
+test("coffee art direction stays decorative and keeps functional type readable", async () => {
+  const [layout, artDirection, packageFile] = await Promise.all([
+    readProjectFile("app/layout.tsx"),
+    readProjectFile("app/styles/coffee-art-direction.css"),
+    readProjectFile("package.json"),
+  ]);
+  assert.match(layout, /@fontsource-variable\/cormorant-garamond\/wght\.css/);
+  assert.match(layout, /coffee-art-direction\.css/);
+  assert.match(packageFile, /@fontsource-variable\/cormorant-garamond/);
+  assert.match(artDirection, /--coffee-display/);
+  assert.match(artDirection, /section-heading > span:not\(:has\(svg\)\)::before/);
+  assert.match(artDirection, /coffee-art-steam/);
+  assert.match(artDirection, /prefers-reduced-motion: reduce/);
+  assert.doesNotMatch(artDirection, /\.primary-action[\s\S]*font-family: var\(--coffee-display\)/);
+});
