@@ -13,6 +13,7 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { SiteChatWidget } from "@/components/SiteChatWidget";
 import { GoogleTracking } from "@/components/GoogleTracking";
 import { GlobalLanguageSwitcher } from "@/components/GlobalLanguageSwitcher";
+import { PageProgress } from "@/components/PageProgress";
 import "@fontsource-variable/cormorant-garamond/wght.css";
 import "@fontsource-variable/cormorant-garamond/wght-italic.css";
 import "./globals.css";
@@ -32,6 +33,7 @@ import "./styles/interaction-depth.css";
 import "./styles/front-refinement.css";
 import "./styles/conversion-typography.css";
 import "./styles/coffee-art-direction.css";
+import "./styles/experience-polish.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(company.siteUrl),
@@ -123,6 +125,7 @@ export default async function RootLayout({
           <LocaleDocumentSync lang={lang} />
           <VisitTracker />
           <GoogleTracking />
+          <PageProgress />
           {children}
           <GlobalLanguageSwitcher currentLang={lang} />
           <SiteChatWidget />

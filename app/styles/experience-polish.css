@@ -1,0 +1,64 @@
+/* Shared interaction clarity for long buyer-facing pages. */
+
+.front-page-progress {
+  position: fixed;
+  z-index: 1200;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(101, 203, 232, .045);
+  pointer-events: none;
+}
+
+.front-page-progress > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #65cbe8 0%, #9ce7f5 52%, #d8915f 100%);
+  box-shadow: 0 0 14px rgba(101, 203, 232, .5);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+[dir="rtl"] .front-page-progress > span { transform-origin: right center; }
+
+:where(.home-shell, .inner-page) :where(.primary-action, .secondary-action, .card-link, .quote-link) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+:where(.home-shell, .inner-page) :where(.primary-action, .secondary-action)::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -80%;
+  left: -32%;
+  width: 24%;
+  height: 260%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .2), transparent);
+  opacity: 0;
+  transform: rotate(18deg) translateX(-180%);
+  transition: transform .68s cubic-bezier(.22, 1, .36, 1), opacity .25s ease;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  :where(.home-shell, .inner-page) :where(.primary-action, .secondary-action):hover::after {
+    opacity: 1;
+    transform: rotate(18deg) translateX(720%);
+  }
+}
+
+:where(.home-shell, .inner-page) :where(a, button, summary):focus-visible {
+  outline-color: rgba(101, 203, 232, .72);
+  box-shadow: 0 0 0 5px rgba(101, 203, 232, .1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .front-page-progress > span { will-change: auto; }
+  :where(.home-shell, .inner-page) :where(.primary-action, .secondary-action)::after { display: none; }
+}

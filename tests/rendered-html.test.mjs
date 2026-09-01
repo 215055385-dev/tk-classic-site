@@ -495,3 +495,26 @@ test("coffee art direction stays decorative and keeps functional type readable",
   assert.match(artDirection, /prefers-reduced-motion: reduce/);
   assert.doesNotMatch(artDirection, /\.primary-action[\s\S]*font-family: var\(--coffee-display\)/);
 });
+
+test("front progress and admin shortcuts improve long-page operations without changing content", async () => {
+  const [layout, progress, experience, adminShell, cms, adminStyles] = await Promise.all([
+    readProjectFile("app/layout.tsx"),
+    readProjectFile("components/PageProgress.tsx"),
+    readProjectFile("app/styles/experience-polish.css"),
+    readProjectFile("components/admin/AdminShell.tsx"),
+    readProjectFile("components/admin/CmsManager.tsx"),
+    readProjectFile("app/admin/admin.css"),
+  ]);
+  assert.match(layout, /<PageProgress \/>/);
+  assert.match(layout, /experience-polish\.css/);
+  assert.match(progress, /requestAnimationFrame/);
+  assert.match(progress, /pathname\.startsWith\("\/admin"\)/);
+  assert.match(experience, /front-page-progress/);
+  assert.match(experience, /prefers-reduced-motion: reduce/);
+  assert.match(adminShell, /admin-session-badge/);
+  assert.match(cms, /searchRef/);
+  assert.match(cms, /Ctrl K/);
+  assert.match(cms, /aria-busy=\{loading\}/);
+  assert.match(adminStyles, /2026 operations polish/);
+  assert.match(adminStyles, /\.cms-toolbar kbd/);
+});

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Edit3, ExternalLink, ImageIcon, Plus, RefreshCw, Search, Trash2, X } from "lucide-react";
 import { MediaUploader } from "@/components/admin/MediaUploader";
@@ -37,6 +37,7 @@ export function CmsManager({ resource }: { resource: Resource }) {
   const meta = labels[resource]; const [items, setItems] = useState<Item[]>([]); const [media, setMedia] = useState<MediaOption[]>([]);
   const [loading, setLoading] = useState(true); const [query, setQuery] = useState(""); const [editing, setEditing] = useState<Item | null>(null);
   const [message, setMessage] = useState(""); const [saving, setSaving] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
     setLoading(true); setMessage("");
@@ -45,6 +46,16 @@ export function CmsManager({ resource }: { resource: Resource }) {
     if (!response.ok) setMessage(body.error || "加载失败"); else { setItems(body.items || []); setMedia(body.media || []); }
     setLoading(false);
   }, [resource]);
+  useEffect(() => {
+    const focusSearch = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k" && !editing) {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", focusSearch);
+    return () => window.removeEventListener("keydown", focusSearch);
+  }, [editing]);
   useEffect(() => {
     const controller = new AbortController();
     const url = resource === "media" ? "/api/admin/cms/media" : `/api/admin/cms/${resource}`;
@@ -75,10 +86,10 @@ export function CmsManager({ resource }: { resource: Resource }) {
     if (!response.ok) setMessage(body.error || "删除失败"); else { setMessage(resource === "products" && item.lockedModel ? "产品已归档" : "已删除"); await load(); }
   }
 
-  return <section className="cms-manager">
+  return <section className="cms-manager" aria-busy={loading}>
     <header className="cms-page-heading"><div><span>{meta.eyebrow}</span><h1>{meta.title}</h1><p>{meta.description}</p></div>{resource !== "media" ? <button className="cms-primary" onClick={() => setEditing(empty(resource))}><Plus size={17}/>{meta.add}</button> : null}</header>
     {resource === "media" ? <MediaUploader onUploaded={load}/> : null}
-    <div className="cms-toolbar"><label><Search size={17}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索当前内容" /></label><button onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{loading ? "加载中…" : "刷新"}</button><span>共 {filtered.length} 条</span></div>
+    <div className="cms-toolbar"><label><Search size={17}/><input ref={searchRef} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索当前内容" aria-label="搜索当前内容" /><kbd>Ctrl K</kbd></label><button onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{loading ? "加载中…" : "刷新"}</button><span>共 {filtered.length} 条</span></div>
     {message ? <p className="cms-notice" role="status">{message}</p> : null}
     {resource === "media" ? <MediaGrid items={filtered} onEdit={setEditing} onDelete={remove}/> : <DataTable resource={resource} items={filtered} onEdit={setEditing} onDelete={remove}/>} 
     {!loading && !filtered.length ? <div className="cms-empty">暂无内容。点击右上角开始创建真实数据。</div> : null}

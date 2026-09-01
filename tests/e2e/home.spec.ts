@@ -221,4 +221,22 @@ test.describe("TK Classic buyer journey", () => {
     const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
   });
+
+  test("long pages expose lightweight reading progress while admin stays distraction free", async ({ page }) => {
+    const runtimeErrors: string[] = [];
+    page.on("pageerror", (error) => runtimeErrors.push(error.message));
+
+    await page.goto("/en");
+    const progress = page.locator(".front-page-progress");
+    await expect(progress).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight / 2));
+    await expect.poll(() => progress.locator("span").evaluate((element) => getComputedStyle(element).transform)).not.toBe("matrix(0, 0, 0, 1, 0, 0)");
+
+    const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+    expect(runtimeErrors).toEqual([]);
+
+    await page.goto("/admin");
+    await expect(page.locator(".front-page-progress")).toHaveCount(0);
+  });
 });
