@@ -693,3 +693,26 @@ test("customer CRM separates today and overdue follow-ups", async () => {
   assert.match(workspace, /按跟进时间筛选/);
   assert.match(workspace, /todayBounds/);
 });
+
+test("customer CRM exposes a unified timeline and audited owner queues", async () => {
+  const service = await readProjectFile("lib/customer-service.ts");
+  const timelineRoute = await readProjectFile("app/api/admin/customers/[id]/timeline/route.ts");
+  const customerRoute = await readProjectFile("app/api/admin/customers/route.ts");
+  const workspace = await readProjectFile("components/admin/CustomerWorkspace.tsx");
+  const adminCss = await readProjectFile("app/admin/admin.css");
+  const auditService = await readProjectFile("lib/audit-log-service.ts");
+
+  assert.match(service, /export async function getCustomerTimeline/);
+  assert.match(service, /FROM chat_conversations/);
+  assert.match(service, /FROM audit_logs/);
+  assert.match(service, /to_regclass\('public\.chat_conversations'\)/);
+  assert.match(auditService, /CREATE TABLE IF NOT EXISTS audit_logs/);
+  assert.match(timelineRoute, /requireAdmin\(\)/);
+  assert.match(timelineRoute, /Cache-Control": "private, no-store/);
+  assert.match(customerRoute, /CUSTOMER_FOLLOW_UP_UPDATE/);
+  assert.match(customerRoute, /auditLog\.create/);
+  assert.match(workspace, /客户互动时间轴/);
+  assert.match(workspace, /负责人快捷视图/);
+  assert.match(adminCss, /\.customer-timeline-panel/);
+  assert.match(adminCss, /\.customer-owner-queues/);
+});

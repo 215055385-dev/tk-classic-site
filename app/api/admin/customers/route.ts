@@ -1,5 +1,7 @@
 import { requireAdmin, adminErrorResponse } from "@/lib/admin-permissions";
 import { listCrmCustomers, updateCrmCustomer } from "@/lib/customer-service";
+import { getPrisma } from "@/lib/prisma";
+import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,7 +17,7 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
-    await requireAdmin(true, request);
+    const admin = await requireAdmin(true, request);
     const body = await request.json() as Record<string, unknown>;
     const id = String(body.id ?? "");
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
@@ -27,6 +29,21 @@ export async function PATCH(request: Request) {
       tags: String(body.tags ?? ""),
       nextFollowUpAt: String(body.nextFollowUpAt ?? ""),
       adminNote: String(body.adminNote ?? ""),
+    });
+    await ensureAuditLogSchema();
+    await getPrisma().auditLog.create({
+      data: {
+        actorId: admin.id,
+        action: "CUSTOMER_FOLLOW_UP_UPDATE",
+        entityType: "customer",
+        entityId: id,
+        after: {
+          status: customer.status,
+          owner: customer.owner,
+          tags: customer.tags,
+          nextFollowUpAt: customer.nextFollowUpAt,
+        },
+      },
     });
     return Response.json({ ok: true, customer, message: "客户跟进信息已保存。" });
   } catch (error) {

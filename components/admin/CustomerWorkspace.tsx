@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CalendarClock, Mail, Pencil, RefreshCw, Save, Search, Tags, UserRoundCheck, UsersRound, X } from "lucide-react";
+import { Activity, CalendarClock, ChevronDown, Mail, Pencil, RefreshCw, Save, Search, Tags, UserRoundCheck, UsersRound, X } from "lucide-react";
 
 type CustomerStatus = "new" | "contacted" | "follow_up" | "qualified" | "won" | "inactive";
 type Customer = {
@@ -11,6 +11,7 @@ type Customer = {
   owner: "Bowie" | "Leo" | ""; tags: string; nextFollowUpAt: string; adminNote: string; updatedAt: string;
 };
 type CustomerDraft = Pick<Customer, "status" | "owner" | "tags" | "adminNote"> & { nextFollowUpAt: string };
+type TimelineItem = { id: string; type: "inquiry" | "chat" | "customer_update"; title: string; detail: string; occurredAt: string; product: string; sourcePage: string; actor: string };
 
 const statusOptions: Array<{ value: CustomerStatus; label: string }> = [
   { value: "new", label: "新客户" }, { value: "contacted", label: "已联系" },
@@ -41,6 +42,9 @@ export function CustomerWorkspace() {
   const [editingId, setEditingId] = useState("");
   const [draft, setDraft] = useState<CustomerDraft | null>(null);
   const [currentTime, setCurrentTime] = useState<number | null>(null);
+  const [expandedTimeline, setExpandedTimeline] = useState("");
+  const [timelineRows, setTimelineRows] = useState<Record<string, TimelineItem[]>>({});
+  const [timelineLoading, setTimelineLoading] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true); setNotice("");
@@ -83,6 +87,12 @@ export function CustomerWorkspace() {
       if (followUpWindow === "overdue" && (!followUpTime || followUpTime >= todayBounds.start || ["won", "inactive"].includes(row.status))) return false;
       if (!term) return true;
       return [row.name, row.email, row.firstChannel, row.lastChannel, row.tags, row.owner, row.adminNote].some((value) => value.toLowerCase().includes(term));
+    }).sort((a, b) => {
+      const aTime = a.nextFollowUpAt ? new Date(a.nextFollowUpAt).getTime() : Number.POSITIVE_INFINITY;
+      const bTime = b.nextFollowUpAt ? new Date(b.nextFollowUpAt).getTime() : Number.POSITIVE_INFINITY;
+      const aActive = ["won", "inactive"].includes(a.status) ? 1 : 0;
+      const bActive = ["won", "inactive"].includes(b.status) ? 1 : 0;
+      return aActive - bActive || aTime - bTime || new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime();
     });
   }, [channel, currentTime, followUpWindow, owner, query, rows, showTests, status, todayBounds]);
 
@@ -109,6 +119,22 @@ export function CustomerWorkspace() {
     } finally { setSaving(false); }
   }
 
+  async function toggleTimeline(row: Customer) {
+    if (expandedTimeline === row.id) { setExpandedTimeline(""); return; }
+    setExpandedTimeline(row.id);
+    if (timelineRows[row.id]) return;
+    setTimelineLoading(row.id); setNotice("");
+    try {
+      const response = await fetch(`/api/admin/customers/${encodeURIComponent(row.id)}/timeline`, { cache: "no-store" });
+      const body = await response.json();
+      if (!response.ok || !body.ok) throw new Error(body.error || "客户记录加载失败。");
+      setTimelineRows((current) => ({ ...current, [row.id]: body.timeline || [] }));
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "客户记录加载失败。");
+      setExpandedTimeline("");
+    } finally { setTimelineLoading(""); }
+  }
+
   return <section className="customer-workspace">
     <header className="cms-page-heading"><div><span>邮箱唯一身份</span><h1>客户管理</h1><p>统一管理客户状态、负责人、标签和下一次跟进时间。</p></div><button className="cms-secondary" onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{loading ? "加载中" : "刷新"}</button></header>
     <div className="customer-summary"><div><UsersRound/><strong>{realRows.length}</strong><span>真实客户</span></div><div><CalendarClock/><strong>{todayCount}</strong><span>今日跟进</span></div><div><CalendarClock/><strong>{overdueCount}</strong><span>已经超期</span></div><div><strong>{realRows.filter((row) => row.status === "won").length}</strong><span>已成交客户</span></div></div>
@@ -120,6 +146,7 @@ export function CustomerWorkspace() {
       <select aria-label="按跟进时间筛选" value={followUpWindow} onChange={(event) => setFollowUpWindow(event.target.value as typeof followUpWindow)}><option value="">全部跟进时间</option><option value="today">今天需要跟进</option><option value="overdue">已经超期</option><option value="due">截至现在待跟进</option></select>
       <label className="customer-test-toggle"><input type="checkbox" checked={showTests} onChange={(event) => setShowTests(event.target.checked)}/>测试数据</label><span>{visible.length} 位客户</span>
     </div>
+    <div className="customer-owner-queues" aria-label="负责人快捷视图"><button className={owner === "Bowie" ? "is-active" : undefined} onClick={() => setOwner(owner === "Bowie" ? "" : "Bowie")}>Bowie <strong>{realRows.filter((row) => row.owner === "Bowie" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className={owner === "Leo" ? "is-active" : undefined} onClick={() => setOwner(owner === "Leo" ? "" : "Leo")}>Leo <strong>{realRows.filter((row) => row.owner === "Leo" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className={owner === "__none" ? "is-active" : undefined} onClick={() => setOwner(owner === "__none" ? "" : "__none")}>未分配 <strong>{realRows.filter((row) => !row.owner && !["won", "inactive"].includes(row.status)).length}</strong></button></div>
     {notice ? <p className="cms-notice" role="status">{notice}</p> : null}
     <div className="customer-list">{visible.map((row) => {
       const isDue = currentTime !== null && Boolean(row.nextFollowUpAt) && new Date(row.nextFollowUpAt).getTime() <= currentTime && !["won", "inactive"].includes(row.status);
@@ -128,7 +155,7 @@ export function CustomerWorkspace() {
         <div><small>客户状态</small><span className={`customer-crm-status is-${row.status}`}>{statusLabel(row.status)}</span><p><UserRoundCheck size={12}/>{row.owner || "未分配负责人"}</p></div>
         <div><small>业务记录</small><strong>{row.inquiryCount} 次询盘 · {row.chatCount} 次聊天</strong><p>{channelLabel(row.lastChannel)} · {row.inquiryCount + row.chatCount > 1 ? "回访客户" : "新客户"}</p></div>
         <div><small>下次跟进</small><strong className={isDue ? "is-due" : undefined}>{row.nextFollowUpAt ? formatDate(row.nextFollowUpAt) : "尚未安排"}</strong><p>最近互动：{formatDate(row.lastSeenAt)}</p></div>
-        <div className="customer-row-actions"><button type="button" onClick={() => editingId === row.id ? (setEditingId(""), setDraft(null)) : openEditor(row)}>{editingId === row.id ? <X size={14}/> : <Pencil size={14}/>} {editingId === row.id ? "取消编辑" : "管理客户"}</button></div>
+        <div className="customer-row-actions"><button type="button" onClick={() => void toggleTimeline(row)}><Activity size={14}/>{timelineLoading === row.id ? "加载中" : expandedTimeline === row.id ? "收起记录" : "客户记录"}<ChevronDown className={expandedTimeline === row.id ? "is-open" : undefined} size={13}/></button><button type="button" onClick={() => editingId === row.id ? (setEditingId(""), setDraft(null)) : openEditor(row)}>{editingId === row.id ? <X size={14}/> : <Pencil size={14}/>} {editingId === row.id ? "取消编辑" : "管理客户"}</button></div>
         {editingId === row.id && draft ? <div className="customer-manage-panel">
           <label><span>客户状态</span><select value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as CustomerStatus })}>{statusOptions.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
           <label><span>负责人</span><select value={draft.owner} onChange={(event) => setDraft({ ...draft, owner: event.target.value as Customer["owner"] })}><option value="">未分配</option><option value="Bowie">Bowie</option><option value="Leo">Leo</option></select></label>
@@ -137,6 +164,7 @@ export function CustomerWorkspace() {
           <label className="is-wide"><span>内部备注</span><textarea value={draft.adminNote} onChange={(event) => setDraft({ ...draft, adminNote: event.target.value })} placeholder="记录客户偏好、报价、样品和下一步计划…"/></label>
           <div className="customer-manage-actions"><button type="button" className="cms-secondary" onClick={() => { setEditingId(""); setDraft(null); }}><X size={15}/>取消</button><button type="button" className="cms-primary" disabled={saving} onClick={() => void saveCustomer(row)}><Save size={15}/>{saving ? "保存中…" : "保存跟进信息"}</button></div>
         </div> : null}
+        {expandedTimeline === row.id ? <div className="customer-timeline-panel"><header><div><Activity size={17}/><strong>客户互动时间轴</strong></div><span>{timelineRows[row.id]?.length ?? 0} 条记录</span></header>{timelineLoading === row.id ? <p className="customer-timeline-empty">正在加载客户历史…</p> : timelineRows[row.id]?.length ? <ol>{timelineRows[row.id].map((item) => <li className={`is-${item.type}`} key={item.id}><span className="customer-timeline-dot"/><div><div><strong>{item.title}</strong><time>{formatDate(item.occurredAt)}</time></div><p>{item.detail}</p><small>{item.actor}{item.sourcePage ? ` · 来源页面：${item.sourcePage}` : ""}</small></div></li>)}</ol> : <p className="customer-timeline-empty">该客户暂时没有可显示的历史记录。</p>}</div> : null}
       </article>;
     })}</div>
     {!loading && !visible.length ? <div className="cms-empty">暂无符合条件的客户。</div> : null}

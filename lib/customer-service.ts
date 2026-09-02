@@ -1,4 +1,5 @@
 import { getDatabase } from "@/lib/database";
+import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 
 export type CustomerActivity = "inquiry" | "chat";
 export const customerStatuses = ["new", "contacted", "follow_up", "qualified", "won", "inactive"] as const;
@@ -23,6 +24,17 @@ export type CrmCustomer = {
   nextFollowUpAt: string;
   adminNote: string;
   updatedAt: string;
+};
+
+export type CustomerTimelineItem = {
+  id: string;
+  type: "inquiry" | "chat" | "customer_update";
+  title: string;
+  detail: string;
+  occurredAt: string;
+  product: string;
+  sourcePage: string;
+  actor: string;
 };
 
 let schemaReady: Promise<void> | null = null;
@@ -160,6 +172,89 @@ export async function updateCrmCustomer(id: string, input: { status: string; own
   `;
   if (!rows[0]) throw new Error("Customer not found");
   return mapCustomer(rows[0]);
+}
+
+export async function getCustomerTimeline(id: string) {
+  await Promise.all([ensureCustomerSchema(), ensureAuditLogSchema()]);
+  const sql = getDatabase();
+  const customerRows = await sql`SELECT email_normalized FROM crm_customers WHERE id = ${id}::uuid LIMIT 1`;
+  if (!customerRows[0]) throw new Error("Customer not found");
+  const email = String(customerRows[0].email_normalized);
+  const tableRows = await sql`
+    SELECT
+      to_regclass('public.chat_conversations') IS NOT NULL AS has_chats,
+      to_regclass('public.admin_profiles') IS NOT NULL AS has_admin_profiles
+  `;
+  const hasChats = Boolean(tableRows[0]?.has_chats);
+  const hasAdminProfiles = Boolean(tableRows[0]?.has_admin_profiles);
+  const [inquiries, chats, updates] = await Promise.all([
+    sql`
+      SELECT id, created_at, product, status, source, source_page, assigned_to
+      FROM inquiries
+      WHERE lower(email) = ${email}
+      ORDER BY created_at DESC
+      LIMIT 100
+    `,
+    hasChats ? sql`
+      SELECT id, created_at, last_message_at, status, source_page, product_model, assigned_to
+      FROM chat_conversations
+      WHERE lower(visitor_email) = ${email}
+      ORDER BY last_message_at DESC
+      LIMIT 100
+    ` : Promise.resolve([]),
+    hasAdminProfiles ? sql`
+      SELECT audit_logs.id, audit_logs.created_at, audit_logs.after,
+        COALESCE(admin_profiles.display_name, admin_profiles.username, '管理员') AS actor
+      FROM audit_logs
+      LEFT JOIN admin_profiles ON admin_profiles.id = audit_logs.actor_id
+      WHERE audit_logs.entity_type = 'customer' AND audit_logs.entity_id = ${id}
+      ORDER BY audit_logs.created_at DESC
+      LIMIT 100
+    ` : sql`
+      SELECT id, created_at, after, '管理员' AS actor
+      FROM audit_logs
+      WHERE entity_type = 'customer' AND entity_id = ${id}
+      ORDER BY created_at DESC
+      LIMIT 100
+    `,
+  ]);
+
+  const items: CustomerTimelineItem[] = [
+    ...inquiries.map((row) => ({
+      id: `inquiry-${row.id}`,
+      type: "inquiry" as const,
+      title: `提交询盘 · ${String(row.product ?? "未指定产品")}`,
+      detail: `状态：${String(row.status ?? "new")} · 负责人：${String(row.assigned_to ?? "未分配")} · 渠道：${identifyCustomerChannel(String(row.source ?? ""))}`,
+      occurredAt: new Date(String(row.created_at)).toISOString(),
+      product: String(row.product ?? ""),
+      sourcePage: String(row.source_page ?? ""),
+      actor: "客户",
+    })),
+    ...chats.map((row) => ({
+      id: `chat-${row.id}`,
+      type: "chat" as const,
+      title: `站内聊天 · ${String(row.product_model ?? "一般咨询")}`,
+      detail: `状态：${String(row.status ?? "OPEN")} · 负责人：${String(row.assigned_to ?? "未分配")}`,
+      occurredAt: new Date(String(row.last_message_at ?? row.created_at)).toISOString(),
+      product: String(row.product_model ?? ""),
+      sourcePage: String(row.source_page ?? ""),
+      actor: "客户",
+    })),
+    ...updates.map((row) => {
+      const after = row.after && typeof row.after === "object" ? row.after as Record<string, unknown> : {};
+      return {
+        id: `update-${row.id}`,
+        type: "customer_update" as const,
+        title: "更新客户跟进计划",
+        detail: `状态：${String(after.status ?? "未变更")} · 负责人：${String(after.owner || "未分配")} · 下次跟进：${String(after.nextFollowUpAt || "未安排")}`,
+        occurredAt: new Date(String(row.created_at)).toISOString(),
+        product: "",
+        sourcePage: "",
+        actor: String(row.actor ?? "管理员"),
+      };
+    }),
+  ];
+  return items.sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()).slice(0, 150);
 }
 
 function mapCustomer(row: Record<string, unknown>): CrmCustomer {

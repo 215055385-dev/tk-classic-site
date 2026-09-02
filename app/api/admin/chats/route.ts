@@ -5,6 +5,7 @@ import { getPrisma } from "@/lib/prisma";
 import { safeChatLang, translateChatText, translationConfigured } from "@/lib/chat-translation";
 import { listCrmCustomers } from "@/lib/customer-service";
 import { getNextLeadAssignee } from "@/lib/lead-assignment";
+import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,6 +46,7 @@ export async function GET() {
 export async function PATCH(request: Request) {
   try {
     const admin = await requireAdmin(true, request); const input = patchSchema.parse(await request.json()); const db = getPrisma();
+    await ensureAuditLogSchema();
     if (input.messageId && input.translateTo) {
       const message = await db.chatMessage.findFirst({ where: { id: input.messageId, conversationId: input.conversationId } });
       if (!message) return Response.json({ error: "未找到该消息。" }, { status: 404 });

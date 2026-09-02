@@ -4,6 +4,7 @@ import { z } from "zod";
 import { adminErrorResponse, requireAdmin } from "@/lib/admin-permissions";
 import { getPrisma } from "@/lib/prisma";
 import { getSupabasePublishableKey, getSupabaseSecretKey, getSupabaseUrl } from "@/lib/supabase/env";
+import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,6 +28,7 @@ function validateFile(type: string, size: number) {
 export async function POST(request: NextRequest) {
   try {
     const admin = await requireAdmin(true, request);
+    await ensureAuditLogSchema();
     const input = requestSchema.parse(await request.json());
     validateFile(input.type, input.size);
     const bucket = "site-public";

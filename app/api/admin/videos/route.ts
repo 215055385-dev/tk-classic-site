@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { adminErrorResponse, requireAdmin } from "@/lib/admin-permissions";
 import { getPrisma } from "@/lib/prisma";
+import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -66,6 +67,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const admin = await requireAdmin(true, request); const input = schema.parse(await request.json()); const db = getPrisma();
+    await ensureAuditLogSchema();
     await validateReferences(input);
     const row = await db.video.create({ data: { slug: input.slug, title: input.title, description: input.description || null, category: input.category, status: input.status, videoId: input.videoId, posterId: input.posterId || null, productId: input.productId || null, sortOrder: input.sortOrder } });
     await db.auditLog.create({ data: { actorId: admin.id, action: "CREATE", entityType: "video", entityId: row.id, after: input } }); revalidateVideoContent();
@@ -76,6 +78,7 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const admin = await requireAdmin(true, request); const input = schema.parse(await request.json()); if (!input.id) return Response.json({ error: "缺少视频编号。" }, { status: 400 }); const db = getPrisma();
+    await ensureAuditLogSchema();
     await validateReferences(input);
     await db.video.update({ where: { id: input.id }, data: { slug: input.slug, title: input.title, description: input.description || null, category: input.category, status: input.status, videoId: input.videoId, posterId: input.posterId || null, productId: input.productId || null, sortOrder: input.sortOrder } });
     await db.auditLog.create({ data: { actorId: admin.id, action: "UPDATE", entityType: "video", entityId: input.id, after: input } }); revalidateVideoContent();
@@ -86,6 +89,7 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const admin = await requireAdmin(true, request); const { id } = z.object({ id: z.string().uuid() }).parse(await request.json()); const db = getPrisma();
+    await ensureAuditLogSchema();
     await db.video.delete({ where: { id } }); await db.auditLog.create({ data: { actorId: admin.id, action: "DELETE", entityType: "video", entityId: id } }); revalidateVideoContent();
     return Response.json({ ok: true });
   } catch (error) { return adminErrorResponse(error); }

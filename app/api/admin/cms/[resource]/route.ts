@@ -4,6 +4,7 @@ import { z } from "zod";
 import { adminErrorResponse, requireAdmin } from "@/lib/admin-permissions";
 import { ensureProductSeed } from "@/lib/cms-seed";
 import { getPrisma } from "@/lib/prisma";
+import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,6 +46,7 @@ const seoSchema = z.object({
 });
 
 async function audit(actorId: string, action: string, entityType: string, entityId?: string, after?: unknown) {
+  await ensureAuditLogSchema();
   await getPrisma().auditLog.create({ data: { actorId, action, entityType, entityId, after: after as never } });
 }
 

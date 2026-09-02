@@ -4,6 +4,7 @@ import { z } from "zod";
 import { adminErrorResponse, requireAdmin } from "@/lib/admin-permissions";
 import { getPrisma } from "@/lib/prisma";
 import { getSupabaseSecretKey, getSupabaseUrl } from "@/lib/supabase/env";
+import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,6 +32,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const admin = await requireAdmin(true, request); const data = await request.formData(); const file = data.get("file");
+    await ensureAuditLogSchema();
     if (!(file instanceof File)) return Response.json({ error: "请选择需要上传的文件。" }, { status: 400 });
     const category = z.enum(categories).parse(data.get("category") || "GENERAL"); const altText = z.string().max(300).parse(data.get("altText") || "");
     if (!allowed.has(file.type)) return Response.json({ error: "仅支持 JPG、PNG、WebP、AVIF、SVG、MP4 或 WebM 文件。" }, { status: 400 });
@@ -52,6 +54,7 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const admin = await requireAdmin(true, request); const x = z.object({ id: z.string().uuid(), category: z.enum(categories), altText: z.string().max(300), originalName: z.string().min(1).max(240) }).parse(await request.json());
+    await ensureAuditLogSchema();
     const row = await getPrisma().mediaAsset.update({ where: { id: x.id }, data: { category: x.category, altText: x.altText || null, originalName: x.originalName } });
     await getPrisma().auditLog.create({ data: { actorId: admin.id, action: "UPDATE", entityType: "media", entityId: row.id, after: x } });
     return Response.json({ ok: true, item: serialize(row) });
@@ -61,6 +64,7 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const admin = await requireAdmin(true, request); const { id } = z.object({ id: z.string().uuid() }).parse(await request.json()); const db = getPrisma();
+    await ensureAuditLogSchema();
     const row = await db.mediaAsset.findUniqueOrThrow({ where: { id }, include: { _count: { select: { productMedia: true, videoFiles: true, videoPosters: true, heroSlides: true, factoryEntries: true, exhibitions: true, certificationPreviews: true, certificationDocuments: true, articleCovers: true } } } });
     const references = Object.values(row._count).reduce((a, b) => a + b, 0); if (references) return Response.json({ error: `该文件正在被 ${references} 处内容引用，请先解除引用。` }, { status: 409 });
     if (row.storageBucket === "site-public") { const { error } = await storageAdmin().storage.from(row.storageBucket).remove([row.storagePath]); if (error) throw error; }
