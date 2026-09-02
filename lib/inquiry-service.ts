@@ -50,6 +50,8 @@ export type InquiryDeliveryStatus = {
   salesEmailSent: boolean;
   customerEmailSent: boolean;
   emailError: string;
+  salesEmailId?: string;
+  customerEmailId?: string;
 };
 
 export type InquiryEmailMessage = {
@@ -194,6 +196,12 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
       customer_email_sent boolean,
       email_error text,
       email_last_attempt_at timestamptz,
+      sales_email_id text,
+      customer_email_id text,
+      sales_delivery_status text,
+      customer_delivery_status text,
+      sales_delivered_at timestamptz,
+      customer_delivered_at timestamptz,
       deleted_at timestamptz
     )
   `;
@@ -209,6 +217,12 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_email_sent boolean`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_error text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_last_attempt_at timestamptz`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS sales_email_id text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_email_id text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS sales_delivery_status text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_delivery_status text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS sales_delivered_at timestamptz`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_delivered_at timestamptz`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS deleted_at timestamptz`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_id uuid`;
   await sql`CREATE INDEX IF NOT EXISTS inquiries_created_at_idx ON inquiries (created_at DESC)`;
@@ -275,7 +289,11 @@ export async function updateInquiryDeliveryStatus(id: string, delivery: InquiryD
       sales_email_sent = ${delivery.salesEmailSent},
       customer_email_sent = ${delivery.customerEmailSent},
       email_error = ${delivery.emailError.slice(0, 1000) || null},
-      email_last_attempt_at = now()
+      email_last_attempt_at = now(),
+      sales_email_id = COALESCE(${delivery.salesEmailId || null}, sales_email_id),
+      customer_email_id = COALESCE(${delivery.customerEmailId || null}, customer_email_id),
+      sales_delivery_status = CASE WHEN ${delivery.salesEmailSent} THEN 'sent' ELSE 'failed' END,
+      customer_delivery_status = CASE WHEN ${delivery.customerEmailSent} THEN 'sent' ELSE 'failed' END
     WHERE id = ${id}::uuid
   `;
 }
@@ -377,7 +395,7 @@ export async function sendInquiryEmail(inquiry: InquiryEmailMessage, attemptKey 
     </div>
   `;
 
-  const { error } = await resend.emails.send(
+  const { data, error } = await resend.emails.send(
     {
       from: sender(),
       to: salesRecipients(),
@@ -389,11 +407,12 @@ export async function sendInquiryEmail(inquiry: InquiryEmailMessage, attemptKey 
     { headers: { "Idempotency-Key": `tk-inquiry-${inquiry.id}${attemptKey ? `-${attemptKey}` : ""}` } },
   );
   if (error) throw new Error(error.message);
+  return data?.id ?? "";
 }
 
 export async function sendInquiryConfirmationEmail(inquiry: InquiryEmailMessage, attemptKey = "") {
   const resend = getResend();
-  const { error } = await resend.emails.send(
+  const { data, error } = await resend.emails.send(
     {
       from: process.env.INQUIRY_CONFIRMATION_FROM_EMAIL ?? sender(),
       to: [inquiry.email],
@@ -411,6 +430,7 @@ export async function sendInquiryConfirmationEmail(inquiry: InquiryEmailMessage,
     { headers: { "Idempotency-Key": `tk-inquiry-confirmation-${inquiry.id}${attemptKey ? `-${attemptKey}` : ""}` } },
   );
   if (error) throw new Error(error.message);
+  return data?.id ?? "";
 }
 
 function escapeHtml(value: string) {

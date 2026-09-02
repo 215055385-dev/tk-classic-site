@@ -29,6 +29,10 @@ export type AdminInquiry = {
   customerEmailSent: boolean | null;
   emailError: string;
   emailLastAttemptAt: string;
+  salesDeliveryStatus: string;
+  customerDeliveryStatus: string;
+  salesDeliveredAt: string;
+  customerDeliveredAt: string;
   deletedAt: string;
 };
 
@@ -107,6 +111,12 @@ async function initializeAdminSchema() {
       customer_email_sent boolean,
       email_error text,
       email_last_attempt_at timestamptz,
+      sales_email_id text,
+      customer_email_id text,
+      sales_delivery_status text,
+      customer_delivery_status text,
+      sales_delivered_at timestamptz,
+      customer_delivered_at timestamptz,
       deleted_at timestamptz
     )
   `;
@@ -121,6 +131,12 @@ async function initializeAdminSchema() {
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_email_sent boolean`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_error text`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS email_last_attempt_at timestamptz`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS sales_email_id text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_email_id text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS sales_delivery_status text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_delivery_status text`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS sales_delivered_at timestamptz`;
+  await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS customer_delivered_at timestamptz`;
   await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS deleted_at timestamptz`;
   await sql`
     CREATE TABLE IF NOT EXISTS site_visits (
@@ -202,7 +218,8 @@ export async function listAdminData(filters: {
     sql`
       SELECT id, created_at, name, email, company, phone, country, product, accessories,
         quantity, branding, message, lang, source, source_page, referrer, attachments, status, admin_note, assigned_to,
-        sales_email_sent, customer_email_sent, email_error, email_last_attempt_at, deleted_at
+        sales_email_sent, customer_email_sent, email_error, email_last_attempt_at,
+        sales_delivery_status, customer_delivery_status, sales_delivered_at, customer_delivered_at, deleted_at
       FROM inquiries
       ORDER BY created_at DESC
       LIMIT 500
@@ -217,6 +234,8 @@ export async function listAdminData(filters: {
           WHERE deleted_at IS NULL AND (
             sales_email_sent = false
             OR (customer_email_sent = false AND COALESCE(source, '') <> 'website-chat')
+            OR sales_delivery_status IN ('bounced', 'complained', 'failed', 'suppressed')
+            OR customer_delivery_status IN ('bounced', 'complained', 'failed', 'suppressed')
           )
         ) AS email_delivery_issues
       FROM inquiries
@@ -266,6 +285,10 @@ export async function listAdminData(filters: {
       customerEmailSent: nullableBoolean(row.customer_email_sent),
       emailError: String(row.email_error ?? ""),
       emailLastAttemptAt: row.email_last_attempt_at ? new Date(String(row.email_last_attempt_at)).toISOString() : "",
+      salesDeliveryStatus: String(row.sales_delivery_status ?? (row.sales_email_sent === true ? "sent" : row.sales_email_sent === false ? "failed" : "unknown")),
+      customerDeliveryStatus: String(row.customer_delivery_status ?? (row.customer_email_sent === true ? "sent" : row.customer_email_sent === false ? "failed" : "unknown")),
+      salesDeliveredAt: row.sales_delivered_at ? new Date(String(row.sales_delivered_at)).toISOString() : "",
+      customerDeliveredAt: row.customer_delivered_at ? new Date(String(row.customer_delivered_at)).toISOString() : "",
       deletedAt: row.deleted_at ? new Date(String(row.deleted_at)).toISOString() : "",
     }))
     .filter((row) => !filters.status || row.status === filters.status)

@@ -10,6 +10,7 @@ export type EmailHealth = {
   siteDomain: string;
   domainStatus: string;
   recipientCount: number;
+  webhookConfigured: boolean;
   checkedAt: string;
   error: string;
 };
@@ -32,6 +33,7 @@ export async function getEmailHealth(): Promise<EmailHealth> {
   const siteDomain = new URL(company.siteUrl).hostname.replace(/^www\./, "").toLowerCase();
   const senderConfigured = Boolean(senderAddress) && senderDomain === siteDomain;
   const recipientCount = configuredRecipients().length;
+  const webhookConfigured = Boolean(process.env.RESEND_WEBHOOK_SECRET?.trim());
   const base = {
     apiKeyConfigured: Boolean(apiKey),
     senderConfigured,
@@ -39,6 +41,7 @@ export async function getEmailHealth(): Promise<EmailHealth> {
     senderDomain,
     siteDomain,
     recipientCount,
+    webhookConfigured,
     checkedAt: new Date().toISOString(),
   };
 
@@ -54,7 +57,7 @@ export async function getEmailHealth(): Promise<EmailHealth> {
     const domainStatus = domain?.status ?? "not_found";
     return {
       ...base,
-      ready: senderConfigured && recipientCount > 0 && domainStatus === "verified",
+      ready: senderConfigured && recipientCount > 0 && webhookConfigured && domainStatus === "verified",
       domainStatus,
       error: "",
     };
@@ -64,7 +67,7 @@ export async function getEmailHealth(): Promise<EmailHealth> {
     if (sendOnlyKey) {
       return {
         ...base,
-        ready: senderConfigured && recipientCount > 0,
+        ready: senderConfigured && recipientCount > 0 && webhookConfigured,
         domainStatus: "send_only_key",
         error: "",
       };

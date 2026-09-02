@@ -5,7 +5,7 @@ import { BarChart3, CheckCircle2, CircleAlert, DatabaseBackup, ExternalLink, Ref
 
 type AuditItem = { id: string; action: string; entityType: string; entityId?: string | null; createdAt: string; actor?: { username: string; displayName?: string | null } | null };
 type GrowthReadiness = { ga4: boolean; googleAds: boolean; leadConversion: boolean; usLandingPage: boolean; inquiryTracking: boolean; readyForPaidTraffic: boolean };
-type EmailHealth = { ready: boolean; senderAddress: string; siteDomain: string; domainStatus: string; recipientCount: number; checkedAt: string; error: string };
+type EmailHealth = { ready: boolean; senderAddress: string; siteDomain: string; domainStatus: string; recipientCount: number; webhookConfigured: boolean; checkedAt: string; error: string };
 type SystemData = { counts: { products: number; media: number; articles: number; inquiries: number; auditLogs: number }; growthReadiness: GrowthReadiness; emailHealth: EmailHealth; logs: AuditItem[] };
 const actionLabels: Record<string, string> = { CREATE: "创建", UPDATE: "更新", DELETE: "删除", UPLOAD: "上传", ARCHIVE: "归档", LOGIN: "登录" };
 const entityLabels: Record<string, string> = { products: "产品", product: "产品", homepage: "首页内容", media: "媒体", articles: "文章", seo: "SEO", inquiry: "询盘" };
@@ -27,7 +27,7 @@ export function SystemWorkspace() {
   return <section className="system-workspace">
     <header className="cms-page-heading"><div><span>系统与安全</span><h1>系统设置</h1><p>后台保持纯中文。这里提供数据概览、操作审计和完整 JSON 备份，不包含多语言管理。</p></div><a className="cms-primary" href="/api/admin/system?mode=backup"><DatabaseBackup size={17}/>下载完整 JSON 备份</a></header>
     <div className="system-security-note"><ShieldCheck size={22}/><div><strong>后台权限保护已启用</strong><p>未登录用户不能访问管理页面或数据接口；写入操作仅允许管理员和编辑角色。</p></div></div>
-    {data ? <div className={`system-email-health ${data.emailHealth.ready ? "is-ready" : "is-warning"}`}>{data.emailHealth.ready ? <CheckCircle2 size={22}/> : <CircleAlert size={22}/>}<div><span>询盘邮件基础设施</span><strong>{data.emailHealth.ready ? "Resend 邮件服务正常" : "邮件服务需要处理"}</strong><p>{data.emailHealth.ready ? data.emailHealth.domainStatus === "send_only_key" ? `使用安全的仅发送密钥；当前配置 ${data.emailHealth.recipientCount} 个销售收件人。` : `${data.emailHealth.siteDomain} 已验证；当前配置 ${data.emailHealth.recipientCount} 个销售收件人。` : data.emailHealth.error || `域名状态：${data.emailHealth.domainStatus}；请检查自定义发件地址。`}</p><small>发件地址：{data.emailHealth.senderAddress || "未配置"} · 最近检查：{new Date(data.emailHealth.checkedAt).toLocaleString("zh-CN")}</small></div></div> : null}
+    {data ? <div className={`system-email-health ${data.emailHealth.ready ? "is-ready" : "is-warning"}`}>{data.emailHealth.ready ? <CheckCircle2 size={22}/> : <CircleAlert size={22}/>}<div><span>询盘邮件基础设施</span><strong>{data.emailHealth.ready ? "Resend 邮件服务正常" : "邮件服务需要处理"}</strong><p>{data.emailHealth.ready ? `${data.emailHealth.siteDomain} 已验证；Webhook 送达追踪已启用，当前配置 ${data.emailHealth.recipientCount} 个销售收件人。` : data.emailHealth.error || (!data.emailHealth.webhookConfigured ? "邮件 Webhook 尚未配置。" : `域名状态：${data.emailHealth.domainStatus}；请检查自定义发件地址。`)}</p><small>发件地址：{data.emailHealth.senderAddress || "未配置"} · 最近检查：{new Date(data.emailHealth.checkedAt).toLocaleString("zh-CN")}</small></div></div> : null}
     {data ? <section className="growth-readiness-panel" aria-labelledby="growth-readiness-title">
       <div className="growth-readiness-head">
         <div><span>获客基础设施</span><h2 id="growth-readiness-title"><BarChart3 size={20}/>广告与转化准备度</h2><p>只有统计、广告代码和询盘转化三项全部完成后，才建议小额充值测试。</p></div>

@@ -559,7 +559,7 @@ test("admin surfaces Resend domain health before inquiry delivery fails", async 
   assert.match(systemRoute, /Cache-Control": "private, no-store"/);
   assert.match(inquiries, /邮件服务运行正常/);
   assert.match(inquiries, /邮件服务需要检查/);
-  assert.match(inquiries, /安全的仅发送密钥/);
+  assert.match(inquiries, /真实送达、退信与投诉追踪已启用/);
   assert.match(settings, /询盘邮件基础设施/);
 });
 
@@ -593,7 +593,7 @@ test("customer management supports secure sales follow-up without changing sourc
   assert.match(service, /export async function updateCrmCustomer/);
   assert.match(route, /export async function PATCH/);
   assert.match(route, /requireAdmin\(true, request\)/);
-  assert.match(workspace, /只看待跟进/);
+  assert.match(workspace, /截至现在待跟进/);
   assert.match(workspace, /管理客户/);
   assert.match(workspace, /保存跟进信息/);
   assert.match(workspace, /Bowie/);
@@ -665,4 +665,31 @@ test("published product videos sync safely from the CMS to product pages", async
   assert.match(productPage, /managedVideos\.length \? managedVideos/);
   assert.match(productPage, /productVideos\.map/);
   assert.match(adminCss, /\.cms-video-selection-preview/);
+});
+
+test("Resend delivery webhooks are verified, idempotent, and visible in CRM", async () => {
+  const route = await readProjectFile("app/api/webhooks/resend/route.ts");
+  const delivery = await readProjectFile("lib/email-delivery-events.ts");
+  const inquiryService = await readProjectFile("lib/inquiry-service.ts");
+  const adminService = await readProjectFile("lib/admin-service.ts");
+  const workspace = await readProjectFile("components/admin/InquiryWorkspace.tsx");
+
+  assert.match(route, /resend\.webhooks\.verify/);
+  assert.match(route, /RESEND_WEBHOOK_SECRET/);
+  assert.match(route, /svix-id/);
+  assert.match(delivery, /ON CONFLICT \(svix_id\) DO NOTHING/);
+  assert.match(delivery, /email\.delivered/);
+  assert.match(delivery, /email\.bounced/);
+  assert.match(inquiryService, /salesEmailId/);
+  assert.match(adminService, /sales_delivery_status/);
+  assert.match(workspace, /已送达/);
+  assert.match(workspace, /已退信/);
+});
+
+test("customer CRM separates today and overdue follow-ups", async () => {
+  const workspace = await readProjectFile("components/admin/CustomerWorkspace.tsx");
+  assert.match(workspace, /今日跟进/);
+  assert.match(workspace, /已经超期/);
+  assert.match(workspace, /按跟进时间筛选/);
+  assert.match(workspace, /todayBounds/);
 });

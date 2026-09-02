@@ -33,14 +33,14 @@ export function CustomerWorkspace() {
   const [channel, setChannel] = useState("");
   const [status, setStatus] = useState("");
   const [owner, setOwner] = useState("");
-  const [dueOnly, setDueOnly] = useState(false);
+  const [followUpWindow, setFollowUpWindow] = useState<"" | "due" | "today" | "overdue">("");
   const [showTests, setShowTests] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
   const [editingId, setEditingId] = useState("");
   const [draft, setDraft] = useState<CustomerDraft | null>(null);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true); setNotice("");
@@ -62,8 +62,13 @@ export function CustomerWorkspace() {
 
   const realRows = useMemo(() => rows.filter((row) => !row.isTest), [rows]);
   const channels = useMemo(() => Array.from(new Set((showTests ? rows : realRows).map((row) => row.lastChannel).filter(Boolean))), [rows, realRows, showTests]);
-  const dueCount = useMemo(() => realRows.filter((row) => row.nextFollowUpAt && new Date(row.nextFollowUpAt).getTime() <= currentTime && !["won", "inactive"].includes(row.status)).length, [currentTime, realRows]);
-  const returning = realRows.filter((row) => row.inquiryCount + row.chatCount > 1).length;
+  const todayBounds = useMemo(() => {
+    if (currentTime === null) return { start: 0, end: 0 };
+    const start = new Date(currentTime); start.setHours(0, 0, 0, 0);
+    return { start: start.getTime(), end: start.getTime() + 86_400_000 };
+  }, [currentTime]);
+  const overdueCount = useMemo(() => realRows.filter((row) => row.nextFollowUpAt && new Date(row.nextFollowUpAt).getTime() < todayBounds.start && !["won", "inactive"].includes(row.status)).length, [realRows, todayBounds.start]);
+  const todayCount = useMemo(() => realRows.filter((row) => { const time = row.nextFollowUpAt ? new Date(row.nextFollowUpAt).getTime() : 0; return time >= todayBounds.start && time < todayBounds.end && !["won", "inactive"].includes(row.status); }).length, [realRows, todayBounds]);
   const visible = useMemo(() => {
     const term = query.trim().toLowerCase();
     return rows.filter((row) => {
@@ -72,11 +77,14 @@ export function CustomerWorkspace() {
       if (status && row.status !== status) return false;
       if (owner === "__none" && row.owner) return false;
       if (owner && owner !== "__none" && row.owner !== owner) return false;
-      if (dueOnly && (!row.nextFollowUpAt || new Date(row.nextFollowUpAt).getTime() > currentTime || ["won", "inactive"].includes(row.status))) return false;
+      const followUpTime = row.nextFollowUpAt ? new Date(row.nextFollowUpAt).getTime() : 0;
+      if (followUpWindow === "due" && (!followUpTime || currentTime === null || followUpTime > currentTime || ["won", "inactive"].includes(row.status))) return false;
+      if (followUpWindow === "today" && (!followUpTime || followUpTime < todayBounds.start || followUpTime >= todayBounds.end || ["won", "inactive"].includes(row.status))) return false;
+      if (followUpWindow === "overdue" && (!followUpTime || followUpTime >= todayBounds.start || ["won", "inactive"].includes(row.status))) return false;
       if (!term) return true;
       return [row.name, row.email, row.firstChannel, row.lastChannel, row.tags, row.owner, row.adminNote].some((value) => value.toLowerCase().includes(term));
     });
-  }, [channel, currentTime, dueOnly, owner, query, rows, showTests, status]);
+  }, [channel, currentTime, followUpWindow, owner, query, rows, showTests, status, todayBounds]);
 
   function openEditor(row: Customer) {
     setEditingId(row.id);
@@ -103,18 +111,18 @@ export function CustomerWorkspace() {
 
   return <section className="customer-workspace">
     <header className="cms-page-heading"><div><span>邮箱唯一身份</span><h1>客户管理</h1><p>统一管理客户状态、负责人、标签和下一次跟进时间。</p></div><button className="cms-secondary" onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{loading ? "加载中" : "刷新"}</button></header>
-    <div className="customer-summary"><div><UsersRound/><strong>{realRows.length}</strong><span>真实客户</span></div><div><CalendarClock/><strong>{dueCount}</strong><span>待跟进</span></div><div><strong>{returning}</strong><span>回访客户</span></div><div><strong>{realRows.filter((row) => row.status === "won").length}</strong><span>已成交客户</span></div></div>
+    <div className="customer-summary"><div><UsersRound/><strong>{realRows.length}</strong><span>真实客户</span></div><div><CalendarClock/><strong>{todayCount}</strong><span>今日跟进</span></div><div><CalendarClock/><strong>{overdueCount}</strong><span>已经超期</span></div><div><strong>{realRows.filter((row) => row.status === "won").length}</strong><span>已成交客户</span></div></div>
     <div className="cms-toolbar customer-toolbar">
       <label><Search size={16}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索姓名、邮箱、标签或备注"/></label>
       <select aria-label="按客户状态筛选" value={status} onChange={(event) => setStatus(event.target.value)}><option value="">全部状态</option>{statusOptions.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
       <select aria-label="按负责人筛选" value={owner} onChange={(event) => setOwner(event.target.value)}><option value="">全部负责人</option><option value="Bowie">Bowie</option><option value="Leo">Leo</option><option value="__none">未分配</option></select>
       <select aria-label="按渠道筛选" value={channel} onChange={(event) => setChannel(event.target.value)}><option value="">全部渠道</option>{channels.map((value) => <option key={value} value={value}>{channelLabel(value)}</option>)}</select>
-      <button className={dueOnly ? "is-active" : undefined} onClick={() => setDueOnly((current) => !current)}><CalendarClock size={15}/>{dueOnly ? "显示全部" : "只看待跟进"}</button>
+      <select aria-label="按跟进时间筛选" value={followUpWindow} onChange={(event) => setFollowUpWindow(event.target.value as typeof followUpWindow)}><option value="">全部跟进时间</option><option value="today">今天需要跟进</option><option value="overdue">已经超期</option><option value="due">截至现在待跟进</option></select>
       <label className="customer-test-toggle"><input type="checkbox" checked={showTests} onChange={(event) => setShowTests(event.target.checked)}/>测试数据</label><span>{visible.length} 位客户</span>
     </div>
     {notice ? <p className="cms-notice" role="status">{notice}</p> : null}
     <div className="customer-list">{visible.map((row) => {
-      const isDue = Boolean(row.nextFollowUpAt) && new Date(row.nextFollowUpAt).getTime() <= currentTime && !["won", "inactive"].includes(row.status);
+      const isDue = currentTime !== null && Boolean(row.nextFollowUpAt) && new Date(row.nextFollowUpAt).getTime() <= currentTime && !["won", "inactive"].includes(row.status);
       return <article className={editingId === row.id ? "is-editing" : undefined} key={row.id}>
         <div className="customer-identity"><span>{(row.name || row.email).slice(0, 1).toUpperCase()}</span><div><h2>{row.name || "未填写姓名"}{row.isTest ? <small>测试数据</small> : null}</h2><a href={`mailto:${row.email.replace(/[\r\n]/g, "")}`}><Mail size={14}/>{row.email}</a>{row.tags ? <p className="customer-tags"><Tags size={12}/>{row.tags}</p> : null}</div></div>
         <div><small>客户状态</small><span className={`customer-crm-status is-${row.status}`}>{statusLabel(row.status)}</span><p><UserRoundCheck size={12}/>{row.owner || "未分配负责人"}</p></div>

@@ -119,10 +119,12 @@ export async function POST(request: Request) {
     const inquiryWithFiles = { ...savedInquiry, attachmentFiles };
     let salesEmailSent = true;
     let customerEmailSent = true;
+    let salesEmailId = "";
+    let customerEmailId = "";
     const deliveryErrors: string[] = [];
 
     try {
-      await sendInquiryEmail(inquiryWithFiles);
+      salesEmailId = await sendInquiryEmail(inquiryWithFiles);
     } catch (emailError) {
       salesEmailSent = false;
       deliveryErrors.push(`sales: ${safeErrorMessage(emailError)}`);
@@ -134,7 +136,7 @@ export async function POST(request: Request) {
     }
 
     try {
-      await sendInquiryConfirmationEmail(inquiryWithFiles);
+      customerEmailId = await sendInquiryConfirmationEmail(inquiryWithFiles);
     } catch (emailError) {
       customerEmailSent = false;
       deliveryErrors.push(`customer: ${safeErrorMessage(emailError)}`);
@@ -149,6 +151,8 @@ export async function POST(request: Request) {
       salesEmailSent,
       customerEmailSent,
       emailError: deliveryErrors.join(" | "),
+      salesEmailId,
+      customerEmailId,
     });
 
     const deliveryPending = !salesEmailSent || !customerEmailSent;

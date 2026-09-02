@@ -101,30 +101,30 @@ model AdminProfile {
 }
 
 model ChatConversation {
-  id                String        @id @default(uuid()) @db.Uuid
-  visitorTokenHash  String        @unique @map("visitor_token_hash")
-  visitorName       String?       @map("visitor_name")
-  visitorEmail      String?       @map("visitor_email")
-  visitorCompany    String?       @map("visitor_company")
-  visitorCountry    String?       @map("visitor_country")
-  locale            String        @default("en") @db.VarChar(12)
-  tags              String[]      @default([])
-  assignedTo        String?       @map("assigned_to")
-  followUpAt        DateTime?     @map("follow_up_at") @db.Timestamptz(6)
-  convertedInquiryId String?      @map("converted_inquiry_id") @db.Uuid
-  lastNotifiedAt    DateTime?     @map("last_notified_at") @db.Timestamptz(6)
-  status            ChatStatus    @default(OPEN)
-  sourcePage        String?       @map("source_page")
-  productModel      String?       @map("product_model")
-  referrer          String?
-  ip                String?
-  userAgent         String?       @map("user_agent")
-  lastMessageAt     DateTime      @default(now()) @map("last_message_at") @db.Timestamptz(6)
-  visitorLastReadAt DateTime?     @map("visitor_last_read_at") @db.Timestamptz(6)
-  adminLastReadAt   DateTime?     @map("admin_last_read_at") @db.Timestamptz(6)
-  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
-  messages          ChatMessage[]
+  id                 String        @id @default(uuid()) @db.Uuid
+  visitorTokenHash   String        @unique @map("visitor_token_hash")
+  visitorName        String?       @map("visitor_name")
+  visitorEmail       String?       @map("visitor_email")
+  visitorCompany     String?       @map("visitor_company")
+  visitorCountry     String?       @map("visitor_country")
+  locale             String        @default("en") @db.VarChar(12)
+  tags               String[]      @default([])
+  assignedTo         String?       @map("assigned_to")
+  followUpAt         DateTime?     @map("follow_up_at") @db.Timestamptz(6)
+  convertedInquiryId String?       @map("converted_inquiry_id") @db.Uuid
+  lastNotifiedAt     DateTime?     @map("last_notified_at") @db.Timestamptz(6)
+  status             ChatStatus    @default(OPEN)
+  sourcePage         String?       @map("source_page")
+  productModel       String?       @map("product_model")
+  referrer           String?
+  ip                 String?
+  userAgent          String?       @map("user_agent")
+  lastMessageAt      DateTime      @default(now()) @map("last_message_at") @db.Timestamptz(6)
+  visitorLastReadAt  DateTime?     @map("visitor_last_read_at") @db.Timestamptz(6)
+  adminLastReadAt    DateTime?     @map("admin_last_read_at") @db.Timestamptz(6)
+  createdAt          DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  messages           ChatMessage[]
 
   @@index([status, lastMessageAt])
   @@map("chat_conversations")
@@ -503,39 +503,59 @@ model SiteSetting {
 
 // Existing production tables are mapped without changing their current shape.
 model Inquiry {
-  id                 String                 @id @db.Uuid
-  createdAt          DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
-  name               String
-  email              String
-  company            String?
-  phone              String?
-  country            String?
-  product            String
-  accessories        String?
-  quantity           String
-  branding           String?
-  message            String
-  lang               String?
-  source             String?
-  sourcePage         String?                @map("source_page")
-  referrer           String?
-  attachments        Json?
-  ip                 String?
-  userAgent          String?                @map("user_agent")
-  status             String                 @default("new")
-  adminNote          String?                @map("admin_note")
-  assignedTo         String?                @map("assigned_to")
-  salesEmailSent     Boolean?               @map("sales_email_sent")
-  customerEmailSent  Boolean?               @map("customer_email_sent")
-  emailError         String?                @map("email_error")
-  emailLastAttemptAt DateTime?              @map("email_last_attempt_at") @db.Timestamptz(6)
-  deletedAt          DateTime?              @map("deleted_at") @db.Timestamptz(6)
-  notes              InquiryNote[]
-  statusHistory      InquiryStatusHistory[]
+  id                     String                 @id @db.Uuid
+  createdAt              DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  name                   String
+  email                  String
+  company                String?
+  phone                  String?
+  country                String?
+  product                String
+  accessories            String?
+  quantity               String
+  branding               String?
+  message                String
+  lang                   String?
+  source                 String?
+  sourcePage             String?                @map("source_page")
+  referrer               String?
+  attachments            Json?
+  ip                     String?
+  userAgent              String?                @map("user_agent")
+  status                 String                 @default("new")
+  adminNote              String?                @map("admin_note")
+  assignedTo             String?                @map("assigned_to")
+  salesEmailSent         Boolean?               @map("sales_email_sent")
+  customerEmailSent      Boolean?               @map("customer_email_sent")
+  emailError             String?                @map("email_error")
+  emailLastAttemptAt     DateTime?              @map("email_last_attempt_at") @db.Timestamptz(6)
+  salesEmailId           String?                @map("sales_email_id")
+  customerEmailId        String?                @map("customer_email_id")
+  salesDeliveryStatus    String?                @map("sales_delivery_status")
+  customerDeliveryStatus String?                @map("customer_delivery_status")
+  salesDeliveredAt       DateTime?              @map("sales_delivered_at") @db.Timestamptz(6)
+  customerDeliveredAt    DateTime?              @map("customer_delivered_at") @db.Timestamptz(6)
+  deletedAt              DateTime?              @map("deleted_at") @db.Timestamptz(6)
+  notes                  InquiryNote[]
+  statusHistory          InquiryStatusHistory[]
 
   @@index([createdAt])
   @@index([status, createdAt])
   @@map("inquiries")
+}
+
+model EmailDeliveryEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  svixId     String   @unique @map("svix_id")
+  emailId    String   @map("email_id")
+  eventType  String   @map("event_type")
+  recipient  String?
+  detail     String?
+  occurredAt DateTime @map("occurred_at") @db.Timestamptz(6)
+  receivedAt DateTime @default(now()) @map("received_at") @db.Timestamptz(6)
+
+  @@index([emailId, occurredAt])
+  @@map("email_delivery_events")
 }
 
 model InquiryNote {

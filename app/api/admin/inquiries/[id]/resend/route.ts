@@ -65,12 +65,14 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   let salesEmailSent = inquiry.salesEmailSent === true;
   let customerEmailSent = customerApplicable ? inquiry.customerEmailSent === true : true;
+  let salesEmailId = "";
+  let customerEmailId = "";
   const errors: string[] = [];
   const attemptKey = `manual-${Date.now()}`;
 
   if (retrySales) {
     try {
-      await sendInquiryEmail(inquiry, attemptKey);
+      salesEmailId = await sendInquiryEmail(inquiry, attemptKey);
       salesEmailSent = true;
     } catch (error) {
       salesEmailSent = false;
@@ -80,7 +82,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   if (retryCustomer) {
     try {
-      await sendInquiryConfirmationEmail(inquiry, attemptKey);
+      customerEmailId = await sendInquiryConfirmationEmail(inquiry, attemptKey);
       customerEmailSent = true;
     } catch (error) {
       customerEmailSent = false;
@@ -92,6 +94,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     salesEmailSent,
     customerEmailSent,
     emailError: errors.join(" | "),
+    salesEmailId,
+    customerEmailId,
   });
 
   const complete = salesEmailSent && customerEmailSent;
@@ -115,6 +119,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       customerEmailSent: customerApplicable ? customerEmailSent : inquiry.customerEmailSent,
       emailError: errors.join(" | "),
       emailLastAttemptAt: new Date().toISOString(),
+      salesDeliveryStatus: salesEmailSent ? "sent" : "failed",
+      customerDeliveryStatus: customerApplicable ? customerEmailSent ? "sent" : "failed" : "",
     },
   }, { status: errors.length ? 502 : 200 });
 }
