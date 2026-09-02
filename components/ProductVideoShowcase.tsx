@@ -8,6 +8,7 @@ import { trackConversionEvent } from "@/lib/client-analytics";
 
 export type ProductVideo = {
   src: string;
+  srcType?: string;
   webmSrc?: string;
   poster: string;
   posterAlt: string;
@@ -27,6 +28,7 @@ export type ProductVideo = {
     label: string;
   };
   layout?: "media-left" | "media-right";
+  schema?: { uploadDate: string };
 };
 
 type ProductVideoShowcaseProps = {
@@ -160,7 +162,7 @@ export function ProductVideoShowcase({
             onVolumeChange={(event) => setIsMuted(event.currentTarget.muted)}
           >
             {video.webmSrc ? <source src={video.webmSrc} type="video/webm" /> : null}
-            <source src={video.src} type="video/mp4" />
+            <source src={video.src} type={video.srcType ?? "video/mp4"} />
             Your browser does not support HTML video.
           </video>
         ) : (
@@ -202,7 +204,7 @@ export function ProductVideoShowcase({
         <span className="product-video-kicker">{video.label}</span>
         <h2>{video.title}</h2>
         <p className="editorial-video-lead">{video.summary}</p>
-        <ol className="product-video-steps">
+        {video.steps.length ? <ol className="product-video-steps">
           {video.steps.map((step, index) => (
             <li key={step.title}>
               <span aria-hidden="true">0{index + 1}</span>
@@ -212,7 +214,7 @@ export function ProductVideoShowcase({
               </div>
             </li>
           ))}
-        </ol>
+        </ol> : null}
         {video.primaryCta || video.secondaryCta ? (
           <div className="product-video-actions">
             {video.primaryCta ? (

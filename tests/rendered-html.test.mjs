@@ -639,3 +639,27 @@ test("product CMS prevents incomplete or duplicate products from being published
   assert.match(adminCss, /\.cms-publish-readiness/);
   assert.match(adminCss, /\.cms-product-gallery-picker/);
 });
+
+test("published product videos sync safely from the CMS to product pages", async () => {
+  const route = await readProjectFile("app/api/admin/videos/route.ts");
+  const workspace = await readProjectFile("components/admin/VideoWorkspace.tsx");
+  const videoSource = await readProjectFile("lib/cms-videos.ts");
+  const showcase = await readProjectFile("components/ProductVideoShowcase.tsx");
+  const productPage = await readProjectFile("app/products/[slug]/page.tsx");
+  const adminCss = await readProjectFile("app/admin/admin.css");
+
+  assert.match(route, /发布视频前必须选择封面图片/);
+  assert.match(route, /INVALID_VIDEO_MEDIA/);
+  assert.match(route, /INVALID_VIDEO_POSTER/);
+  assert.match(route, /revalidateTag\("cms-videos"/);
+  assert.match(workspace, /videoPublishIssues/);
+  assert.match(workspace, /发布预览/);
+  assert.match(workspace, /发布后才会同步到关联产品页面/);
+  assert.match(videoSource, /status: "PUBLISHED"/);
+  assert.match(videoSource, /product: \{ is: \{ model \} \}/);
+  assert.match(showcase, /video\.srcType \?\? "video\/mp4"/);
+  assert.match(productPage, /await getCmsProductVideos\(product\.model\)/);
+  assert.match(productPage, /managedVideos\.length \? managedVideos/);
+  assert.match(productPage, /productVideos\.map/);
+  assert.match(adminCss, /\.cms-video-selection-preview/);
+});

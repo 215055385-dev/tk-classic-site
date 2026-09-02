@@ -48,6 +48,7 @@ import { ProcurementExpectation } from "@/components/ProcurementExpectation";
 import { ProductLogistics } from "@/components/ProductLogistics";
 import { packingProperties } from "@/lib/commercial-data";
 import { getProductSpecEntries } from "@/lib/product-presentation";
+import { getCmsProductVideos } from "@/lib/cms-videos";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -119,6 +120,26 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     zh: { fullSpecs: "查看完整参数", packing: "包装与物流", procurement: "采购条款", verified: "已核实的产品指南", inquiry: "提交产品询盘" },
     ru: { fullSpecs: "Все характеристики", packing: "Упаковка и логистика", procurement: "Условия закупки", verified: "Проверенное руководство", inquiry: "Начать запрос" },
   }[lang];
+  const fallbackVideo: ProductVideo | null = product.model === "DQ-010" && lang === "en" ? {
+    src: "/videos/dq-010-real-operation.mp4",
+    webmSrc: "/videos/dq-010-real-operation.webm",
+    poster: "/optimized/video-posters/dq-010-real-operation.webp",
+    posterAlt: "DQ-010 portable coffee machine real operation video cover",
+    label: "Real operation / DQ-010",
+    title: "See the DQ-010 preparation and extraction sequence",
+    summary: "This real-product video shows the order of preparing the coffee container, adding water, assembling the machine and collecting the finished espresso.",
+    steps: [
+      { title: "Prepare the coffee", description: "Use the compatible coffee container shown in the video." },
+      { title: "Add water", description: "Fill the water chamber following the demonstrated order." },
+      { title: "Assemble and start", description: "Fit the components and start the DQ-010 as shown." },
+      { title: "Collect espresso", description: "Allow the extracted coffee to flow into the cup." },
+    ],
+    secondaryCta: { href: "#product-inquiry", label: "Request a DQ-010 quotation" },
+    layout: "media-left",
+    schema: { uploadDate: "2026-07-30T16:46:36+08:00" },
+  } : null;
+  const managedVideos = lang === "en" ? await getCmsProductVideos(product.model) : [];
+  const productVideos = managedVideos.length ? managedVideos : fallbackVideo ? [fallbackVideo] : [];
   const productUrl = localizedUrl(`/products/${product.slug}`, lang);
   const structuredData = [
     {
@@ -192,37 +213,17 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         acceptedAnswer: { "@type": "Answer", text: item.answer },
       })),
     },
-    ...(product.model === "DQ-010" && lang === "en" ? [
-      {
+    ...productVideos.map((video) => ({
         "@context": "https://schema.org",
         "@type": "VideoObject",
-        name: "DQ-010 Portable Espresso Extraction Demonstration",
-        description: "A real DQ-010 presentation showing the preparation and espresso extraction sequence.",
-        thumbnailUrl: `${company.siteUrl}/optimized/video-posters/dq-010-real-operation.webp`,
-        contentUrl: `${company.siteUrl}/videos/dq-010-real-operation.mp4`,
-        uploadDate: "2026-07-30T16:46:36+08:00",
+        name: video.title,
+        description: video.summary,
+        thumbnailUrl: absoluteAssetUrl(video.poster),
+        contentUrl: absoluteAssetUrl(video.src),
+        uploadDate: video.schema?.uploadDate,
         inLanguage: "en",
-      },
-    ] : []),
+      })),
   ];
-
-  const dq010Video: ProductVideo | null = product.model === "DQ-010" && lang === "en" ? {
-    src: "/videos/dq-010-real-operation.mp4",
-    webmSrc: "/videos/dq-010-real-operation.webm",
-    poster: "/optimized/video-posters/dq-010-real-operation.webp",
-    posterAlt: "DQ-010 portable coffee machine real operation video cover",
-    label: "Real operation / DQ-010",
-    title: "See the DQ-010 preparation and extraction sequence",
-    summary: "This real-product video shows the order of preparing the coffee container, adding water, assembling the machine and collecting the finished espresso.",
-    steps: [
-      { title: "Prepare the coffee", description: "Use the compatible coffee container shown in the video." },
-      { title: "Add water", description: "Fill the water chamber following the demonstrated order." },
-      { title: "Assemble and start", description: "Fit the components and start the DQ-010 as shown." },
-      { title: "Collect espresso", description: "Allow the extracted coffee to flow into the cup." },
-    ],
-    secondaryCta: { href: "#product-inquiry", label: "Request a DQ-010 quotation" },
-    layout: "media-left",
-  } : null;
 
   return (
     <main className="inner-page" dir={dir} lang={lang}>
@@ -444,7 +445,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         </div>
       </RevealSection>
 
-      {dq010Video ? <ProductVideoShowcase video={dq010Video} /> : null}
+      {productVideos.map((video) => <ProductVideoShowcase key={`${video.src}-${video.title}`} video={video} />)}
 
       <ProductAccessorySelector lang={lang} model={product.model} />
 
