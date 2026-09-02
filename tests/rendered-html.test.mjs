@@ -602,6 +602,7 @@ test("customer management supports secure sales follow-up without changing sourc
 test("product CMS prevents incomplete or duplicate products from being published", async () => {
   const route = await readProjectFile("app/api/admin/cms/[resource]/route.ts");
   const manager = await readProjectFile("components/admin/CmsManager.tsx");
+  const productSource = await readProjectFile("lib/cms-products.ts");
   const adminCss = await readProjectFile("app/admin/admin.css");
 
   assert.match(route, /product\.status !== "PUBLISHED"/);
@@ -609,10 +610,21 @@ test("product CMS prevents incomplete or duplicate products from being published
   assert.match(route, /发布前至少填写 3 项真实参数/);
   assert.match(route, /产品型号或 URL 路径已经存在/);
   assert.match(route, /INVALID_HERO_MEDIA/);
+  assert.match(route, /galleryMediaIds/);
+  assert.match(route, /MISSING_PRODUCT_GALLERY/);
+  assert.match(route, /INVALID_GALLERY_MEDIA/);
+  assert.match(route, /role: "GALLERY"/);
   assert.match(manager, /productPublishIssues/);
   assert.match(manager, /发布前还需补充/);
   assert.match(manager, /保存草稿/);
   assert.match(manager, /前往媒体库上传/);
   assert.match(manager, /当前选择的产品主图预览/);
+  assert.match(manager, /产品详情图库/);
+  assert.match(manager, /下方顺序就是前台展示顺序/);
+  assert.match(manager, /上移/);
+  assert.match(manager, /下移/);
+  assert.match(productSource, /entry\.role === "GALLERY"/);
+  assert.match(productSource, /managedGallery\.length \? managedGallery : fallback\?\.gallery/);
   assert.match(adminCss, /\.cms-publish-readiness/);
+  assert.match(adminCss, /\.cms-product-gallery-picker/);
 });

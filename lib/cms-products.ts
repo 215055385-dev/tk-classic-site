@@ -6,7 +6,7 @@ const readProducts = unstable_cache(async (): Promise<Product[]> => {
   try {
     const rows = await getPrisma().product.findMany({
       where: { status: "PUBLISHED" }, orderBy: [{ sortOrder: "asc" }, { model: "asc" }],
-      include: { translations: true, specs: { orderBy: { sortOrder: "asc" } }, features: { orderBy: { sortOrder: "asc" } }, useCases: { orderBy: { sortOrder: "asc" } }, media: { where: { role: "HERO" }, include: { media: true }, take: 1 } },
+      include: { translations: true, specs: { orderBy: { sortOrder: "asc" } }, features: { orderBy: { sortOrder: "asc" } }, useCases: { orderBy: { sortOrder: "asc" } }, media: { where: { role: { in: ["HERO", "GALLERY"] } }, include: { media: true }, orderBy: { sortOrder: "asc" } } },
     });
     if (!rows.length) return fallbackProducts;
     return rows.map((row) => {
@@ -22,13 +22,14 @@ const readProducts = unstable_cache(async (): Promise<Product[]> => {
         zh: english?.summary ?? "",
         ru: english?.summary ?? "",
       };
-      const hero = row.media[0]?.media.publicUrl ?? fallback?.hero ?? "/optimized/hero-products/dq-001.webp";
+      const hero = row.media.find((entry) => entry.role === "HERO")?.media.publicUrl ?? fallback?.hero ?? "/optimized/hero-products/dq-001.webp";
+      const managedGallery = [...new Set(row.media.filter((entry) => entry.role === "GALLERY").map((entry) => entry.media.publicUrl).filter((url): url is string => Boolean(url)))];
       return {
         slug: row.slug,
         model: row.model,
         summary: { ...truthfulBaseSummary, ...summaries } as Product["summary"],
         hero,
-        gallery: fallback?.gallery ?? [hero],
+        gallery: managedGallery.length ? managedGallery : fallback?.gallery ?? [hero],
         featureLabel: english?.featureLabel ?? fallback?.featureLabel ?? "Portable espresso machine",
         price: fallback?.price ?? { regular: 0, sale: 0, currency: "USD" },
         spec: Object.fromEntries(row.specs.map((spec) => [spec.key, spec.value])),

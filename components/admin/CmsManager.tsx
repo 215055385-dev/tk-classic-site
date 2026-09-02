@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { Edit3, ExternalLink, ImageIcon, Plus, RefreshCw, Search, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Edit3, ExternalLink, ImageIcon, Plus, RefreshCw, Search, Trash2, X } from "lucide-react";
 import { MediaUploader } from "@/components/admin/MediaUploader";
 
 type Resource = "products" | "homepage" | "articles" | "seo" | "media";
@@ -21,7 +21,7 @@ const statusText: Record<string, string> = { DRAFT: "草稿", PUBLISHED: "已发
 const categories = ["PRODUCT", "FACTORY", "EXHIBITION", "CERTIFICATION", "BANNER", "VIDEO_POSTER", "ARTICLE", "GENERAL"];
 
 function empty(resource: Resource): Item {
-  if (resource === "products") return { id: "", slug: "", model: "", name: "", summary: "", description: "", featureLabel: "", status: "DRAFT", sortOrder: 0, heroMediaId: null, specs: {}, features: [], useCases: [], seoTitle: "", seoDescription: "", seoKeywords: [] };
+  if (resource === "products") return { id: "", slug: "", model: "", name: "", summary: "", description: "", featureLabel: "", status: "DRAFT", sortOrder: 0, heroMediaId: null, galleryMediaIds: [], specs: {}, features: [], useCases: [], seoTitle: "", seoDescription: "", seoKeywords: [] };
   if (resource === "homepage") return { id: "", key: "", type: "content", status: "DRAFT", sortOrder: 0, title: "", subtitle: "", body: "", ctaLabel: "", ctaHref: "", settings: {} };
   if (resource === "articles") return { id: "", slug: "", status: "DRAFT", title: "", excerpt: "", content: "", category: "Buyer Guides", coverMediaId: null, seoTitle: "", seoDescription: "" };
   if (resource === "seo") return { id: "", path: "/", locale: "en", title: "", description: "", keywords: [], canonicalUrl: "", noIndex: false, schemaData: null };
@@ -36,6 +36,7 @@ function slugify(value: string) { return value.toLowerCase().trim().replace(/[^a
 function productPublishIssues(item: Item) {
   const issues: string[] = [];
   if (!item.heroMediaId) issues.push("官方主图");
+  if (!item.lockedModel && (!Array.isArray(item.galleryMediaIds) || !item.galleryMediaIds.length)) issues.push("至少 1 张详情展示图");
   if (specRows(item.specs).filter((row) => row.key.trim() && row.value.trim()).length < 3) issues.push("至少 3 项真实参数");
   if (!Array.isArray(item.features) || !item.features.length) issues.push("核心卖点");
   if (!Array.isArray(item.useCases) || !item.useCases.length) issues.push("应用场景");
@@ -121,6 +122,27 @@ function MediaGrid({ items, onEdit, onDelete }: { items: Item[]; onEdit: (x: Ite
 }
 
 function Field({ label, children, wide = false }: { label: string; children: React.ReactNode; wide?: boolean }) { return <label className={wide ? "cms-field is-wide" : "cms-field"}><span>{label}</span>{children}</label>; }
+function ProductGalleryPicker({ item, media, change }: { item: Item; media: MediaOption[]; change: (key: string, value: unknown) => void }) {
+  const selected = Array.isArray(item.galleryMediaIds) ? item.galleryMediaIds.filter((id): id is string => typeof id === "string") : [];
+  const selectedMedia = selected.map((id) => media.find((entry) => entry.id === id)).filter((entry): entry is MediaOption => Boolean(entry));
+  const toggle = (id: string) => {
+    if (id === item.heroMediaId) return;
+    if (selected.includes(id)) change("galleryMediaIds", selected.filter((entry) => entry !== id));
+    else if (selected.length < 12) change("galleryMediaIds", [...selected, id]);
+  };
+  const move = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= selected.length) return;
+    const next = [...selected];
+    [next[index], next[target]] = [next[target], next[index]];
+    change("galleryMediaIds", next);
+  };
+  return <section className="cms-field is-wide cms-product-gallery-picker">
+    <div className="cms-gallery-heading"><div><span>产品详情图库</span><small>选择 1–12 张真实图片；下方顺序就是前台展示顺序。</small></div><strong>{selected.length}/12</strong></div>
+    {selectedMedia.length ? <div className="cms-gallery-order" aria-label="已选详情图顺序">{selectedMedia.map((entry, index) => <article key={entry.id}><span>{index + 1}</span>{entry.publicUrl ? <Image unoptimized src={entry.publicUrl} alt={entry.originalName} width={96} height={96}/> : <ImageIcon/>}<p title={entry.originalName}>{entry.originalName}</p><div><button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label={`上移 ${entry.originalName}`}><ArrowUp size={14}/></button><button type="button" onClick={() => move(index, 1)} disabled={index === selectedMedia.length - 1} aria-label={`下移 ${entry.originalName}`}><ArrowDown size={14}/></button><button type="button" className="is-remove" onClick={() => toggle(entry.id)} aria-label={`移除 ${entry.originalName}`}><X size={14}/></button></div></article>)}</div> : <p className="cms-gallery-empty">尚未选择详情图。新产品发布前至少需要 1 张；官方锁定型号会继续使用现有真实图库。</p>}
+    <div className="cms-gallery-library" aria-label="可选产品图片">{media.map((entry) => { const isSelected = selected.includes(entry.id); const isHero = entry.id === item.heroMediaId; return <button type="button" key={entry.id} className={isSelected ? "is-selected" : ""} disabled={isHero} onClick={() => toggle(entry.id)} aria-pressed={isSelected} aria-label={`${isSelected ? "取消选择" : "选择"}详情图 ${entry.originalName}`}>{entry.publicUrl ? <Image unoptimized src={entry.publicUrl} alt={entry.originalName} width={128} height={128}/> : <ImageIcon/>}<span title={entry.originalName}>{isHero ? "主图" : entry.originalName}</span>{isSelected ? <i><Check size={13}/></i> : null}</button>; })}</div>
+  </section>;
+}
 function Editor({ resource, item, media, setItem, close, save, saving }: { resource: Resource; item: Item; media: MediaOption[]; setItem: (x: Item) => void; close: () => void; save: (e: React.FormEvent<HTMLFormElement>) => void; saving: boolean }) {
   const change = (key: string, value: unknown) => setItem({ ...item, [key]: value });
   const updateSpecs = (rows: Array<{ key: string; value: string }>) => change("specs", Object.fromEntries(rows.filter((row) => row.key.trim()).map((row) => [row.key.trim(), row.value])));
@@ -132,7 +154,8 @@ function Editor({ resource, item, media, setItem, close, save, saving }: { resou
     {resource === "products" ? <>
       <Field label="产品型号"><input value={text(item.model)} disabled={Boolean(item.lockedModel)} onChange={(e) => { const model = e.target.value.toUpperCase().replace(/[^A-Z0-9-]+/g, "-"); setItem({ ...item, model, ...(!item.id && !text(item.slug) ? { slug: slugify(model) } : {}) }); }} required /></Field><Field label="URL 路径"><input value={text(item.slug)} onChange={(e) => change("slug", slugify(e.target.value))} required /></Field>
       <Field label="英文产品名称"><input value={text(item.name)} onChange={(e) => change("name", e.target.value)} required /></Field><Status item={item} change={change}/><Field label="排序"><input type="number" min="0" value={Number(item.sortOrder)} onChange={(e) => change("sortOrder", Number(e.target.value))}/></Field>
-      <div className="cms-field is-wide cms-product-media-picker"><span>官方主图</span><div><select aria-label="官方主图" value={text(item.heroMediaId)} onChange={(e) => change("heroMediaId", e.target.value || null)}><option value="">暂不关联</option>{media.map((x) => <option key={x.id} value={x.id}>{x.originalName}</option>)}</select><a href="/admin/media">前往媒体库上传</a></div>{heroMedia?.publicUrl ? <Image unoptimized src={heroMedia.publicUrl} alt="当前选择的产品主图预览" width={180} height={180}/> : <small>请先把真实产品图片上传到“媒体资源”，分类选择“产品图片”。</small>}</div>
+      <div className="cms-field is-wide cms-product-media-picker"><span>官方主图</span><div><select aria-label="官方主图" value={text(item.heroMediaId)} onChange={(e) => { const heroMediaId = e.target.value || null; const galleryMediaIds = Array.isArray(item.galleryMediaIds) ? item.galleryMediaIds.filter((id) => id !== heroMediaId) : []; setItem({ ...item, heroMediaId, galleryMediaIds }); }}><option value="">暂不关联</option>{media.map((x) => <option key={x.id} value={x.id}>{x.originalName}</option>)}</select><a href="/admin/media">前往媒体库上传</a></div>{heroMedia?.publicUrl ? <Image unoptimized src={heroMedia.publicUrl} alt="当前选择的产品主图预览" width={180} height={180}/> : <small>请先把真实产品图片上传到“媒体资源”，分类选择“产品图片”。</small>}</div>
+      <ProductGalleryPicker item={item} media={media} change={change}/>
       <Field label="一句话定位" wide><textarea value={text(item.summary)} onChange={(e) => change("summary", e.target.value)} required /></Field><Field label="详细介绍" wide><textarea rows={5} value={text(item.description)} onChange={(e) => change("description", e.target.value)} /></Field>
       <Field label="产品标签"><input value={text(item.featureLabel)} onChange={(e) => change("featureLabel", e.target.value)}/></Field><div className="cms-field is-wide cms-spec-editor"><span>产品参数</span><p>逐项维护参数，不需要编辑 JSON。参数名称建议保持英文键名，以确保前台标签正确匹配。</p>{currentSpecs.map((row, index) => <div className="cms-spec-row" key={index}><input aria-label={`参数 ${index + 1} 名称`} value={row.key} placeholder="例如 pressure" onChange={(e) => { const next = [...currentSpecs]; next[index] = { ...row, key: e.target.value }; updateSpecs(next); }}/><input aria-label={`参数 ${index + 1} 内容`} value={row.value} placeholder="例如 25 bar" onChange={(e) => { const next = [...currentSpecs]; next[index] = { ...row, value: e.target.value }; updateSpecs(next); }}/><button type="button" aria-label={`删除参数 ${index + 1}`} onClick={() => updateSpecs(currentSpecs.filter((_, i) => i !== index))}><Trash2 size={15}/></button></div>)}<button type="button" className="cms-inline-add" onClick={() => updateSpecs([...currentSpecs, { key: `parameter-${currentSpecs.length + 1}`, value: "" }])}><Plus size={15}/>添加参数</button></div>
       <Field label="核心卖点（每行一条）" wide><textarea rows={5} value={lines(item.features)} onChange={(e) => change("features", e.target.value.split("\n").map((x) => x.trim()).filter(Boolean))}/></Field><Field label="应用场景（每行一条）" wide><textarea rows={4} value={lines(item.useCases)} onChange={(e) => change("useCases", e.target.value.split("\n").map((x) => x.trim()).filter(Boolean))}/></Field>

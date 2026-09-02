@@ -15,6 +15,7 @@ const baseProduct = z.object({
   summary: z.string().trim().min(8).max(1000), description: z.string().max(20000).optional().default(""),
   featureLabel: z.string().max(160).optional().default(""), status: statusSchema,
   sortOrder: z.coerce.number().int().min(0).max(9999), heroMediaId: z.string().uuid().nullable().optional(),
+  galleryMediaIds: z.array(z.string().uuid()).max(12).default([]),
   specs: z.record(z.string(), z.string().trim().min(1).max(500)).default({}), features: z.array(z.string().trim().min(1).max(500)).max(20).default([]), useCases: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
   seoTitle: z.string().max(180).optional().default(""), seoDescription: z.string().max(500).optional().default(""), seoKeywords: z.array(z.string()).default([]),
 }).superRefine((product, context) => {
@@ -59,10 +60,10 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     if (resource === "products") {
       await ensureProductSeed();
       const [rows, media] = await Promise.all([
-        db.product.findMany({ orderBy: [{ sortOrder: "asc" }, { model: "asc" }], include: { translations: true, specs: { orderBy: { sortOrder: "asc" } }, features: { orderBy: { sortOrder: "asc" } }, useCases: { orderBy: { sortOrder: "asc" } }, media: { where: { role: "HERO" }, include: { media: true }, take: 1 } } }),
+        db.product.findMany({ orderBy: [{ sortOrder: "asc" }, { model: "asc" }], include: { translations: true, specs: { orderBy: { sortOrder: "asc" } }, features: { orderBy: { sortOrder: "asc" } }, useCases: { orderBy: { sortOrder: "asc" } }, media: { where: { role: { in: ["HERO", "GALLERY"] } }, include: { media: true }, orderBy: { sortOrder: "asc" } } } }),
         db.mediaAsset.findMany({ where: { type: "IMAGE", deletedAt: null }, orderBy: { createdAt: "desc" }, select: { id: true, originalName: true, publicUrl: true, altText: true } }),
       ]);
-      return Response.json({ items: rows.map((row) => { const en = row.translations.find((t) => t.locale === "en") ?? row.translations[0]; return { id: row.id, slug: row.slug, model: row.model, lockedModel: row.lockedModel, name: en?.name ?? row.model, summary: en?.summary ?? "", description: en?.description ?? "", featureLabel: en?.featureLabel ?? "", status: row.status, sortOrder: row.sortOrder, specs: Object.fromEntries(row.specs.map((s) => [s.key, s.value])), features: row.features.filter((x) => x.locale === "en").map((x) => x.content), useCases: row.useCases.filter((x) => x.locale === "en").map((x) => x.content), seoTitle: en?.seoTitle ?? "", seoDescription: en?.seoDescription ?? "", seoKeywords: en?.seoKeywords ?? [], heroMediaId: row.media[0]?.mediaId ?? null, heroUrl: row.media[0]?.media.publicUrl ?? null, updatedAt: row.updatedAt.toISOString() }; }), media });
+      return Response.json({ items: rows.map((row) => { const en = row.translations.find((t) => t.locale === "en") ?? row.translations[0]; const hero = row.media.find((entry) => entry.role === "HERO"); const gallery = row.media.filter((entry) => entry.role === "GALLERY"); return { id: row.id, slug: row.slug, model: row.model, lockedModel: row.lockedModel, name: en?.name ?? row.model, summary: en?.summary ?? "", description: en?.description ?? "", featureLabel: en?.featureLabel ?? "", status: row.status, sortOrder: row.sortOrder, specs: Object.fromEntries(row.specs.map((s) => [s.key, s.value])), features: row.features.filter((x) => x.locale === "en").map((x) => x.content), useCases: row.useCases.filter((x) => x.locale === "en").map((x) => x.content), seoTitle: en?.seoTitle ?? "", seoDescription: en?.seoDescription ?? "", seoKeywords: en?.seoKeywords ?? [], heroMediaId: hero?.mediaId ?? null, heroUrl: hero?.media.publicUrl ?? null, galleryMediaIds: gallery.map((entry) => entry.mediaId), galleryUrls: gallery.map((entry) => entry.media.publicUrl), updatedAt: row.updatedAt.toISOString() }; }), media });
     }
     if (resource === "homepage") {
       const rows = await db.homepageSection.findMany({ orderBy: { sortOrder: "asc" }, include: { translations: { where: { locale: "en" }, take: 1 } } });
@@ -80,11 +81,17 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 async function saveProduct(input: z.infer<typeof baseProduct>) {
   const db = getPrisma();
   return db.$transaction(async (tx) => {
+    const existing = input.id ? await tx.product.findUnique({ where: { id: input.id } }) : null;
+    const galleryMediaIds = [...new Set(input.galleryMediaIds)].filter((id) => id !== input.heroMediaId);
     if (input.heroMediaId) {
       const hero = await tx.mediaAsset.findFirst({ where: { id: input.heroMediaId, type: "IMAGE", deletedAt: null }, select: { id: true } });
       if (!hero) throw new Error("INVALID_HERO_MEDIA");
     }
-    const existing = input.id ? await tx.product.findUnique({ where: { id: input.id } }) : null;
+    if (galleryMediaIds.length) {
+      const validGallery = await tx.mediaAsset.count({ where: { id: { in: galleryMediaIds }, type: "IMAGE", deletedAt: null } });
+      if (validGallery !== galleryMediaIds.length) throw new Error("INVALID_GALLERY_MEDIA");
+    }
+    if (input.status === "PUBLISHED" && !existing?.lockedModel && !galleryMediaIds.length) throw new Error("MISSING_PRODUCT_GALLERY");
     if (existing?.lockedModel && existing.model !== input.model) throw new Error("LOCKED_MODEL");
     const product = input.id
       ? await tx.product.update({ where: { id: input.id }, data: { slug: input.slug, model: input.model, status: input.status, sortOrder: input.sortOrder, publishedAt: input.status === "PUBLISHED" ? existing?.publishedAt ?? new Date() : null } })
@@ -94,8 +101,9 @@ async function saveProduct(input: z.infer<typeof baseProduct>) {
     let i = 0; for (const [key, value] of Object.entries(input.specs)) await tx.productSpec.create({ data: { productId: product.id, key, value, sortOrder: ++i } });
     if (input.features.length) await tx.productFeature.createMany({ data: input.features.filter(Boolean).map((content, index) => ({ productId: product.id, locale: "en", content, sortOrder: index + 1 })) });
     if (input.useCases.length) await tx.productUseCase.createMany({ data: input.useCases.filter(Boolean).map((content, index) => ({ productId: product.id, locale: "en", content, sortOrder: index + 1 })) });
-    await tx.productMedia.deleteMany({ where: { productId: product.id, role: "HERO" } });
+    await tx.productMedia.deleteMany({ where: { productId: product.id, role: { in: ["HERO", "GALLERY"] } } });
     if (input.heroMediaId) await tx.productMedia.create({ data: { productId: product.id, mediaId: input.heroMediaId, role: "HERO", sortOrder: 1 } });
+    if (galleryMediaIds.length) await tx.productMedia.createMany({ data: galleryMediaIds.map((mediaId, index) => ({ productId: product.id, mediaId, role: "GALLERY" as const, sortOrder: index + 1 })) });
     return product;
   });
 }
@@ -109,7 +117,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ re
     else if (resource === "seo") { const x = seoSchema.parse(body); saved = await db.pageSeo.create({ data: { path: x.path, locale: x.locale, title: x.title, description: x.description, keywords: x.keywords, canonicalUrl: x.canonicalUrl || null, noIndex: x.noIndex, schemaData: x.schemaData as never } }); }
     else return Response.json({ error: "未知的后台资源。" }, { status: 404 });
     await audit(admin.id, "CREATE", resource, saved.id, body); revalidatePath("/", "layout"); revalidateTag("cms-products", "max"); revalidateTag("cms-content", "max"); return Response.json({ ok: true, id: saved.id });
-  } catch (error) { if (error instanceof z.ZodError) return Response.json({ error: error.issues[0]?.message ?? "字段内容无效。" }, { status: 400 }); if (error instanceof Error && error.message === "LOCKED_MODEL") return Response.json({ error: "官方型号已锁定，不能修改。" }, { status: 409 }); if (error instanceof Error && error.message === "INVALID_HERO_MEDIA") return Response.json({ error: "选择的主图不存在或不是有效图片，请重新选择。" }, { status: 400 }); if (isUniqueConflict(error)) return Response.json({ error: "产品型号或 URL 路径已经存在，请使用新的唯一值。" }, { status: 409 }); return adminErrorResponse(error); }
+  } catch (error) { if (error instanceof z.ZodError) return Response.json({ error: error.issues[0]?.message ?? "字段内容无效。" }, { status: 400 }); if (error instanceof Error && error.message === "LOCKED_MODEL") return Response.json({ error: "官方型号已锁定，不能修改。" }, { status: 409 }); if (error instanceof Error && error.message === "INVALID_HERO_MEDIA") return Response.json({ error: "选择的主图不存在或不是有效图片，请重新选择。" }, { status: 400 }); if (error instanceof Error && error.message === "INVALID_GALLERY_MEDIA") return Response.json({ error: "详情图库包含不存在或无效的图片，请重新选择。" }, { status: 400 }); if (error instanceof Error && error.message === "MISSING_PRODUCT_GALLERY") return Response.json({ error: "新产品发布前至少需要选择 1 张详情展示图。" }, { status: 400 }); if (isUniqueConflict(error)) return Response.json({ error: "产品型号或 URL 路径已经存在，请使用新的唯一值。" }, { status: 409 }); return adminErrorResponse(error); }
 }
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ resource: string }> }) {
@@ -121,7 +129,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ r
     else if (resource === "seo") { const x = seoSchema.parse(body); if (!x.id) throw new Error("MISSING_ID"); id = x.id; await db.pageSeo.update({ where: { id }, data: { path: x.path, locale: x.locale, title: x.title, description: x.description, keywords: x.keywords, canonicalUrl: x.canonicalUrl || null, noIndex: x.noIndex, schemaData: x.schemaData as never } }); }
     else return Response.json({ error: "未知的后台资源。" }, { status: 404 });
     await audit(admin.id, "UPDATE", resource, id, body); revalidatePath("/", "layout"); revalidateTag("cms-products", "max"); revalidateTag("cms-content", "max"); return Response.json({ ok: true, id });
-  } catch (error) { if (error instanceof z.ZodError) return Response.json({ error: error.issues[0]?.message ?? "字段内容无效。" }, { status: 400 }); if (error instanceof Error && error.message === "LOCKED_MODEL") return Response.json({ error: "官方型号已锁定，不能修改。" }, { status: 409 }); if (error instanceof Error && error.message === "INVALID_HERO_MEDIA") return Response.json({ error: "选择的主图不存在或不是有效图片，请重新选择。" }, { status: 400 }); if (isUniqueConflict(error)) return Response.json({ error: "产品型号或 URL 路径已经存在，请使用新的唯一值。" }, { status: 409 }); return adminErrorResponse(error); }
+  } catch (error) { if (error instanceof z.ZodError) return Response.json({ error: error.issues[0]?.message ?? "字段内容无效。" }, { status: 400 }); if (error instanceof Error && error.message === "LOCKED_MODEL") return Response.json({ error: "官方型号已锁定，不能修改。" }, { status: 409 }); if (error instanceof Error && error.message === "INVALID_HERO_MEDIA") return Response.json({ error: "选择的主图不存在或不是有效图片，请重新选择。" }, { status: 400 }); if (error instanceof Error && error.message === "INVALID_GALLERY_MEDIA") return Response.json({ error: "详情图库包含不存在或无效的图片，请重新选择。" }, { status: 400 }); if (error instanceof Error && error.message === "MISSING_PRODUCT_GALLERY") return Response.json({ error: "新产品发布前至少需要选择 1 张详情展示图。" }, { status: 400 }); if (isUniqueConflict(error)) return Response.json({ error: "产品型号或 URL 路径已经存在，请使用新的唯一值。" }, { status: 409 }); return adminErrorResponse(error); }
 }
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ resource: string }> }) {
