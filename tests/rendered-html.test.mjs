@@ -551,12 +551,15 @@ test("admin surfaces Resend domain health before inquiry delivery fails", async 
 
   assert.match(health, /resend\.domains\.list\(\)/);
   assert.match(health, /domainStatus === "verified"/);
+  assert.match(health, /restricted to only send emails/i);
+  assert.match(health, /domainStatus: "send_only_key"/);
   assert.match(health, /senderDomain === siteDomain/);
   assert.match(health, /recipientCount > 0/);
   assert.match(systemRoute, /mode === "email-health"/);
   assert.match(systemRoute, /Cache-Control": "private, no-store"/);
   assert.match(inquiries, /邮件服务运行正常/);
   assert.match(inquiries, /邮件服务需要检查/);
+  assert.match(inquiries, /安全的仅发送密钥/);
   assert.match(settings, /询盘邮件基础设施/);
 });
 

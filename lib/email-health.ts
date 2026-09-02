@@ -59,11 +59,21 @@ export async function getEmailHealth(): Promise<EmailHealth> {
       error: "",
     };
   } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    const sendOnlyKey = /restricted to only send emails/i.test(message);
+    if (sendOnlyKey) {
+      return {
+        ...base,
+        ready: senderConfigured && recipientCount > 0,
+        domainStatus: "send_only_key",
+        error: "",
+      };
+    }
     return {
       ...base,
       ready: false,
       domainStatus: "check_failed",
-      error: error instanceof Error ? error.message.slice(0, 300) : "无法检查 Resend 域名状态。",
+      error: message.slice(0, 300) || "无法检查 Resend 域名状态。",
     };
   }
 }
