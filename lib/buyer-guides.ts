@@ -349,6 +349,116 @@ const sourcingGuides: BuyerGuide[] = [
       },
     ],
   },
+  {
+    slug: "portable-espresso-machine-rfq-checklist-us-importers",
+    title: "Portable espresso machine RFQ checklist for US importers",
+    description:
+      "A practical RFQ checklist for US importers requesting a model-specific portable espresso machine quotation without leaving product, packaging or compliance questions undefined.",
+    eyebrow: "US importer RFQ checklist",
+    readTime: "7 minute read",
+    publishedAt: "2026-09-02",
+    updatedAt: "2026-09-02",
+    heroImage: "/optimized/product-scenes/dq-001-1.webp",
+    heroAlt: "Official TK Classic DQ-001 portable espresso machine photograph for the US importer RFQ checklist",
+    keyTakeaways: [
+      "Name one model and the required coffee formats before asking for commercial terms.",
+      "Include destination, quantity estimate, sales channel, branding, packaging and accessories in the RFQ.",
+      "Request model- and market-specific documents instead of treating a general certification overview as the final file set.",
+      "Keep price, MOQ, payment, production and shipping terms inside the written quotation for the approved configuration.",
+    ],
+    directAnswerTitle: "What should a portable espresso machine RFQ include?",
+    directAnswer:
+      "A useful portable espresso machine RFQ should identify the buyer and company, target market, selected model, estimated quantity, required coffee formats, color, logo, packaging, accessories, sample needs and requested compliance documents. For DQ-001, state whether capsule and ground-coffee configurations are required. For DQ-010, identify the required N-series, Dolce Gusto, ground-coffee or documented portable drip-cup formats. Price, MOQ, payment, production and shipping arrangements should then be confirmed for that exact configuration in the formal quotation.",
+    keywords: [
+      "portable espresso machine RFQ",
+      "coffee machine quotation checklist",
+      "OEM coffee machine RFQ",
+      "portable coffee machine US importer",
+      "DQ-001 wholesale quotation",
+      "DQ-010 wholesale quotation",
+    ],
+    relatedLinks: [
+      { href: "/wholesale/usa", label: "US wholesale sourcing path" },
+      { href: "/products/dq-001", label: "Review DQ-001 published data" },
+      { href: "/products/dq-010", label: "Review DQ-010 published data" },
+      { href: "/tools/inquiry-builder", label: "Build a structured inquiry" },
+      { href: "/certifications", label: "Review the compliance evidence overview" },
+    ],
+    sections: [
+      {
+        title: "1. Identify the exact sourcing project",
+        paragraphs: [
+          "Start with the company, buyer type, destination market and intended sales channel. A US importer preparing an ecommerce launch may need a different packaging and document brief from a gift distributor or outdoor-products wholesaler.",
+          "Add an estimated quantity range for quotation planning, but do not treat that estimate as a published MOQ. TK Classic confirms MOQ and commercial terms after the model, configuration and customization scope are understood.",
+        ],
+        bullets: [
+          "Company and buyer contact",
+          "Destination market and delivery location",
+          "Import, wholesale, retail, ecommerce or private-label channel",
+          "Estimated quantity for the requested quotation",
+        ],
+      },
+      {
+        title: "2. Freeze the model and coffee-format configuration",
+        paragraphs: [
+          "Name the model rather than requesting a general portable coffee machine price. DQ-001 is the value-led starting model with capsule and ground-coffee adapters. DQ-010 is the premium LCD model with a 325 mL cup and published N-series, Dolce Gusto, ground-coffee and portable drip-cup formats.",
+          "List every required coffee format and optional accessory. Included components must be confirmed in the quotation because a photograph or general compatibility statement does not define the final retail package.",
+        ],
+        bullets: [
+          "Model and required color",
+          "Coffee formats and matching adapters or components",
+          "Cup, charging component and optional accessories",
+          "Sample configuration to be reviewed before a bulk order",
+        ],
+      },
+      {
+        title: "3. Describe branding, packaging and document needs",
+        paragraphs: [
+          "State whether the project needs a logo, custom color or packaging. If artwork already exists, identify the required application area and attach the current version so the customization discussion refers to a controlled file.",
+          "Request the available compliance and test documents for the selected model and US market. The website presents a compliance overview, while the applicable files are provided after inquiry according to the model and destination rather than assumed from the overview image alone.",
+        ],
+        bullets: [
+          "Logo method, position and artwork file",
+          "Packaging, insert, manual and label requirements",
+          "Optional accessories included in the intended retail offer",
+          "Model- and market-specific document request",
+        ],
+      },
+      {
+        title: "4. Ask for a quotation that closes the open terms",
+        paragraphs: [
+          "The formal quotation should connect the model, configuration, quantity, destination, branding, packaging and accessories to the commercial terms. TK Classic supports T/T, PayPal and Western Union; the final payment arrangement is recorded for the actual project.",
+          "Samples are charged and are planned for dispatch within seven days of the sample order. The sample fee may be refunded or credited after a bulk order is placed and shipped, subject to the confirmed order terms. Courier transit, final production timing, MOQ and shipping arrangements remain part of the written quotation and order discussion.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: "What information does TK Classic need for a portable espresso machine quotation?",
+        answer: "Provide the company and buyer contact, target market, selected model, estimated quantity, required coffee formats, color, branding, packaging, accessories, sample needs and requested compliance documents.",
+      },
+      {
+        question: "Are wholesale prices published before an RFQ is reviewed?",
+        answer: "No. Price is confirmed privately after the exact model, configuration, estimated quantity, destination, branding, packaging and accessory requirements are reviewed.",
+      },
+      {
+        question: "Is one MOQ published for every portable espresso machine project?",
+        answer: "No universal MOQ is published. MOQ is discussed after the selected model, configuration, customization and quantity requirements are understood.",
+      },
+      {
+        question: "Can a US importer request a sample before a bulk order?",
+        answer: "Yes. Samples are charged and are planned for dispatch within seven days of the sample order. The sample fee may be refunded or credited after a bulk order is placed and shipped, subject to the confirmed order terms.",
+      },
+      {
+        question: "Which payment methods can be discussed in the quotation?",
+        answer: "TK Classic supports T/T, PayPal and Western Union. The final payment arrangement is recorded in the formal quotation for the project.",
+      },
+      {
+        question: "How should a buyer request certification and test documents?",
+        answer: "Name the selected model and destination market in the RFQ. TK Classic then confirms the available model- and market-specific document set after inquiry.",
+      },
+    ],
+  },
 ];
 
 export const buyerGuides: BuyerGuide[] = [...sourcingGuides, ...geoGuides];

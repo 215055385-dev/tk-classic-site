@@ -51,6 +51,7 @@ test("buyer guides are indexable, evidence-led, and linked into discovery files"
     "25-bar-portable-coffee-machine-buying-checklist",
     "oem-packaging-checklist-portable-coffee-gift-sets",
     "portable-espresso-machine-sample-approval-checklist",
+    "portable-espresso-machine-rfq-checklist-us-importers",
   ]) {
     assert.match(guides, new RegExp(`slug: "${slug}"`));
   }
@@ -63,6 +64,9 @@ test("buyer guides are indexable, evidence-led, and linked into discovery files"
   assert.match(commercialCopy, /Pricing & order terms/);
   assert.match(sitemap, /buyerGuides/);
   assert.match(llms, /Buyer guides/);
+  assert.match(guides, /What should a portable espresso machine RFQ include\?/);
+  assert.match(guides, /Price, MOQ, payment, production and shipping arrangements should then be confirmed/);
+  assert.equal((guides.match(/question: "(?:What information does TK Classic need|Are wholesale prices published|Is one MOQ published|Can a US importer request|Which payment methods|How should a buyer request)/g) ?? []).length, 6);
   assert.doesNotMatch(siteData, /OEM à partir de 500 unités/);
   assert.doesNotMatch(siteData, /يبدأ OEM من 500 قطعة/);
   assert.doesNotMatch(siteData, /Quick delivery/);

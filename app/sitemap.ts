@@ -60,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${company.siteUrl}/resources`,
-      lastModified: "2026-08-20",
+      lastModified: "2026-09-02",
       changeFrequency: "monthly",
       priority: 0.7,
       alternates: localized("/resources"),
@@ -92,7 +92,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${company.siteUrl}/wholesale/usa`,
-      lastModified: "2026-08-25",
+      lastModified: "2026-09-02",
       changeFrequency: "monthly",
       priority: 0.88,
     },
