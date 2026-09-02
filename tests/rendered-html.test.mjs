@@ -598,3 +598,21 @@ test("customer management supports secure sales follow-up without changing sourc
   assert.match(adminCss, /\.customer-manage-panel/);
   assert.match(adminCss, /\.customer-crm-status\.is-won/);
 });
+
+test("product CMS prevents incomplete or duplicate products from being published", async () => {
+  const route = await readProjectFile("app/api/admin/cms/[resource]/route.ts");
+  const manager = await readProjectFile("components/admin/CmsManager.tsx");
+  const adminCss = await readProjectFile("app/admin/admin.css");
+
+  assert.match(route, /product\.status !== "PUBLISHED"/);
+  assert.match(route, /发布前必须选择官方主图/);
+  assert.match(route, /发布前至少填写 3 项真实参数/);
+  assert.match(route, /产品型号或 URL 路径已经存在/);
+  assert.match(route, /INVALID_HERO_MEDIA/);
+  assert.match(manager, /productPublishIssues/);
+  assert.match(manager, /发布前还需补充/);
+  assert.match(manager, /保存草稿/);
+  assert.match(manager, /前往媒体库上传/);
+  assert.match(manager, /当前选择的产品主图预览/);
+  assert.match(adminCss, /\.cms-publish-readiness/);
+});

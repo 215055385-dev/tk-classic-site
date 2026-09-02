@@ -11,12 +11,20 @@ export const dynamic = "force-dynamic";
 const statusSchema = z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]);
 const baseProduct = z.object({
   id: z.string().uuid().optional(), slug: z.string().trim().min(2).regex(/^[a-z0-9-]+$/),
-  model: z.string().trim().min(2).max(80), name: z.string().trim().min(2).max(160),
+  model: z.string().trim().min(2).max(80).regex(/^[A-Z0-9][A-Z0-9-]*$/, "产品型号只能使用大写字母、数字和连字符。"), name: z.string().trim().min(2).max(160),
   summary: z.string().trim().min(8).max(1000), description: z.string().max(20000).optional().default(""),
   featureLabel: z.string().max(160).optional().default(""), status: statusSchema,
   sortOrder: z.coerce.number().int().min(0).max(9999), heroMediaId: z.string().uuid().nullable().optional(),
-  specs: z.record(z.string(), z.string()).default({}), features: z.array(z.string()).default([]), useCases: z.array(z.string()).default([]),
+  specs: z.record(z.string(), z.string().trim().min(1).max(500)).default({}), features: z.array(z.string().trim().min(1).max(500)).max(20).default([]), useCases: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
   seoTitle: z.string().max(180).optional().default(""), seoDescription: z.string().max(500).optional().default(""), seoKeywords: z.array(z.string()).default([]),
+}).superRefine((product, context) => {
+  if (product.status !== "PUBLISHED") return;
+  if (!product.heroMediaId) context.addIssue({ code: "custom", path: ["heroMediaId"], message: "发布前必须选择官方主图。" });
+  if (Object.keys(product.specs).length < 3) context.addIssue({ code: "custom", path: ["specs"], message: "发布前至少填写 3 项真实参数。" });
+  if (!product.features.length) context.addIssue({ code: "custom", path: ["features"], message: "发布前至少填写 1 条核心卖点。" });
+  if (!product.useCases.length) context.addIssue({ code: "custom", path: ["useCases"], message: "发布前至少填写 1 个真实应用场景。" });
+  if (!product.seoTitle.trim()) context.addIssue({ code: "custom", path: ["seoTitle"], message: "发布前必须填写 SEO 标题。" });
+  if (!product.seoDescription.trim()) context.addIssue({ code: "custom", path: ["seoDescription"], message: "发布前必须填写 SEO 描述。" });
 });
 const sectionSchema = z.object({
   id: z.string().uuid().optional(), key: z.string().trim().min(2).regex(/^[a-z0-9-]+$/), type: z.string().trim().min(2).max(80),
@@ -37,6 +45,10 @@ const seoSchema = z.object({
 
 async function audit(actorId: string, action: string, entityType: string, entityId?: string, after?: unknown) {
   await getPrisma().auditLog.create({ data: { actorId, action, entityType, entityId, after: after as never } });
+}
+
+function isUniqueConflict(error: unknown) {
+  return Boolean(error && typeof error === "object" && "code" in error && error.code === "P2002");
 }
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ resource: string }> }) {
@@ -68,6 +80,10 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 async function saveProduct(input: z.infer<typeof baseProduct>) {
   const db = getPrisma();
   return db.$transaction(async (tx) => {
+    if (input.heroMediaId) {
+      const hero = await tx.mediaAsset.findFirst({ where: { id: input.heroMediaId, type: "IMAGE", deletedAt: null }, select: { id: true } });
+      if (!hero) throw new Error("INVALID_HERO_MEDIA");
+    }
     const existing = input.id ? await tx.product.findUnique({ where: { id: input.id } }) : null;
     if (existing?.lockedModel && existing.model !== input.model) throw new Error("LOCKED_MODEL");
     const product = input.id
@@ -93,7 +109,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ re
     else if (resource === "seo") { const x = seoSchema.parse(body); saved = await db.pageSeo.create({ data: { path: x.path, locale: x.locale, title: x.title, description: x.description, keywords: x.keywords, canonicalUrl: x.canonicalUrl || null, noIndex: x.noIndex, schemaData: x.schemaData as never } }); }
     else return Response.json({ error: "未知的后台资源。" }, { status: 404 });
     await audit(admin.id, "CREATE", resource, saved.id, body); revalidatePath("/", "layout"); revalidateTag("cms-products", "max"); revalidateTag("cms-content", "max"); return Response.json({ ok: true, id: saved.id });
-  } catch (error) { if (error instanceof z.ZodError) return Response.json({ error: error.issues[0]?.message ?? "字段内容无效。" }, { status: 400 }); if (error instanceof Error && error.message === "LOCKED_MODEL") return Response.json({ error: "官方型号已锁定，不能修改。" }, { status: 409 }); return adminErrorResponse(error); }
+  } catch (error) { if (error instanceof z.ZodError) return Response.json({ error: error.issues[0]?.message ?? "字段内容无效。" }, { status: 400 }); if (error instanceof Error && error.message === "LOCKED_MODEL") return Response.json({ error: "官方型号已锁定，不能修改。" }, { status: 409 }); if (error instanceof Error && error.message === "INVALID_HERO_MEDIA") return Response.json({ error: "选择的主图不存在或不是有效图片，请重新选择。" }, { status: 400 }); if (isUniqueConflict(error)) return Response.json({ error: "产品型号或 URL 路径已经存在，请使用新的唯一值。" }, { status: 409 }); return adminErrorResponse(error); }
 }
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ resource: string }> }) {
@@ -105,7 +121,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ r
     else if (resource === "seo") { const x = seoSchema.parse(body); if (!x.id) throw new Error("MISSING_ID"); id = x.id; await db.pageSeo.update({ where: { id }, data: { path: x.path, locale: x.locale, title: x.title, description: x.description, keywords: x.keywords, canonicalUrl: x.canonicalUrl || null, noIndex: x.noIndex, schemaData: x.schemaData as never } }); }
     else return Response.json({ error: "未知的后台资源。" }, { status: 404 });
     await audit(admin.id, "UPDATE", resource, id, body); revalidatePath("/", "layout"); revalidateTag("cms-products", "max"); revalidateTag("cms-content", "max"); return Response.json({ ok: true, id });
-  } catch (error) { if (error instanceof z.ZodError) return Response.json({ error: error.issues[0]?.message ?? "字段内容无效。" }, { status: 400 }); if (error instanceof Error && error.message === "LOCKED_MODEL") return Response.json({ error: "官方型号已锁定，不能修改。" }, { status: 409 }); return adminErrorResponse(error); }
+  } catch (error) { if (error instanceof z.ZodError) return Response.json({ error: error.issues[0]?.message ?? "字段内容无效。" }, { status: 400 }); if (error instanceof Error && error.message === "LOCKED_MODEL") return Response.json({ error: "官方型号已锁定，不能修改。" }, { status: 409 }); if (error instanceof Error && error.message === "INVALID_HERO_MEDIA") return Response.json({ error: "选择的主图不存在或不是有效图片，请重新选择。" }, { status: 400 }); if (isUniqueConflict(error)) return Response.json({ error: "产品型号或 URL 路径已经存在，请使用新的唯一值。" }, { status: 409 }); return adminErrorResponse(error); }
 }
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ resource: string }> }) {
