@@ -1,16 +1,21 @@
 import { buyerGuides } from "@/lib/buyer-guides";
-import { company, products } from "@/lib/site-data";
+import { company } from "@/lib/site-data";
 import { solutions } from "@/lib/solutions";
 import { getEnglishProductManualKnowledge } from "@/lib/product-manual-data";
 import { scenarioPages } from "@/lib/scenario-pages";
+import { getCmsProducts } from "@/lib/cms-products";
+import { absoluteAssetUrl } from "@/lib/seo";
+import { getProductSpecEntries } from "@/lib/product-presentation";
 
-export const dynamic = "force-static";
+export const runtime = "nodejs";
+export const revalidate = 300;
 
-export function GET() {
+export async function GET() {
+  const products = await getCmsProducts();
   const productLines = products
     .map(
       (product) =>
-        `- ${product.model}: ${product.summary.en} Pressure ${product.spec.pressure}; battery ${product.spec.battery}; cup capacity ${product.spec.cup}; product image ${company.siteUrl}${product.hero}. Product page: ${company.siteUrl}/products/${product.slug}`,
+        `- ${product.model}: ${product.summary.en} Published specifications: ${getProductSpecEntries(product).map(([key, value]) => `${key}: ${value}`).join("; ")}. Product image: ${absoluteAssetUrl(product.hero)}. Product page: ${company.siteUrl}/products/${product.slug}`,
     )
     .join("\n");
 

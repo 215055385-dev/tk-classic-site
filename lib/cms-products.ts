@@ -27,6 +27,8 @@ const readProducts = unstable_cache(async (): Promise<Product[]> => {
       return {
         slug: row.slug,
         model: row.model,
+        name: english?.name ?? row.model,
+        description: english?.description ?? undefined,
         summary: { ...truthfulBaseSummary, ...summaries } as Product["summary"],
         hero,
         gallery: managedGallery.length ? managedGallery : fallback?.gallery ?? [hero],
@@ -35,6 +37,11 @@ const readProducts = unstable_cache(async (): Promise<Product[]> => {
         spec: Object.fromEntries(row.specs.map((spec) => [spec.key, spec.value])),
         highlight: row.features.filter((x) => x.locale === "en").map((x) => x.content),
         useCases: row.useCases.filter((x) => x.locale === "en").map((x) => x.content),
+        seo: {
+          title: english?.seoTitle ?? "",
+          description: english?.seoDescription ?? "",
+          keywords: english?.seoKeywords ?? [],
+        },
       };
     });
   } catch {

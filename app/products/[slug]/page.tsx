@@ -37,7 +37,7 @@ import { PrimaryNav } from "@/components/PrimaryNav";
 import { ProductAccessorySelector } from "@/components/ProductAccessorySelector";
 import { ProductVideoShowcase, type ProductVideo } from "@/components/ProductVideoShowcase";
 import { company, copy, languages, type Lang } from "@/lib/site-data";
-import { languageAlternates, localizedPath, localizedUrl } from "@/lib/seo";
+import { absoluteAssetUrl, languageAlternates, localizedPath, localizedUrl } from "@/lib/seo";
 import { brandTagline } from "@/lib/translation-copy";
 import { whatsappHref } from "@/lib/contact";
 import { getCmsProducts } from "@/lib/cms-products";
@@ -47,6 +47,7 @@ import { getProductManualKnowledge } from "@/lib/product-manual-data";
 import { ProcurementExpectation } from "@/components/ProcurementExpectation";
 import { ProductLogistics } from "@/components/ProductLogistics";
 import { packingProperties } from "@/lib/commercial-data";
+import { getProductSpecEntries } from "@/lib/product-presentation";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -68,11 +69,14 @@ export async function generateMetadata({ params, searchParams }: ProductPageProp
   const lang = getLang(resolvedSearchParams?.lang);
   const managed = await getCmsSeo(`/products/${slug}`, lang);
   const geo = getProductGeo(product, lang);
+  const productSeo = lang === "en" ? product.seo : undefined;
+  const seededSeoTitle = `${product.model} Portable Espresso Machine | OEM & ODM`;
+  const productSeoTitle = productSeo?.title.trim() === seededSeoTitle ? "" : productSeo?.title.trim();
 
   return {
-    title: { absolute: managed?.title?.trim() || (lang === "en" ? `${geo.seoTitle} | ${company.brand}` : `${geo.displayName} | ${company.brand}`) },
-    description: managed?.description?.trim() || product.summary[lang],
-    keywords: managed?.keywords.length ? managed.keywords : undefined,
+    title: { absolute: managed?.title?.trim() || productSeoTitle || (lang === "en" ? `${geo.seoTitle} | ${company.brand}` : `${geo.displayName} | ${company.brand}`) },
+    description: managed?.description?.trim() || productSeo?.description.trim() || product.summary[lang],
+    keywords: managed?.keywords.length ? managed.keywords : productSeo?.keywords.length ? productSeo.keywords : undefined,
     robots: managed?.noIndex ? { index: false, follow: false } : undefined,
     alternates: {
       canonical: managed?.canonicalUrl?.trim() || localizedUrl(`/products/${product.slug}`, lang),
@@ -85,7 +89,7 @@ export async function generateMetadata({ params, searchParams }: ProductPageProp
       type: "website",
       images: [
         {
-          url: product.hero,
+          url: absoluteAssetUrl(product.hero),
           alt: geo.primaryAlt,
         },
       ],
@@ -105,6 +109,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const pageFaqs = manual ? [...geo.faqs, ...manual.faqs] : geo.faqs;
   const dir = languages.find((language) => language.code === lang)?.dir ?? "ltr";
   const related = cmsProducts.filter((item) => item.slug !== product.slug).slice(0, 3);
+  const primarySpecs = getProductSpecEntries(product, 3);
   const productUi = {
     en: { fullSpecs: "View full specifications", packing: "Packing & logistics", procurement: "Procurement terms", verified: "Verified product guidance", inquiry: "Start a product inquiry" },
     es: { fullSpecs: "Ver especificaciones completas", packing: "Embalaje y logística", procurement: "Condiciones de compra", verified: "Guía de producto verificada", inquiry: "Iniciar una consulta" },
@@ -132,7 +137,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         name: geo.displayName,
         alternateName: product.model,
         description: product.summary[lang],
-        image: product.gallery.map((image) => `${company.siteUrl}${image}`),
+        image: product.gallery.map(absoluteAssetUrl),
         identifier: {
           "@type": "PropertyValue",
           propertyID: "Model",
@@ -253,18 +258,10 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           <HeroTitleMotion>{product.model}</HeroTitleMotion>
           <HeroTextMotion className="hero-lead">{product.summary[lang]}</HeroTextMotion>
           <div className="spec-pill-row">
-            <span>
-              <Zap size={16} aria-hidden="true" />
-              {product.spec.pressure}
-            </span>
-            <span>
-              <BatteryCharging size={16} aria-hidden="true" />
-              {product.spec.battery}
-            </span>
-            <span>
-              <Coffee size={16} aria-hidden="true" />
-              {product.spec.cup}
-            </span>
+            {primarySpecs.map(([key, value], index) => {
+              const Icon = [Zap, BatteryCharging, Coffee][index] ?? Coffee;
+              return <span key={key} title={t.labels[key] ?? key}><Icon size={16} aria-hidden="true" />{localizeSpecValue(value, lang)}</span>;
+            })}
           </div>
           <HeroActionsMotion className="hero-actions">
             <MotionCta className="primary-action" href="#product-inquiry">

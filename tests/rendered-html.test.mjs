@@ -603,6 +603,10 @@ test("product CMS prevents incomplete or duplicate products from being published
   const route = await readProjectFile("app/api/admin/cms/[resource]/route.ts");
   const manager = await readProjectFile("components/admin/CmsManager.tsx");
   const productSource = await readProjectFile("lib/cms-products.ts");
+  const productPage = await readProjectFile("app/products/[slug]/page.tsx");
+  const productList = await readProjectFile("app/products/page.tsx");
+  const productPresentation = await readProjectFile("lib/product-presentation.ts");
+  const llms = await readProjectFile("app/llms.txt/route.ts");
   const adminCss = await readProjectFile("app/admin/admin.css");
 
   assert.match(route, /product\.status !== "PUBLISHED"/);
@@ -625,6 +629,13 @@ test("product CMS prevents incomplete or duplicate products from being published
   assert.match(manager, /下移/);
   assert.match(productSource, /entry\.role === "GALLERY"/);
   assert.match(productSource, /managedGallery\.length \? managedGallery : fallback\?\.gallery/);
+  assert.match(productSource, /seo:/);
+  assert.match(productPage, /productSeo\?\.title/);
+  assert.match(productPage, /absoluteAssetUrl/);
+  assert.match(productList, /getProductSpecEntries/);
+  assert.match(productPresentation, /preferredSpecKeys/);
+  assert.match(llms, /await getCmsProducts\(\)/);
+  assert.match(llms, /Published specifications/);
   assert.match(adminCss, /\.cms-publish-readiness/);
   assert.match(adminCss, /\.cms-product-gallery-picker/);
 });

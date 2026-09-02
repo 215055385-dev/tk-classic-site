@@ -906,6 +906,8 @@ export const copy: Record<Lang, Copy> = {
 export type Product = {
   slug: string;
   model: string;
+  name?: string;
+  description?: string;
   summary: Record<Lang, string>;
   hero: string;
   gallery: string[];
@@ -914,6 +916,11 @@ export type Product = {
   spec: Record<string, string>;
   highlight: string[];
   useCases: string[];
+  seo?: {
+    title: string;
+    description: string;
+    keywords: string[];
+  };
 };
 
 export type ProductPrice = {

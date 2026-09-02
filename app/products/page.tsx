@@ -15,6 +15,8 @@ import { getCmsSeo } from "@/lib/cms-content";
 import { brandTagline } from "@/lib/translation-copy";
 import { getProductGeo } from "@/lib/product-geo";
 import { PrimaryNav } from "@/components/PrimaryNav";
+import { getProductSpecEntries } from "@/lib/product-presentation";
+import { localizeSpecValue } from "@/lib/localized-ui";
 
 type ProductsPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
@@ -115,6 +117,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <div className="product-grid featured-grid product-pricing-grid">
           {cmsProducts.map((product, index) => {
             const geo = getProductGeo(product, lang);
+            const cardSpecs = getProductSpecEntries(product, 3);
             return (
             <RevealArticle className="product-card is-featured" key={product.model}>
               <Link href={`/products/${product.slug}${query}`} className="product-image-link">
@@ -134,9 +137,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <ProductPriceTag lang={lang} />
                 <p>{product.summary[lang]}</p>
                 <dl>
-                  <div><dt>{t.labels.pressure}</dt><dd>{product.spec.pressure}</dd></div>
-                  <div><dt>{t.labels.battery}</dt><dd>{product.spec.battery}</dd></div>
-                  <div><dt>{t.labels.material}</dt><dd>{product.spec.material}</dd></div>
+                  {cardSpecs.map(([key, value]) => <div key={key}><dt>{t.labels[key] ?? key}</dt><dd>{localizeSpecValue(value, lang)}</dd></div>)}
                 </dl>
                 <Link className="card-link" href={`/products/${product.slug}${query}`}>{t.labels.fullSpec}<ChevronRight size={17} aria-hidden="true" /></Link>
                 <Link className="quote-link" href={`/contact${query}`}>{t.hero.primaryCta}<Mail size={15} aria-hidden="true" /></Link>
