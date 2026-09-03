@@ -357,6 +357,10 @@ test("US wholesale acquisition path is factual, private-price, and conversion re
   assert.doesNotMatch(page, /ProductPriceTag|price\.sale|\$25|\$34/);
   assert.match(page, /Which portable espresso machine should a US wholesaler start with/);
   assert.match(page, /Verified model comparison/);
+  assert.match(page, /Import planning data/);
+  assert.match(page, /342 × 342 × 315 mm/);
+  assert.match(page, /360 × 365 × 360 mm/);
+  assert.match(page, /additionalProperty: logisticsByModel/);
   assert.match(page, /"@type": "ItemList"/);
   assert.match(page, /faqs\.map/);
   assert.match(quickForm, /formType" type="hidden" value="quick"/);
