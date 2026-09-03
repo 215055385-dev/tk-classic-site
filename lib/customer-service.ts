@@ -207,6 +207,49 @@ export async function updateCrmCustomer(id: string, input: { status: string; own
   return mapCustomer(rows[0]);
 }
 
+export async function assignUnownedCrmCustomers() {
+  await ensureCustomerSchema();
+  const sql = getDatabase();
+  const [countRows, unownedRows] = await Promise.all([
+    sql`
+      SELECT
+        count(*) FILTER (WHERE owner = 'Bowie')::int AS bowie_count,
+        count(*) FILTER (WHERE owner = 'Leo')::int AS leo_count
+      FROM crm_customers
+      WHERE is_test = false AND COALESCE(crm_status, 'new') NOT IN ('won', 'inactive')
+    `,
+    sql`
+      SELECT id
+      FROM crm_customers
+      WHERE owner IS NULL
+        AND is_test = false
+        AND COALESCE(crm_status, 'new') NOT IN ('won', 'inactive')
+      ORDER BY last_seen_at DESC
+      LIMIT 500
+    `,
+  ]);
+  const totals = {
+    Bowie: Number(countRows[0]?.bowie_count ?? 0),
+    Leo: Number(countRows[0]?.leo_count ?? 0),
+  };
+  const assignments: Array<{ id: string; owner: "Bowie" | "Leo" }> = [];
+
+  for (const row of unownedRows) {
+    const owner: "Bowie" | "Leo" = totals.Bowie <= totals.Leo ? "Bowie" : "Leo";
+    const updated = await sql`
+      UPDATE crm_customers
+      SET owner = ${owner}, updated_at = now()
+      WHERE id = ${String(row.id)}::uuid AND owner IS NULL
+      RETURNING id
+    `;
+    if (!updated[0]) continue;
+    totals[owner] += 1;
+    assignments.push({ id: String(updated[0].id), owner });
+  }
+
+  return { assignments, totals };
+}
+
 export async function getCustomerTimeline(id: string) {
   await Promise.all([ensureCustomerSchema(), ensureAuditLogSchema()]);
   const sql = getDatabase();

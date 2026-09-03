@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Activity, CalendarClock, ChevronDown, Mail, Pencil, RefreshCw, Save, Search, Tags, UserRoundCheck, UsersRound, X } from "lucide-react";
+import { Activity, CalendarClock, ChevronDown, Mail, Pencil, RefreshCw, Save, Search, Tags, UserPlus, UserRoundCheck, UsersRound, X } from "lucide-react";
 
 type CustomerStatus = "new" | "contacted" | "follow_up" | "qualified" | "won" | "inactive";
 type Customer = {
@@ -45,6 +45,8 @@ export function CustomerWorkspace() {
   const [expandedTimeline, setExpandedTimeline] = useState("");
   const [timelineRows, setTimelineRows] = useState<Record<string, TimelineItem[]>>({});
   const [timelineLoading, setTimelineLoading] = useState("");
+  const [confirmingAssignment, setConfirmingAssignment] = useState(false);
+  const [assigning, setAssigning] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true); setNotice("");
@@ -139,6 +141,24 @@ export function CustomerWorkspace() {
     } finally { setTimelineLoading(""); }
   }
 
+  async function assignUnowned() {
+    setAssigning(true); setNotice("");
+    try {
+      const response = await fetch("/api/admin/customers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "assign-unowned" }),
+      });
+      const body = await response.json();
+      if (!response.ok || !body.ok) throw new Error(body.error || "客户分配失败。");
+      await load();
+      setNotice(body.message);
+      setConfirmingAssignment(false);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "客户分配失败。");
+    } finally { setAssigning(false); }
+  }
+
   return <section className="customer-workspace">
     <header className="cms-page-heading"><div><span>邮箱唯一身份</span><h1>客户管理</h1><p>统一管理客户状态、负责人、标签和下一次跟进时间。</p></div><button className="cms-secondary" onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{loading ? "加载中" : "刷新"}</button></header>
     <div className="customer-summary"><div><UsersRound/><strong>{realRows.length}</strong><span>真实客户</span></div><div><CalendarClock/><strong>{todayCount}</strong><span>今日跟进</span></div><div><CalendarClock/><strong>{overdueCount}</strong><span>已经超期</span></div><div><strong>{realRows.filter((row) => row.status === "won").length}</strong><span>已成交客户</span></div></div>
@@ -150,7 +170,8 @@ export function CustomerWorkspace() {
       <select aria-label="按跟进时间筛选" value={followUpWindow} onChange={(event) => setFollowUpWindow(event.target.value as typeof followUpWindow)}><option value="">全部跟进时间</option><option value="today">今天需要跟进</option><option value="overdue">已经超期</option><option value="due">截至现在待跟进</option></select>
       <label className="customer-test-toggle"><input type="checkbox" checked={showTests} onChange={(event) => setShowTests(event.target.checked)}/>测试数据</label><span>{visible.length} 位客户</span>
     </div>
-    <div className="customer-owner-queues" aria-label="负责人快捷视图"><button className={owner === "Bowie" ? "is-active" : undefined} onClick={() => setOwner(owner === "Bowie" ? "" : "Bowie")}>Bowie <strong>{realRows.filter((row) => row.owner === "Bowie" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className={owner === "Leo" ? "is-active" : undefined} onClick={() => setOwner(owner === "Leo" ? "" : "Leo")}>Leo <strong>{realRows.filter((row) => row.owner === "Leo" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className={owner === "__none" ? "is-active" : undefined} onClick={() => setOwner(owner === "__none" ? "" : "__none")}>未分配 <strong>{realRows.filter((row) => !row.owner && !["won", "inactive"].includes(row.status)).length}</strong></button></div>
+    <div className="customer-owner-queues" aria-label="负责人快捷视图"><button className={owner === "Bowie" ? "is-active" : undefined} onClick={() => setOwner(owner === "Bowie" ? "" : "Bowie")}>Bowie <strong>{realRows.filter((row) => row.owner === "Bowie" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className={owner === "Leo" ? "is-active" : undefined} onClick={() => setOwner(owner === "Leo" ? "" : "Leo")}>Leo <strong>{realRows.filter((row) => row.owner === "Leo" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className={owner === "__none" ? "is-active" : undefined} onClick={() => setOwner(owner === "__none" ? "" : "__none")}>未分配 <strong>{realRows.filter((row) => !row.owner && !["won", "inactive"].includes(row.status)).length}</strong></button><button className="customer-assign-trigger" type="button" disabled={!realRows.some((row) => !row.owner && !["won", "inactive"].includes(row.status)) || assigning} onClick={() => setConfirmingAssignment(true)}><UserPlus size={14}/>均衡分配未分配客户</button></div>
+    {confirmingAssignment ? <div className="customer-bulk-confirm" role="alert"><div><strong>确认均衡分配？</strong><p>仅分配真实、活跃且当前没有负责人的客户；已分配客户、成交客户和测试数据不会改变。</p></div><button type="button" className="cms-secondary" onClick={() => setConfirmingAssignment(false)} disabled={assigning}>取消</button><button type="button" className="cms-primary" onClick={() => void assignUnowned()} disabled={assigning}>{assigning ? "分配中…" : "确认分配"}</button></div> : null}
     {notice ? <p className="cms-notice" role="status">{notice}</p> : null}
     <div className="customer-list">{visible.map((row) => {
       const isDue = currentTime !== null && Boolean(row.nextFollowUpAt) && new Date(row.nextFollowUpAt).getTime() <= currentTime && !["won", "inactive"].includes(row.status);

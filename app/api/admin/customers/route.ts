@@ -1,5 +1,5 @@
 import { requireAdmin, adminErrorResponse } from "@/lib/admin-permissions";
-import { listCrmCustomers, updateCrmCustomer } from "@/lib/customer-service";
+import { assignUnownedCrmCustomers, listCrmCustomers, updateCrmCustomer } from "@/lib/customer-service";
 import { getPrisma } from "@/lib/prisma";
 import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 
@@ -19,6 +19,29 @@ export async function PATCH(request: Request) {
   try {
     const admin = await requireAdmin(true, request);
     const body = await request.json() as Record<string, unknown>;
+    if (body.action === "assign-unowned") {
+      const result = await assignUnownedCrmCustomers();
+      await ensureAuditLogSchema();
+      await getPrisma().auditLog.create({
+        data: {
+          actorId: admin.id,
+          action: "CUSTOMER_BULK_OWNER_ASSIGN",
+          entityType: "customer",
+          after: {
+            assignedCount: result.assignments.length,
+            bowieTotal: result.totals.Bowie,
+            leoTotal: result.totals.Leo,
+          },
+        },
+      });
+      return Response.json({
+        ok: true,
+        assignedCount: result.assignments.length,
+        message: result.assignments.length
+          ? `已均衡分配 ${result.assignments.length} 位客户。`
+          : "当前没有需要分配的客户。",
+      });
+    }
     const id = String(body.id ?? "");
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
       return Response.json({ ok: false, error: "客户编号无效。" }, { status: 400 });

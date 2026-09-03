@@ -753,3 +753,17 @@ test("lead ownership stays synchronized across inquiries, chats, and customer pr
   assert.match(inquiryWorkspace, /客户档案/);
   assert.match(customerWorkspace, /URLSearchParams\(window\.location\.search\)/);
 });
+
+test("customer CRM can safely balance unassigned active customers", async () => {
+  const service = await readProjectFile("lib/customer-service.ts");
+  const route = await readProjectFile("app/api/admin/customers/route.ts");
+  const workspace = await readProjectFile("components/admin/CustomerWorkspace.tsx");
+
+  assert.match(service, /export async function assignUnownedCrmCustomers/);
+  assert.match(service, /owner IS NULL/);
+  assert.match(service, /is_test = false/);
+  assert.match(service, /NOT IN \('won', 'inactive'\)/);
+  assert.match(route, /CUSTOMER_BULK_OWNER_ASSIGN/);
+  assert.match(workspace, /均衡分配未分配客户/);
+  assert.match(workspace, /确认均衡分配/);
+});
