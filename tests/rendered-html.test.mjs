@@ -720,3 +720,26 @@ test("customer CRM exposes a unified timeline and audited owner queues", async (
   assert.match(adminCss, /\.customer-timeline-panel/);
   assert.match(adminCss, /\.customer-owner-queues/);
 });
+
+test("lead ownership stays synchronized across inquiries, chats, and customer profiles", async () => {
+  const customerService = await readProjectFile("lib/customer-service.ts");
+  const inquiryService = await readProjectFile("lib/inquiry-service.ts");
+  const adminService = await readProjectFile("lib/admin-service.ts");
+  const chatRoute = await readProjectFile("app/api/admin/chats/route.ts");
+  const publicChatRoute = await readProjectFile("app/api/chat/route.ts");
+  const inquiryWorkspace = await readProjectFile("components/admin/InquiryWorkspace.tsx");
+  const customerWorkspace = await readProjectFile("components/admin/CustomerWorkspace.tsx");
+
+  assert.match(customerService, /owner = COALESCE\(crm_customers\.owner, EXCLUDED\.owner\)/);
+  assert.match(customerService, /export async function syncCustomerOwner/);
+  assert.match(customerService, /owner: "Bowie" \| "Leo" \| null/);
+  assert.match(customerService, /SELECT DISTINCT ON \(lower\(email\)\)/);
+  assert.match(inquiryService, /owner: assignedTo/);
+  assert.match(publicChatRoute, /owner: assignedTo/);
+  assert.match(adminService, /syncCustomerOwner/);
+  assert.match(adminService, /owner: assignedTo \? assignedTo as SalesAssignee : null/);
+  assert.match(chatRoute, /z\.enum\(\["Bowie", "Leo"\]\)/);
+  assert.match(chatRoute, /syncCustomerOwner/);
+  assert.match(inquiryWorkspace, /客户档案/);
+  assert.match(customerWorkspace, /URLSearchParams\(window\.location\.search\)/);
+});

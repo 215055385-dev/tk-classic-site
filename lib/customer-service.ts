@@ -38,6 +38,7 @@ export type CustomerTimelineItem = {
 };
 
 let schemaReady: Promise<void> | null = null;
+let ownerBackfillReady: Promise<void> | null = null;
 
 export function normalizeCustomerEmail(email: string) {
   return email.trim().toLowerCase();
@@ -103,7 +104,7 @@ async function createCustomerSchema() {
   await sql`CREATE INDEX IF NOT EXISTS crm_customers_follow_up_idx ON crm_customers (next_follow_up_at) WHERE next_follow_up_at IS NOT NULL`;
 }
 
-export async function recordCustomerActivity(input: { name: string; email: string; source: string; sourcePage: string; referrer?: string; activity: CustomerActivity }) {
+export async function recordCustomerActivity(input: { name: string; email: string; source: string; sourcePage: string; referrer?: string; activity: CustomerActivity; owner?: "Bowie" | "Leo" }) {
   await ensureCustomerSchema();
   const sql = getDatabase();
   const email = normalizeCustomerEmail(input.email);
@@ -115,10 +116,10 @@ export async function recordCustomerActivity(input: { name: string; email: strin
   const rows = await sql`
     INSERT INTO crm_customers (
       id, email, email_normalized, name, first_channel, last_channel,
-      first_source_page, last_source_page, inquiry_count, chat_count, is_test
+      first_source_page, last_source_page, inquiry_count, chat_count, is_test, owner
     ) VALUES (
       ${crypto.randomUUID()}, ${email}, ${email}, ${input.name.trim().slice(0, 100)}, ${channel}, ${channel},
-      ${input.sourcePage.slice(0, 500)}, ${input.sourcePage.slice(0, 500)}, ${inquiryIncrement}, ${chatIncrement}, ${isTest}
+      ${input.sourcePage.slice(0, 500)}, ${input.sourcePage.slice(0, 500)}, ${inquiryIncrement}, ${chatIncrement}, ${isTest}, ${input.owner ?? null}
     )
     ON CONFLICT (email_normalized) DO UPDATE SET
       email = EXCLUDED.email,
@@ -128,6 +129,7 @@ export async function recordCustomerActivity(input: { name: string; email: strin
       inquiry_count = crm_customers.inquiry_count + EXCLUDED.inquiry_count,
       chat_count = crm_customers.chat_count + EXCLUDED.chat_count,
       is_test = EXCLUDED.is_test,
+      owner = COALESCE(crm_customers.owner, EXCLUDED.owner),
       last_seen_at = now()
     RETURNING id, email, name, first_channel, last_channel, first_source_page, last_source_page,
       inquiry_count, chat_count, first_seen_at, last_seen_at, is_test, crm_status, owner, tags,
@@ -138,6 +140,8 @@ export async function recordCustomerActivity(input: { name: string; email: strin
 
 export async function listCrmCustomers() {
   await ensureCustomerSchema();
+  if (!ownerBackfillReady) ownerBackfillReady = backfillCustomerOwners().catch((error) => { ownerBackfillReady = null; throw error; });
+  await ownerBackfillReady;
   const sql = getDatabase();
   const rows = await sql`
     SELECT id, email, name, first_channel, last_channel, first_source_page, last_source_page,
@@ -148,6 +152,35 @@ export async function listCrmCustomers() {
     LIMIT 2000
   `;
   return rows.map(mapCustomer);
+}
+
+async function backfillCustomerOwners() {
+  const sql = getDatabase();
+  const tables = await sql`SELECT to_regclass('public.inquiries') IS NOT NULL AS has_inquiries`;
+  if (!tables[0]?.has_inquiries) return;
+  await sql`
+    UPDATE crm_customers AS customer
+    SET owner = latest.assigned_to, updated_at = now()
+    FROM (
+      SELECT DISTINCT ON (lower(email)) lower(email) AS email_normalized, assigned_to
+      FROM inquiries
+      WHERE assigned_to IN ('Bowie', 'Leo')
+      ORDER BY lower(email), created_at DESC
+    ) AS latest
+    WHERE customer.email_normalized = latest.email_normalized
+      AND customer.owner IS NULL
+  `;
+}
+
+export async function syncCustomerOwner(input: { customerId?: string; email: string; owner: "Bowie" | "Leo" | null }) {
+  await ensureCustomerSchema();
+  const sql = getDatabase();
+  await sql`
+    UPDATE crm_customers
+    SET owner = ${input.owner}, updated_at = now()
+    WHERE (${input.customerId ?? null}::uuid IS NOT NULL AND id = ${input.customerId ?? null}::uuid)
+      OR (${input.customerId ?? null}::uuid IS NULL AND email_normalized = ${normalizeCustomerEmail(input.email)})
+  `;
 }
 
 export async function updateCrmCustomer(id: string, input: { status: string; owner: string; tags: string; nextFollowUpAt: string; adminNote: string }) {

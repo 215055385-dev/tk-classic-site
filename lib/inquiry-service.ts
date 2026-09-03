@@ -235,6 +235,7 @@ export async function saveInquiry(inquiry: InquiryPayload, requestMeta: { ip: st
     sourcePage: inquiry.sourcePage,
     referrer: inquiry.referrer,
     activity: "inquiry",
+    owner: assignedTo,
   });
 
   const rows = await sql`

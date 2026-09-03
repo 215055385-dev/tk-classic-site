@@ -3,8 +3,8 @@ import { adminErrorResponse, requireAdmin } from "@/lib/admin-permissions";
 import { getDatabase } from "@/lib/database";
 import { getPrisma } from "@/lib/prisma";
 import { safeChatLang, translateChatText, translationConfigured } from "@/lib/chat-translation";
-import { listCrmCustomers } from "@/lib/customer-service";
-import { getNextLeadAssignee } from "@/lib/lead-assignment";
+import { listCrmCustomers, syncCustomerOwner } from "@/lib/customer-service";
+import { getNextLeadAssignee, isSalesAssignee } from "@/lib/lead-assignment";
 import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 
 export const runtime = "nodejs";
@@ -19,7 +19,7 @@ const patchSchema = z.object({
   messageId: z.string().uuid().optional(),
   sendTranslated: z.boolean().optional(),
   tags: z.array(z.string().trim().min(1).max(40)).max(12).optional(),
-  assignedTo: z.string().trim().max(100).nullable().optional(),
+  assignedTo: z.enum(["Bowie", "Leo"]).nullable().optional(),
   followUpAt: z.string().datetime().nullable().optional(),
   convertToInquiry: z.boolean().optional(),
 }).refine((input) => input.message || input.status || input.markRead || (input.messageId && input.translateTo) || input.tags || input.assignedTo !== undefined || input.followUpAt !== undefined || input.convertToInquiry, "未提供任何更改。");
@@ -61,13 +61,14 @@ export async function PATCH(request: Request) {
     if (input.convertToInquiry) {
       if (conversation.convertedInquiryId) return Response.json({ ok: true, inquiryId: conversation.convertedInquiryId, alreadyConverted: true });
       const inquiryId = crypto.randomUUID();
-      const assignedTo = conversation.assignedTo || await getNextLeadAssignee();
+      const assignedTo = conversation.assignedTo && isSalesAssignee(conversation.assignedTo) ? conversation.assignedTo : await getNextLeadAssignee();
       const transcript = conversation.messages.map((item) => `[${item.sender}] ${item.body}`).join("\n\n").slice(0, 12000);
       const sql = getDatabase();
       await sql`ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS assigned_to text`;
       await sql`INSERT INTO inquiries (id,name,email,company,phone,country,product,accessories,quantity,branding,message,lang,source,source_page,referrer,attachments,status,admin_note,assigned_to,sales_email_sent,customer_email_sent) VALUES (${inquiryId},${conversation.visitorName || "Website chat visitor"},${conversation.visitorEmail || "unknown@chat.local"},${conversation.visitorCompany || ""},${""},${conversation.visitorCountry || ""},${conversation.productModel || "General portable coffee inquiry"},${""},${"To be confirmed in follow-up"},${""},${transcript},${conversation.locale},${"website-chat"},${conversation.sourcePage || "/"},${conversation.referrer || ""},${JSON.stringify([])},${"new"},${`Converted from website chat ${conversation.id}`},${assignedTo},${true},${null})`;
       await db.chatConversation.update({ where: { id: conversation.id }, data: { convertedInquiryId: inquiryId, tags: Array.from(new Set([...conversation.tags, "已转询盘"])) } });
       await db.auditLog.create({ data: { actorId: admin.id, action: "CHAT_CONVERT_INQUIRY", entityType: "chat", entityId: conversation.id, after: { inquiryId } } });
+      if (conversation.visitorEmail) await syncCustomerOwner({ email: conversation.visitorEmail, owner: assignedTo });
       return Response.json({ ok: true, inquiryId });
     }
 
@@ -81,6 +82,7 @@ export async function PATCH(request: Request) {
       } });
       await tx.auditLog.create({ data: { actorId: admin.id, action: input.message ? "CHAT_REPLY" : "CHAT_UPDATE", entityType: "chat", entityId: input.conversationId } });
     });
+    if (input.assignedTo !== undefined && conversation.visitorEmail) await syncCustomerOwner({ email: conversation.visitorEmail, owner: input.assignedTo });
     return Response.json({ ok: true });
   } catch (error) {
     if (error instanceof z.ZodError) return Response.json({ error: error.issues[0]?.message || "聊天内容无效。" }, { status: 400 });

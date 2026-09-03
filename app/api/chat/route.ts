@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     after(async () => {
       await Promise.allSettled([
         notifyNewChat({ id: conversation.id, name: input.name, email: input.email, body: input.message, sourcePage: input.sourcePage }),
-        recordCustomerActivity({ name: input.name, email: input.email, source: input.source, sourcePage: input.sourcePage, referrer: input.referrer, activity: "chat" }),
+        recordCustomerActivity({ name: input.name, email: input.email, source: input.source, sourcePage: input.sourcePage, referrer: input.referrer, activity: "chat", owner: assignedTo }),
       ]);
     });
     return Response.json({ ok: true, conversation: serialize(conversation) }, { status: 201 });

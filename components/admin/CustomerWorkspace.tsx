@@ -60,7 +60,11 @@ export function CustomerWorkspace() {
   }, []);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => void load(), 0);
+    const email = new URLSearchParams(window.location.search).get("email")?.trim() ?? "";
+    const timer = window.setTimeout(() => {
+      if (email) setQuery(email);
+      void load();
+    }, 0);
     return () => window.clearTimeout(timer);
   }, [load]);
 

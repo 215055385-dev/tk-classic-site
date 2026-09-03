@@ -1,5 +1,6 @@
 import { getDatabase } from "@/lib/database";
 import { isSalesAssignee, type SalesAssignee } from "@/lib/lead-assignment";
+import { syncCustomerOwner } from "@/lib/customer-service";
 
 export const inquiryStatuses = ["new", "contacted", "qualified", "sample_discussion", "sample_sent", "quoted", "negotiating", "won", "closed"] as const;
 export type InquiryStatus = (typeof inquiryStatuses)[number];
@@ -347,10 +348,15 @@ export async function updateInquiryStatus(id: string, status: string, adminNote:
   if (!inquiryStatuses.includes(status as InquiryStatus)) throw new Error("Invalid inquiry status");
   if (assignedTo && !isSalesAssignee(assignedTo)) throw new Error("Invalid inquiry assignee");
   const sql = getDatabase();
-  const previous = await sql`SELECT status, product FROM inquiries WHERE id = ${id}::uuid LIMIT 1`;
+  const previous = await sql`SELECT status, product, customer_id, email FROM inquiries WHERE id = ${id}::uuid LIMIT 1`;
   if (!previous[0]) throw new Error("Inquiry not found");
   const rows = await sql`UPDATE inquiries SET status = ${status}, admin_note = ${adminNote.slice(0, 2000)}, assigned_to = ${assignedTo || null} WHERE id = ${id}::uuid RETURNING id, status, admin_note, assigned_to`;
   if (!rows[0]) throw new Error("Inquiry not found");
+  await syncCustomerOwner({
+    customerId: previous[0].customer_id ? String(previous[0].customer_id) : undefined,
+    email: String(previous[0].email ?? ""),
+    owner: assignedTo ? assignedTo as SalesAssignee : null,
+  });
   if (String(previous[0].status ?? "new") !== status) {
     const eventName: ConversionEventName | undefined = status === "qualified" ? "qualify_lead"
       : (["sample_discussion", "sample_sent", "quoted", "negotiating"] as string[]).includes(status) ? "working_lead"
