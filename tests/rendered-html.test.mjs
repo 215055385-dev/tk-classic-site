@@ -17,6 +17,16 @@ test("project documentation describes the TK Classic website", async () => {
   assert.doesNotMatch(readme, /Your site is taking shape/i);
 });
 
+test("brand favicon replaces the legacy blue grid with the TK coffee mark", async () => {
+  const favicon = await readProjectFile("public/favicon.svg");
+  const manifest = await readProjectFile("app/manifest.ts");
+
+  assert.match(favicon, />TK<\/text>/);
+  assert.match(favicon, /#FF7A32/);
+  assert.doesNotMatch(favicon, /#0C79D8|#2E9EFF|#68C4FF/);
+  assert.match(manifest, /theme_color: "#111817"/);
+});
+
 test("core buyer-facing pages and downloads exist", async () => {
   await Promise.all([
     access(new URL("app/page.tsx", root)),
