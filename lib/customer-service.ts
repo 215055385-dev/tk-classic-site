@@ -92,6 +92,7 @@ async function createCustomerSchema() {
       crm_status text NOT NULL DEFAULT 'new',
       owner text,
       owner_initialized boolean NOT NULL DEFAULT true,
+      owner_replicas_initialized boolean NOT NULL DEFAULT true,
       owner_sync_pending boolean NOT NULL DEFAULT false,
       owner_sync_error text NOT NULL DEFAULT '',
       tags text NOT NULL DEFAULT '',
@@ -106,6 +107,7 @@ async function createCustomerSchema() {
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS crm_status text NOT NULL DEFAULT 'new'`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner text`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner_initialized boolean NOT NULL DEFAULT false`;
+  await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner_replicas_initialized boolean NOT NULL DEFAULT false`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner_sync_pending boolean NOT NULL DEFAULT false`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner_sync_error text NOT NULL DEFAULT ''`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS tags text NOT NULL DEFAULT ''`;
@@ -127,10 +129,10 @@ export async function recordCustomerActivity(input: { name: string; email: strin
   const rows = await sql`
     INSERT INTO crm_customers (
       id, email, email_normalized, name, first_channel, last_channel,
-      first_source_page, last_source_page, inquiry_count, chat_count, is_test, owner, owner_initialized
+      first_source_page, last_source_page, inquiry_count, chat_count, is_test, owner, owner_initialized, owner_replicas_initialized
     ) VALUES (
       ${crypto.randomUUID()}, ${email}, ${email}, ${input.name.trim().slice(0, 100)}, ${channel}, ${channel},
-      ${input.sourcePage.slice(0, 500)}, ${input.sourcePage.slice(0, 500)}, ${inquiryIncrement}, ${chatIncrement}, ${isTest}, ${input.owner ?? null}, true
+      ${input.sourcePage.slice(0, 500)}, ${input.sourcePage.slice(0, 500)}, ${inquiryIncrement}, ${chatIncrement}, ${isTest}, ${input.owner ?? null}, true, true
     )
     ON CONFLICT (email_normalized) DO UPDATE SET
       email = EXCLUDED.email,
@@ -142,6 +144,7 @@ export async function recordCustomerActivity(input: { name: string; email: strin
       is_test = EXCLUDED.is_test,
       owner = COALESCE(crm_customers.owner, EXCLUDED.owner),
       owner_initialized = true,
+      owner_replicas_initialized = true,
       last_seen_at = now()
     RETURNING id, email, name, first_channel, last_channel, first_source_page, last_source_page,
       inquiry_count, chat_count, first_seen_at, last_seen_at, is_test, crm_status, owner, tags,
@@ -153,6 +156,7 @@ export async function recordCustomerActivity(input: { name: string; email: strin
 export async function listCrmCustomers() {
   await ensureCustomerSchema();
   await ensureCustomerOwnerBackfill();
+  await initializeCustomerOwnerReplicas();
   await retryPendingCustomerOwnerSyncs();
   const sql = getDatabase();
   const rows = await sql`
@@ -221,6 +225,15 @@ async function retryPendingCustomerOwnerSyncs() {
     id: String(row.id), email: String(row.email_normalized),
     owner: ["Bowie", "Leo"].includes(String(row.owner ?? "")) ? String(row.owner) as "Bowie" | "Leo" : null,
   })));
+}
+
+async function initializeCustomerOwnerReplicas() {
+  const sql = getDatabase();
+  await sql`
+    UPDATE crm_customers
+    SET owner_replicas_initialized = true, owner_sync_pending = true, owner_sync_error = ''
+    WHERE owner_replicas_initialized = false
+  `;
 }
 
 export async function updateCrmCustomer(id: string, input: { status: string; owner: string; tags: string; nextFollowUpAt: string; adminNote: string }) {

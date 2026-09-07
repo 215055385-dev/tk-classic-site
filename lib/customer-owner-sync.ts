@@ -3,6 +3,7 @@ WITH target AS (
   UPDATE crm_customers
   SET owner = $3::text,
       owner_initialized = true,
+      owner_replicas_initialized = true,
       owner_sync_pending = true,
       owner_sync_error = '',
       updated_at = now()

@@ -10,7 +10,7 @@ const sql = neon(process.env.DATABASE_URL);
 // Every table is session-local and removed at commit. No public CRM rows are touched.
 for (const [bowie, leo] of [[0, 0], [0, 3], [3, 0]]) {
   const results = await sql.transaction([
-    sql`CREATE TEMP TABLE crm_customers (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email_normalized text DEFAULT gen_random_uuid()::text || '@example.com', owner text, owner_initialized boolean DEFAULT true, owner_sync_pending boolean DEFAULT false, owner_sync_error text DEFAULT '', is_test boolean DEFAULT false, crm_status text DEFAULT 'new', last_seen_at timestamptz DEFAULT now(), updated_at timestamptz, next_follow_up_at timestamptz) ON COMMIT DROP`,
+    sql`CREATE TEMP TABLE crm_customers (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email_normalized text DEFAULT gen_random_uuid()::text || '@example.com', owner text, owner_initialized boolean DEFAULT true, owner_replicas_initialized boolean DEFAULT true, owner_sync_pending boolean DEFAULT false, owner_sync_error text DEFAULT '', is_test boolean DEFAULT false, crm_status text DEFAULT 'new', last_seen_at timestamptz DEFAULT now(), updated_at timestamptz, next_follow_up_at timestamptz) ON COMMIT DROP`,
     sql`CREATE TEMP TABLE audit_logs (id uuid, actor_id uuid, action text, entity_type text, entity_id text, before jsonb, after jsonb) ON COMMIT DROP`,
     sql`CREATE TEMP TABLE inquiries (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email text, assigned_to text) ON COMMIT DROP`,
     sql`INSERT INTO crm_customers (owner) SELECT 'Bowie' FROM generate_series(1, ${bowie})`,
@@ -46,7 +46,7 @@ assert.equal(backfilled.get('unknown@example.com').owner, null, 'unknown histori
 assert.ok([...backfilled.values()].every((row) => row.owner_initialized), 'all legacy rows must be finalized once');
 
 const syncResults = await sql.transaction([
-  sql`CREATE TEMP TABLE crm_customers (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email_normalized text, owner text, owner_initialized boolean DEFAULT true, owner_sync_pending boolean DEFAULT false, owner_sync_error text DEFAULT '', updated_at timestamptz DEFAULT now()) ON COMMIT DROP`,
+  sql`CREATE TEMP TABLE crm_customers (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email_normalized text, owner text, owner_initialized boolean DEFAULT true, owner_replicas_initialized boolean DEFAULT true, owner_sync_pending boolean DEFAULT false, owner_sync_error text DEFAULT '', updated_at timestamptz DEFAULT now()) ON COMMIT DROP`,
   sql`CREATE TEMP TABLE inquiries (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email text, assigned_to text) ON COMMIT DROP`,
   sql`INSERT INTO crm_customers (id, email_normalized, owner) VALUES ('00000000-0000-4000-8000-000000000010', 'buyer@example.com', 'Bowie')`,
   sql`INSERT INTO inquiries (email, assigned_to) VALUES ('BUYER@example.com', 'Bowie'), ('other@example.com', 'Leo')`,
