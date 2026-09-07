@@ -743,7 +743,7 @@ test("lead ownership stays synchronized across inquiries, chats, and customer pr
   assert.match(customerService, /owner = COALESCE\(crm_customers\.owner, EXCLUDED\.owner\)/);
   assert.match(customerService, /export async function syncCustomerOwner/);
   assert.match(customerService, /owner: "Bowie" \| "Leo" \| null/);
-  assert.match(customerService, /SELECT DISTINCT ON \(lower\(email\)\)/);
+  assert.match(customerService, /customerOwnerBackfillSql/);
   assert.match(inquiryService, /owner: assignedTo/);
   assert.match(publicChatRoute, /owner: assignedTo/);
   assert.match(adminService, /syncCustomerOwner/);
@@ -762,9 +762,12 @@ test("customer CRM can safely balance unassigned active customers", async () => 
   assert.match(service, /export async function assignUnownedCrmCustomers/);
   assert.match(route, /assignUnownedCrmCustomers\(admin.id\)/);
   const assignment = await readProjectFile("lib/customer-assignment.ts");
+  const backfill = await readProjectFile("lib/customer-owner-backfill.ts");
   assert.match(assignment, /owner IS NULL/);
   assert.match(assignment, /is_test = false/);
   assert.match(assignment, /NOT IN \('won', 'inactive'\)/);
+  assert.match(backfill, /owner_initialized = false/);
+  assert.match(backfill, /ORDER BY inquiry\.created_at DESC/);
   assert.match(assignment, /CUSTOMER_BULK_OWNER_ASSIGN/);
   assert.match(workspace, /均衡分配未分配客户/);
   assert.match(workspace, /确认均衡分配/);

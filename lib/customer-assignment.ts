@@ -20,7 +20,7 @@ WITH counts AS (
     ELSE 'Leo' END AS owner
   FROM ranked CROSS JOIN counts
 ), updated AS (
-  UPDATE crm_customers c SET owner = a.owner, updated_at = now()
+  UPDATE crm_customers c SET owner = a.owner, owner_initialized = true, updated_at = now()
   FROM assigned a WHERE c.id = a.id AND c.owner IS NULL AND c.is_test = false
     AND COALESCE(c.crm_status, 'new') NOT IN ('won', 'inactive')
   RETURNING c.id, c.owner, c.crm_status, c.next_follow_up_at

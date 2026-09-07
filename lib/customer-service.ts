@@ -1,6 +1,7 @@
 import { getDatabase } from "@/lib/database";
 import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 import { customerAssignmentSql } from "@/lib/customer-assignment";
+import { customerOwnerBackfillSql } from "@/lib/customer-owner-backfill";
 
 export type CustomerActivity = "inquiry" | "chat";
 export const customerStatuses = ["new", "contacted", "follow_up", "qualified", "won", "inactive"] as const;
@@ -87,6 +88,7 @@ async function createCustomerSchema() {
       is_test boolean NOT NULL DEFAULT false,
       crm_status text NOT NULL DEFAULT 'new',
       owner text,
+      owner_initialized boolean NOT NULL DEFAULT true,
       tags text NOT NULL DEFAULT '',
       next_follow_up_at timestamptz,
       admin_note text NOT NULL DEFAULT '',
@@ -98,6 +100,7 @@ async function createCustomerSchema() {
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS is_test boolean NOT NULL DEFAULT false`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS crm_status text NOT NULL DEFAULT 'new'`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner text`;
+  await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner_initialized boolean NOT NULL DEFAULT false`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS tags text NOT NULL DEFAULT ''`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS next_follow_up_at timestamptz`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS admin_note text NOT NULL DEFAULT ''`;
@@ -117,10 +120,10 @@ export async function recordCustomerActivity(input: { name: string; email: strin
   const rows = await sql`
     INSERT INTO crm_customers (
       id, email, email_normalized, name, first_channel, last_channel,
-      first_source_page, last_source_page, inquiry_count, chat_count, is_test, owner
+      first_source_page, last_source_page, inquiry_count, chat_count, is_test, owner, owner_initialized
     ) VALUES (
       ${crypto.randomUUID()}, ${email}, ${email}, ${input.name.trim().slice(0, 100)}, ${channel}, ${channel},
-      ${input.sourcePage.slice(0, 500)}, ${input.sourcePage.slice(0, 500)}, ${inquiryIncrement}, ${chatIncrement}, ${isTest}, ${input.owner ?? null}
+      ${input.sourcePage.slice(0, 500)}, ${input.sourcePage.slice(0, 500)}, ${inquiryIncrement}, ${chatIncrement}, ${isTest}, ${input.owner ?? null}, true
     )
     ON CONFLICT (email_normalized) DO UPDATE SET
       email = EXCLUDED.email,
@@ -131,6 +134,7 @@ export async function recordCustomerActivity(input: { name: string; email: strin
       chat_count = crm_customers.chat_count + EXCLUDED.chat_count,
       is_test = EXCLUDED.is_test,
       owner = COALESCE(crm_customers.owner, EXCLUDED.owner),
+      owner_initialized = true,
       last_seen_at = now()
     RETURNING id, email, name, first_channel, last_channel, first_source_page, last_source_page,
       inquiry_count, chat_count, first_seen_at, last_seen_at, is_test, crm_status, owner, tags,
@@ -141,8 +145,7 @@ export async function recordCustomerActivity(input: { name: string; email: strin
 
 export async function listCrmCustomers() {
   await ensureCustomerSchema();
-  if (!ownerBackfillReady) ownerBackfillReady = backfillCustomerOwners().catch((error) => { ownerBackfillReady = null; throw error; });
-  await ownerBackfillReady;
+  await ensureCustomerOwnerBackfill();
   const sql = getDatabase();
   const rows = await sql`
     SELECT id, email, name, first_channel, last_channel, first_source_page, last_source_page,
@@ -155,22 +158,17 @@ export async function listCrmCustomers() {
   return rows.map(mapCustomer);
 }
 
+async function ensureCustomerOwnerBackfill() {
+  if (!ownerBackfillReady) ownerBackfillReady = backfillCustomerOwners().catch((error) => { ownerBackfillReady = null; throw error; });
+  return ownerBackfillReady;
+}
+
 async function backfillCustomerOwners() {
   const sql = getDatabase();
   const tables = await sql`SELECT to_regclass('public.inquiries') IS NOT NULL AS has_inquiries`;
   if (!tables[0]?.has_inquiries) return;
-  await sql`
-    UPDATE crm_customers AS customer
-    SET owner = latest.assigned_to, updated_at = now()
-    FROM (
-      SELECT DISTINCT ON (lower(email)) lower(email) AS email_normalized, assigned_to
-      FROM inquiries
-      WHERE assigned_to IN ('Bowie', 'Leo')
-      ORDER BY lower(email), created_at DESC
-    ) AS latest
-    WHERE customer.email_normalized = latest.email_normalized
-      AND customer.owner IS NULL
-  `;
+  await sql.query(customerOwnerBackfillSql);
+  await sql`ALTER TABLE crm_customers ALTER COLUMN owner_initialized SET DEFAULT true`;
 }
 
 export async function syncCustomerOwner(input: { customerId?: string; email: string; owner: "Bowie" | "Leo" | null }) {
@@ -178,7 +176,7 @@ export async function syncCustomerOwner(input: { customerId?: string; email: str
   const sql = getDatabase();
   await sql`
     UPDATE crm_customers
-    SET owner = ${input.owner}, updated_at = now()
+    SET owner = ${input.owner}, owner_initialized = true, updated_at = now()
     WHERE (${input.customerId ?? null}::uuid IS NOT NULL AND id = ${input.customerId ?? null}::uuid)
       OR (${input.customerId ?? null}::uuid IS NULL AND email_normalized = ${normalizeCustomerEmail(input.email)})
   `;
@@ -195,6 +193,7 @@ export async function updateCrmCustomer(id: string, input: { status: string; own
     UPDATE crm_customers
     SET crm_status = ${input.status},
       owner = ${input.owner || null},
+      owner_initialized = true,
       tags = ${input.tags.trim().slice(0, 500)},
       next_follow_up_at = ${nextFollowUpAt ? nextFollowUpAt.toISOString() : null}::timestamptz,
       admin_note = ${input.adminNote.trim().slice(0, 2000)},
@@ -210,6 +209,7 @@ export async function updateCrmCustomer(id: string, input: { status: string; own
 
 export async function assignUnownedCrmCustomers(actorId: string) {
   await Promise.all([ensureCustomerSchema(), ensureAuditLogSchema()]);
+  await ensureCustomerOwnerBackfill();
   const sql = getDatabase();
   // Separate statements give a fresh READ COMMITTED snapshot after the lock wait.
   const results = await sql.transaction([
