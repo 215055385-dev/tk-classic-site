@@ -760,10 +760,12 @@ test("customer CRM can safely balance unassigned active customers", async () => 
   const workspace = await readProjectFile("components/admin/CustomerWorkspace.tsx");
 
   assert.match(service, /export async function assignUnownedCrmCustomers/);
-  assert.match(service, /owner IS NULL/);
-  assert.match(service, /is_test = false/);
-  assert.match(service, /NOT IN \('won', 'inactive'\)/);
-  assert.match(route, /CUSTOMER_BULK_OWNER_ASSIGN/);
+  assert.match(route, /assignUnownedCrmCustomers\(admin.id\)/);
+  const assignment = await readProjectFile("lib/customer-assignment.ts");
+  assert.match(assignment, /owner IS NULL/);
+  assert.match(assignment, /is_test = false/);
+  assert.match(assignment, /NOT IN \('won', 'inactive'\)/);
+  assert.match(assignment, /CUSTOMER_BULK_OWNER_ASSIGN/);
   assert.match(workspace, /均衡分配未分配客户/);
   assert.match(workspace, /确认均衡分配/);
 });

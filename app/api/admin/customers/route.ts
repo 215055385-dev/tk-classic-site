@@ -20,20 +20,7 @@ export async function PATCH(request: Request) {
     const admin = await requireAdmin(true, request);
     const body = await request.json() as Record<string, unknown>;
     if (body.action === "assign-unowned") {
-      const result = await assignUnownedCrmCustomers();
-      await ensureAuditLogSchema();
-      await getPrisma().auditLog.create({
-        data: {
-          actorId: admin.id,
-          action: "CUSTOMER_BULK_OWNER_ASSIGN",
-          entityType: "customer",
-          after: {
-            assignedCount: result.assignments.length,
-            bowieTotal: result.totals.Bowie,
-            leoTotal: result.totals.Leo,
-          },
-        },
-      });
+      const result = await assignUnownedCrmCustomers(admin.id);
       return Response.json({
         ok: true,
         assignedCount: result.assignments.length,

@@ -31,13 +31,21 @@ const publicationDate = "2026-08-04";
 const sourcingGuides: BuyerGuide[] = [
   {
     slug: "portable-espresso-machine-private-label-buying-guide",
-    title: "How to source portable espresso machines for a private label program",
+    title: "Private label portable espresso: a sourcing guide",
     description:
-      "A practical sourcing framework for comparing portable espresso models, approving samples, planning packaging and preparing a clear OEM quotation brief.",
+      "Source private label portable espresso machines for a US wholesale program: compare models, approve samples, verify documents and define the OEM order brief.",
     eyebrow: "Private label sourcing guide",
     readTime: "8 minute read",
     publishedAt: publicationDate,
-    updatedAt: publicationDate,
+    updatedAt: "2026-09-07",
+    directAnswerTitle: "How should a US buyer start a private label project?",
+    directAnswer: "Start with the destination market and coffee format, choose a specific machine model, then approve a paid sample and its accessory list. Record logo artwork, packaging, requested compliance documents and commercial terms in one written brief before production. A visual customization preview is not a production approval.",
+    keywords: ["private label portable espresso machine", "portable coffee machine OEM sourcing", "US private label coffee machine supplier"],
+    relatedLinks: [
+      { href: "/wholesale/usa", label: "US wholesale sourcing: DQ-001 and DQ-010" },
+      { href: "/resources/portable-espresso-machine-sample-approval-checklist", label: "Build a sample approval record" },
+      { href: "/resources/portable-espresso-machine-rfq-checklist-us-importers", label: "Prepare a complete quotation request" },
+    ],
     heroImage: "/optimized/product-scenes/dq-002-1.webp",
     heroAlt: "TK Classic DQ-002 portable espresso machine range in official product photography",
     keyTakeaways: [
@@ -50,7 +58,7 @@ const sourcingGuides: BuyerGuide[] = [
       {
         title: "1. Start with the retail and use scenario",
         paragraphs: [
-          "A wholesale buyer should first define where the machine will be sold and how the end customer will use it. A compact ecommerce launch, a premium gift set and a European retail program can require different cup formats, adapters, packaging and supporting documents.",
+          "A US importer should first define the sales channel and intended use. A wholesale assortment, a premium gift set and an ecommerce launch can require different adapters, packaging and supporting documents. Begin with a buying brief, not a logo mockup.",
           "Write the target market, sales channel, preferred coffee format and intended bundle into the project brief. This prevents a visually attractive model from being selected before its configuration is checked against the actual program.",
         ],
         bullets: [
@@ -101,6 +109,18 @@ const sourcingGuides: BuyerGuide[] = [
         question: "When are certification documents supplied?",
         answer: "Certification and test documents are provided after inquiry according to the model and destination market.",
       },
+      {
+        question: "How should I shortlist DQ-001 and DQ-010?",
+        answer: "DQ-001 is the value-focused option with capsule and ground-coffee adapters. DQ-010 targets a premium program with an LCD display, fast charging and N-series, Dolce Gusto and ground-coffee options, plus a separate drip method. Compare the exact model pages and sample contents before choosing.",
+      },
+      {
+        question: "Is the private label sample free?",
+        answer: "Samples are charged. The sample fee can be refunded or credited against a bulk order under the agreed order terms. Confirm the fee treatment in writing; do not assume that freight or other costs are included.",
+      },
+      {
+        question: "Does a digital logo preview approve the finished product?",
+        answer: "No. A preview communicates your design request. Confirm the logo method, position, color, packaging artwork and physical sample with the factory before approving production.",
+      },
     ],
     showModelTable: true,
   },
@@ -112,7 +132,15 @@ const sourcingGuides: BuyerGuide[] = [
     eyebrow: "Technical buying checklist",
     readTime: "7 minute read",
     publishedAt: publicationDate,
-    updatedAt: publicationDate,
+    updatedAt: "2026-09-07",
+    directAnswerTitle: "Is 25 bar enough to choose a wholesale machine?",
+    directAnswer: "No. Treat the published pressure figure as one specification, not a guarantee of espresso quality or constant pressure at the coffee bed. Check the exact model, coffee adapters, charging instructions and heating workflow, then record sample results under stated conditions before approving an order.",
+    keywords: ["25 bar portable coffee machine checklist", "portable espresso machine specification verification"],
+    relatedLinks: [
+      { href: "/products/dq-001", label: "Check the DQ-001 specification" },
+      { href: "/products/dq-010", label: "Check the DQ-010 specification" },
+      { href: "/resources/portable-espresso-machine-sample-approval-checklist", label: "Record a repeatable sample review" },
+    ],
     heroImage: "/optimized/product-scenes/dq-010-1.webp",
     heroAlt: "Official TK Classic DQ-010 portable coffee machine product image",
     keyTakeaways: [
@@ -166,8 +194,20 @@ const sourcingGuides: BuyerGuide[] = [
         answer: "No. Use the published model page and approved sample because similar product shapes can have different specifications and included components.",
       },
       {
-        question: "Which documents should a European buyer request?",
-        answer: "Request the available model- and market-specific compliance set. The current evidence library includes CE, RoHS, FCC, UKCA, LFGB, FDA, ISO 9001 and EU conformity documents.",
+        question: "Which documents should a US buyer request?",
+        answer: "Ask for the available reports for the exact model and intended US sales channel. Review the report scope, named applicant, model coverage and dates. A certificate thumbnail or an EU document alone does not establish that all US requirements are met.",
+      },
+      {
+        question: "Does a 25 bar listing describe pressure throughout brewing?",
+        answer: "The published figure alone does not describe pressure throughout a brew. Ask what the figure measures and request the applicable test conditions; do not interpret it as a pressure curve or a guarantee of taste.",
+      },
+      {
+        question: "What should I record when checking heating time?",
+        answer: "Record the model, water volume, starting water temperature, battery charge and operating sequence. Keep these conditions consistent when comparing samples, and use the model instructions rather than assuming every run matches a headline time.",
+      },
+      {
+        question: "Are all DQ-010 coffee formats the same brewing method?",
+        answer: "No. The DQ-010 manual lists N-series capsules, Dolce Gusto capsules and ground coffee, plus a separate portable drip method. Identify each adapter and method in the sample checklist instead of treating the drip accessory as capsule extraction.",
       },
     ],
     showModelTable: true,

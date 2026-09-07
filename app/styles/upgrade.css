@@ -857,7 +857,7 @@ html {
 .buyer-guide-hero .eyebrow { display: block; margin-bottom: 14px; }
 .buyer-guide-hero h1 { max-width: 18ch; margin: 14px 0 20px; color: var(--lava-espresso); font-size: clamp(42px, 7vw, 86px); line-height: 0.96; letter-spacing: -0.065em; }
 .buyer-guide-deck { max-width: 780px; color: #725d51; font-size: clamp(18px, 2vw, 24px); line-height: 1.55; }
-.buyer-guide-meta { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 28px; color: var(--lava-cocoa); font-size: 13px; }
+.buyer-guide-meta { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 28px; color: #b9c7ce; font-size: 13px; }
 .buyer-guide-meta span { display: inline-flex; align-items: center; gap: 7px; }
 
 .buyer-guide-visual { max-width: 1040px; padding: clamp(12px, 2vw, 22px); background: var(--lava-espresso); overflow: hidden; }

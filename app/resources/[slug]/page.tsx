@@ -118,6 +118,7 @@ export default async function BuyerGuidePage({ params }: GuidePageProps) {
           <p className="buyer-guide-deck">{guide.description}</p>
           <div className="buyer-guide-meta" aria-label="Article information">
             <span><CalendarDays size={16} aria-hidden="true" /><time dateTime={guide.publishedAt}>Published {publishedLabel}</time></span>
+            {guide.updatedAt !== guide.publishedAt ? <span><time dateTime={guide.updatedAt}>Updated {new Date(`${guide.updatedAt}T00:00:00Z`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" })}</time></span> : null}
             <span><Clock3 size={16} aria-hidden="true" />{guide.readTime}</span>
             <span><BookOpenCheck size={16} aria-hidden="true" />Reviewed by TK Classic</span>
           </div>
