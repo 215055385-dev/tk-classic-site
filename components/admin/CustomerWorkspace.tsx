@@ -8,7 +8,7 @@ type Customer = {
   id: string; name: string; email: string; firstChannel: string; lastChannel: string;
   firstSourcePage: string; lastSourcePage: string; inquiryCount: number; chatCount: number;
   firstSeenAt: string; lastSeenAt: string; isTest: boolean; status: CustomerStatus;
-  owner: "Bowie" | "Leo" | ""; tags: string; nextFollowUpAt: string; adminNote: string; updatedAt: string;
+  owner: "Bowie" | "Leo" | ""; tags: string; nextFollowUpAt: string; adminNote: string; updatedAt: string; ownerSyncPending: boolean;
 };
 type CustomerDraft = Pick<Customer, "status" | "owner" | "tags" | "adminNote"> & { nextFollowUpAt: string };
 type TimelineItem = { id: string; type: "inquiry" | "chat" | "customer_update"; title: string; detail: string; occurredAt: string; product: string; sourcePage: string; actor: string };
@@ -177,7 +177,7 @@ export function CustomerWorkspace() {
       const isDue = currentTime !== null && Boolean(row.nextFollowUpAt) && new Date(row.nextFollowUpAt).getTime() <= currentTime && !["won", "inactive"].includes(row.status);
       return <article className={editingId === row.id ? "is-editing" : undefined} key={row.id}>
         <div className="customer-identity"><span>{(row.name || row.email).slice(0, 1).toUpperCase()}</span><div><h2>{row.name || "未填写姓名"}{row.isTest ? <small>测试数据</small> : null}</h2><a href={`mailto:${row.email.replace(/[\r\n]/g, "")}`}><Mail size={14}/>{row.email}</a>{row.tags ? <p className="customer-tags"><Tags size={12}/>{row.tags}</p> : null}</div></div>
-        <div><small>客户状态</small><span className={`customer-crm-status is-${row.status}`}>{statusLabel(row.status)}</span><p><UserRoundCheck size={12}/>{row.owner || "未分配负责人"}</p></div>
+        <div><small>客户状态</small><span className={`customer-crm-status is-${row.status}`}>{statusLabel(row.status)}</span><p><UserRoundCheck size={12}/>{row.owner || "未分配负责人"}</p>{row.ownerSyncPending ? <em className="customer-owner-sync-pending">负责人同步待重试</em> : null}</div>
         <div><small>业务记录</small><strong>{row.inquiryCount} 次询盘 · {row.chatCount} 次聊天</strong><p>{channelLabel(row.lastChannel)} · {row.inquiryCount + row.chatCount > 1 ? "回访客户" : "新客户"}</p></div>
         <div><small>下次跟进</small><strong className={isDue ? "is-due" : undefined}>{row.nextFollowUpAt ? formatDate(row.nextFollowUpAt) : "尚未安排"}</strong><p>最近互动：{formatDate(row.lastSeenAt)}</p></div>
         <div className="customer-row-actions"><button type="button" onClick={() => void toggleTimeline(row)}><Activity size={14}/>{timelineLoading === row.id ? "加载中" : expandedTimeline === row.id ? "收起记录" : "客户记录"}<ChevronDown className={expandedTimeline === row.id ? "is-open" : undefined} size={13}/></button><button type="button" onClick={() => editingId === row.id ? (setEditingId(""), setDraft(null)) : openEditor(row)}>{editingId === row.id ? <X size={14}/> : <Pencil size={14}/>} {editingId === row.id ? "取消编辑" : "管理客户"}</button></div>

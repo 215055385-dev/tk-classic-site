@@ -2,6 +2,8 @@ import { getDatabase } from "@/lib/database";
 import { ensureAuditLogSchema } from "@/lib/audit-log-service";
 import { customerAssignmentSql } from "@/lib/customer-assignment";
 import { customerOwnerBackfillSql } from "@/lib/customer-owner-backfill";
+import { customerOwnerSyncSql } from "@/lib/customer-owner-sync";
+import { getPrisma } from "@/lib/prisma";
 
 export type CustomerActivity = "inquiry" | "chat";
 export const customerStatuses = ["new", "contacted", "follow_up", "qualified", "won", "inactive"] as const;
@@ -26,6 +28,7 @@ export type CrmCustomer = {
   nextFollowUpAt: string;
   adminNote: string;
   updatedAt: string;
+  ownerSyncPending: boolean;
 };
 
 export type CustomerTimelineItem = {
@@ -89,6 +92,8 @@ async function createCustomerSchema() {
       crm_status text NOT NULL DEFAULT 'new',
       owner text,
       owner_initialized boolean NOT NULL DEFAULT true,
+      owner_sync_pending boolean NOT NULL DEFAULT false,
+      owner_sync_error text NOT NULL DEFAULT '',
       tags text NOT NULL DEFAULT '',
       next_follow_up_at timestamptz,
       admin_note text NOT NULL DEFAULT '',
@@ -101,6 +106,8 @@ async function createCustomerSchema() {
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS crm_status text NOT NULL DEFAULT 'new'`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner text`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner_initialized boolean NOT NULL DEFAULT false`;
+  await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner_sync_pending boolean NOT NULL DEFAULT false`;
+  await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS owner_sync_error text NOT NULL DEFAULT ''`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS tags text NOT NULL DEFAULT ''`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS next_follow_up_at timestamptz`;
   await sql`ALTER TABLE crm_customers ADD COLUMN IF NOT EXISTS admin_note text NOT NULL DEFAULT ''`;
@@ -138,7 +145,7 @@ export async function recordCustomerActivity(input: { name: string; email: strin
       last_seen_at = now()
     RETURNING id, email, name, first_channel, last_channel, first_source_page, last_source_page,
       inquiry_count, chat_count, first_seen_at, last_seen_at, is_test, crm_status, owner, tags,
-      next_follow_up_at, admin_note, updated_at
+      next_follow_up_at, admin_note, updated_at, owner_sync_pending
   `;
   return mapCustomer(rows[0]);
 }
@@ -146,11 +153,12 @@ export async function recordCustomerActivity(input: { name: string; email: strin
 export async function listCrmCustomers() {
   await ensureCustomerSchema();
   await ensureCustomerOwnerBackfill();
+  await retryPendingCustomerOwnerSyncs();
   const sql = getDatabase();
   const rows = await sql`
     SELECT id, email, name, first_channel, last_channel, first_source_page, last_source_page,
       inquiry_count, chat_count, first_seen_at, last_seen_at, is_test, crm_status, owner, tags,
-      next_follow_up_at, admin_note, updated_at
+      next_follow_up_at, admin_note, updated_at, owner_sync_pending
     FROM crm_customers
     ORDER BY last_seen_at DESC
     LIMIT 2000
@@ -174,12 +182,45 @@ async function backfillCustomerOwners() {
 export async function syncCustomerOwner(input: { customerId?: string; email: string; owner: "Bowie" | "Leo" | null }) {
   await ensureCustomerSchema();
   const sql = getDatabase();
-  await sql`
-    UPDATE crm_customers
-    SET owner = ${input.owner}, owner_initialized = true, updated_at = now()
-    WHERE (${input.customerId ?? null}::uuid IS NOT NULL AND id = ${input.customerId ?? null}::uuid)
-      OR (${input.customerId ?? null}::uuid IS NULL AND email_normalized = ${normalizeCustomerEmail(input.email)})
-  `;
+  const rows = await sql.query(customerOwnerSyncSql, [input.customerId ?? null, normalizeCustomerEmail(input.email), input.owner]);
+  if (!rows[0]) return { pending: false };
+  return syncChatOwnerReplica({ id: String(rows[0].id), email: String(rows[0].email_normalized), owner: input.owner });
+}
+
+async function syncChatOwnerReplica(input: { id: string; email: string; owner: "Bowie" | "Leo" | null }) {
+  const sql = getDatabase();
+  let desired = input;
+  try {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      await getPrisma().chatConversation.updateMany({
+        where: { visitorEmail: { equals: desired.email, mode: "insensitive" } },
+        data: { assignedTo: desired.owner },
+      });
+      const confirmed = await sql`UPDATE crm_customers SET owner_sync_pending = false, owner_sync_error = '' WHERE id = ${desired.id}::uuid AND owner IS NOT DISTINCT FROM ${desired.owner} RETURNING id`;
+      if (confirmed[0]) return { pending: false };
+      const latest = await sql`SELECT id, email_normalized, owner FROM crm_customers WHERE id = ${desired.id}::uuid LIMIT 1`;
+      if (!latest[0]) return { pending: false };
+      desired = {
+        id: String(latest[0].id), email: String(latest[0].email_normalized),
+        owner: ["Bowie", "Leo"].includes(String(latest[0].owner ?? "")) ? String(latest[0].owner) as "Bowie" | "Leo" : null,
+      };
+    }
+    await sql`UPDATE crm_customers SET owner_sync_pending = true, owner_sync_error = 'Owner changed during synchronization' WHERE id = ${desired.id}::uuid`;
+    return { pending: true };
+  } catch (error) {
+    console.error("Customer owner replica sync failed", error);
+    await sql`UPDATE crm_customers SET owner_sync_pending = true, owner_sync_error = 'Chat owner synchronization failed' WHERE id = ${desired.id}::uuid AND owner IS NOT DISTINCT FROM ${desired.owner}`;
+    return { pending: true };
+  }
+}
+
+async function retryPendingCustomerOwnerSyncs() {
+  const sql = getDatabase();
+  const pending = await sql`SELECT id, email_normalized, owner FROM crm_customers WHERE owner_sync_pending = true ORDER BY updated_at LIMIT 25`;
+  await Promise.all(pending.map((row) => syncChatOwnerReplica({
+    id: String(row.id), email: String(row.email_normalized),
+    owner: ["Bowie", "Leo"].includes(String(row.owner ?? "")) ? String(row.owner) as "Bowie" | "Leo" : null,
+  })));
 }
 
 export async function updateCrmCustomer(id: string, input: { status: string; owner: string; tags: string; nextFollowUpAt: string; adminNote: string }) {
@@ -192,8 +233,6 @@ export async function updateCrmCustomer(id: string, input: { status: string; own
   const rows = await sql`
     UPDATE crm_customers
     SET crm_status = ${input.status},
-      owner = ${input.owner || null},
-      owner_initialized = true,
       tags = ${input.tags.trim().slice(0, 500)},
       next_follow_up_at = ${nextFollowUpAt ? nextFollowUpAt.toISOString() : null}::timestamptz,
       admin_note = ${input.adminNote.trim().slice(0, 2000)},
@@ -201,10 +240,11 @@ export async function updateCrmCustomer(id: string, input: { status: string; own
     WHERE id = ${id}::uuid
     RETURNING id, email, name, first_channel, last_channel, first_source_page, last_source_page,
       inquiry_count, chat_count, first_seen_at, last_seen_at, is_test, crm_status, owner, tags,
-      next_follow_up_at, admin_note, updated_at
+      next_follow_up_at, admin_note, updated_at, owner_sync_pending
   `;
   if (!rows[0]) throw new Error("Customer not found");
-  return mapCustomer(rows[0]);
+  const ownerResult = await syncCustomerOwner({ customerId: id, email: String(rows[0].email), owner: input.owner ? input.owner as "Bowie" | "Leo" : null });
+  return { ...mapCustomer(rows[0]), owner: input.owner as "Bowie" | "Leo" | "", ownerSyncPending: ownerResult.pending };
 }
 
 export async function assignUnownedCrmCustomers(actorId: string) {
@@ -217,6 +257,7 @@ export async function assignUnownedCrmCustomers(actorId: string) {
     sql`SELECT pg_advisory_xact_lock(84017, 1)`,
     sql.query(customerAssignmentSql, [actorId]),
   ], { isolationLevel: "ReadCommitted" });
+  await retryPendingCustomerOwnerSyncs();
   return { assignments: results[2].map((row) => ({ id: String(row.id), owner: String(row.owner) })) };
 }
 
@@ -317,5 +358,6 @@ function mapCustomer(row: Record<string, unknown>): CrmCustomer {
     nextFollowUpAt: row.next_follow_up_at ? new Date(String(row.next_follow_up_at)).toISOString() : "",
     adminNote: String(row.admin_note ?? ""),
     updatedAt: row.updated_at ? new Date(String(row.updated_at)).toISOString() : new Date(String(row.last_seen_at)).toISOString(),
+    ownerSyncPending: Boolean(row.owner_sync_pending),
   };
 }

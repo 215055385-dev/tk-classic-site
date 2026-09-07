@@ -3,14 +3,16 @@ import { config } from "dotenv";
 import { neon } from "@neondatabase/serverless";
 import { customerAssignmentSql } from "../lib/customer-assignment.ts";
 import { customerOwnerBackfillSql } from "../lib/customer-owner-backfill.ts";
+import { customerOwnerSyncSql } from "../lib/customer-owner-sync.ts";
 
 config({ path: ".env.local", quiet: true });
 const sql = neon(process.env.DATABASE_URL);
 // Every table is session-local and removed at commit. No public CRM rows are touched.
 for (const [bowie, leo] of [[0, 0], [0, 3], [3, 0]]) {
   const results = await sql.transaction([
-    sql`CREATE TEMP TABLE crm_customers (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), owner text, owner_initialized boolean DEFAULT true, is_test boolean DEFAULT false, crm_status text DEFAULT 'new', last_seen_at timestamptz DEFAULT now(), updated_at timestamptz, next_follow_up_at timestamptz) ON COMMIT DROP`,
+    sql`CREATE TEMP TABLE crm_customers (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email_normalized text DEFAULT gen_random_uuid()::text || '@example.com', owner text, owner_initialized boolean DEFAULT true, owner_sync_pending boolean DEFAULT false, owner_sync_error text DEFAULT '', is_test boolean DEFAULT false, crm_status text DEFAULT 'new', last_seen_at timestamptz DEFAULT now(), updated_at timestamptz, next_follow_up_at timestamptz) ON COMMIT DROP`,
     sql`CREATE TEMP TABLE audit_logs (id uuid, actor_id uuid, action text, entity_type text, entity_id text, before jsonb, after jsonb) ON COMMIT DROP`,
+    sql`CREATE TEMP TABLE inquiries (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email text, assigned_to text) ON COMMIT DROP`,
     sql`INSERT INTO crm_customers (owner) SELECT 'Bowie' FROM generate_series(1, ${bowie})`,
     sql`INSERT INTO crm_customers (owner) SELECT 'Leo' FROM generate_series(1, ${leo})`,
     sql`INSERT INTO crm_customers (owner) SELECT NULL FROM generate_series(1, 7)`,
@@ -20,12 +22,12 @@ for (const [bowie, leo] of [[0, 0], [0, 3], [3, 0]]) {
     sql`SELECT count(*) FILTER (WHERE owner = 'Bowie')::int b, count(*) FILTER (WHERE owner = 'Leo')::int l, count(*) FILTER (WHERE owner IS NULL)::int untouched FROM crm_customers`,
     sql`SELECT count(*)::int n, count(DISTINCT entity_id)::int unique_n FROM audit_logs`,
   ]);
-  assert.equal(results[6].length, 7);
-  assert.equal(results[7].length, 0, "repeat call must be a no-op");
-  assert.ok(Math.abs(results[8][0].b - results[8][0].l) <= 1);
-  assert.equal(results[8][0].untouched, 3, "exclude test, won and inactive customers");
-  assert.equal(results[9][0].n, 7);
-  assert.equal(results[9][0].unique_n, 7);
+  assert.equal(results[7].length, 7);
+  assert.equal(results[8].length, 0, "repeat call must be a no-op");
+  assert.ok(Math.abs(results[9][0].b - results[9][0].l) <= 1);
+  assert.equal(results[9][0].untouched, 3, "exclude test, won and inactive customers");
+  assert.equal(results[10][0].n, 7);
+  assert.equal(results[10][0].unique_n, 7);
 }
 
 const backfillResults = await sql.transaction([
@@ -42,4 +44,18 @@ assert.equal(backfilled.get('legacy@example.com').owner, 'Leo', 'latest historic
 assert.equal(backfilled.get('cleared@example.com').owner, null, 'administrator-cleared owner must stay empty');
 assert.equal(backfilled.get('unknown@example.com').owner, null, 'unknown historical owner stays empty');
 assert.ok([...backfilled.values()].every((row) => row.owner_initialized), 'all legacy rows must be finalized once');
+
+const syncResults = await sql.transaction([
+  sql`CREATE TEMP TABLE crm_customers (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email_normalized text, owner text, owner_initialized boolean DEFAULT true, owner_sync_pending boolean DEFAULT false, owner_sync_error text DEFAULT '', updated_at timestamptz DEFAULT now()) ON COMMIT DROP`,
+  sql`CREATE TEMP TABLE inquiries (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email text, assigned_to text) ON COMMIT DROP`,
+  sql`INSERT INTO crm_customers (id, email_normalized, owner) VALUES ('00000000-0000-4000-8000-000000000010', 'buyer@example.com', 'Bowie')`,
+  sql`INSERT INTO inquiries (email, assigned_to) VALUES ('BUYER@example.com', 'Bowie'), ('other@example.com', 'Leo')`,
+  sql.query(customerOwnerSyncSql, ['00000000-0000-4000-8000-000000000010', 'buyer@example.com', 'Leo']),
+  sql`SELECT owner, owner_initialized, owner_sync_pending FROM crm_customers WHERE email_normalized = 'buyer@example.com'`,
+  sql`SELECT email, assigned_to FROM inquiries ORDER BY email`,
+]);
+assert.equal(syncResults[5][0].owner, 'Leo');
+assert.equal(syncResults[5][0].owner_sync_pending, true, 'cross-database chat replication must remain pending until confirmed');
+assert.equal(syncResults[6][0].assigned_to, 'Leo', 'matching inquiry owner must update');
+assert.equal(syncResults[6][1].assigned_to, 'Leo', 'unrelated inquiry must stay unchanged');
 console.log("Customer ownership: assignment and historical backfill scenarios passed; no public CRM rows changed.");

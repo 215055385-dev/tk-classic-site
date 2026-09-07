@@ -1205,6 +1205,7 @@
 .customer-crm-status.is-qualified { color: #675199; background: #f0ebfa; }
 .customer-crm-status.is-won { color: #267353; background: #e3f5ec; }
 .customer-crm-status.is-inactive { color: #697980; background: #edf0f1; }
+.customer-owner-sync-pending { display: inline-flex; margin-top: 6px; color: #9a5b29; font-size: 11px; font-style: normal; font-weight: 750; }
 
 .customer-tags {
   max-width: 100%;

@@ -742,6 +742,8 @@ test("lead ownership stays synchronized across inquiries, chats, and customer pr
 
   assert.match(customerService, /owner = COALESCE\(crm_customers\.owner, EXCLUDED\.owner\)/);
   assert.match(customerService, /export async function syncCustomerOwner/);
+  assert.match(customerService, /retryPendingCustomerOwnerSyncs/);
+  assert.match(customerService, /chatConversation\.updateMany/);
   assert.match(customerService, /owner: "Bowie" \| "Leo" \| null/);
   assert.match(customerService, /customerOwnerBackfillSql/);
   assert.match(inquiryService, /owner: assignedTo/);
@@ -752,6 +754,7 @@ test("lead ownership stays synchronized across inquiries, chats, and customer pr
   assert.match(chatRoute, /syncCustomerOwner/);
   assert.match(inquiryWorkspace, /客户档案/);
   assert.match(customerWorkspace, /URLSearchParams\(window\.location\.search\)/);
+  assert.match(customerWorkspace, /负责人同步待重试/);
 });
 
 test("customer CRM can safely balance unassigned active customers", async () => {

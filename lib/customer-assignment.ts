@@ -20,10 +20,16 @@ WITH counts AS (
     ELSE 'Leo' END AS owner
   FROM ranked CROSS JOIN counts
 ), updated AS (
-  UPDATE crm_customers c SET owner = a.owner, owner_initialized = true, updated_at = now()
+  UPDATE crm_customers c SET owner = a.owner, owner_initialized = true,
+    owner_sync_pending = true, owner_sync_error = '', updated_at = now()
   FROM assigned a WHERE c.id = a.id AND c.owner IS NULL AND c.is_test = false
     AND COALESCE(c.crm_status, 'new') NOT IN ('won', 'inactive')
   RETURNING c.id, c.owner, c.crm_status, c.next_follow_up_at
+), inquiry_sync AS (
+  UPDATE inquiries i SET assigned_to = u.owner
+  FROM updated u JOIN crm_customers c ON c.id = u.id
+  WHERE lower(i.email) = c.email_normalized
+  RETURNING i.id
 ), audited AS (
   INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, before, after)
   SELECT gen_random_uuid(), $1::uuid, 'CUSTOMER_BULK_OWNER_ASSIGN', 'customer', id::text,
