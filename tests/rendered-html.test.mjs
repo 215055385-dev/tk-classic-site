@@ -778,7 +778,7 @@ test("customer CRM can safely balance unassigned active customers", async () => 
 });
 
 test("Chinese search discovery has dedicated machine-readable endpoints", async () => {
-  const [layout, robots, proxy, sitemapZh, llmsZh, baiduScript, envExample, chineseGuide, resources, companyPage, productPage, oemPage, localizedUi, productGeoLocalization] = await Promise.all([
+  const [layout, robots, proxy, sitemapZh, llmsZh, baiduScript, envExample, chineseGuide, resources, companyPage, productPage, oemPage, localizedUi, productGeoLocalization, baiduVerificationFile] = await Promise.all([
     readProjectFile("app/layout.tsx"),
     readProjectFile("app/robots.ts"),
     readProjectFile("proxy.ts"),
@@ -793,6 +793,7 @@ test("Chinese search discovery has dedicated machine-readable endpoints", async 
     readProjectFile("app/oem-odm/page.tsx"),
     readProjectFile("lib/localized-ui.ts"),
     readProjectFile("lib/product-geo.ts"),
+    readProjectFile("public/baidu_verify_codeva-E9efZejrfe.html"),
   ]);
 
   assert.match(layout, /baidu-site-verification/);
@@ -829,4 +830,5 @@ test("Chinese search discovery has dedicated machine-readable endpoints", async 
   assert.match(localizedUi, /美式滴滤配件拓展使用场景/);
   assert.doesNotMatch(localizedUi, /适合欧洲采购/);
   assert.match(productGeoLocalization, /localizeSpecValue\(product\.spec\.adapter, lang\)/);
+  assert.equal(baiduVerificationFile, "aa046224176d828d13cff8f16d6dfa77");
 });
