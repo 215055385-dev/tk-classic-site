@@ -87,6 +87,15 @@ export const metadata: Metadata = {
   },
   other: {
     google: "notranslate",
+    ...(process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION
+      ? { "baidu-site-verification": process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.NEXT_PUBLIC_360_SITE_VERIFICATION
+      ? { "360-site-verification": process.env.NEXT_PUBLIC_360_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.NEXT_PUBLIC_SOGOU_SITE_VERIFICATION
+      ? { sogou_site_verification: process.env.NEXT_PUBLIC_SOGOU_SITE_VERIFICATION }
+      : {}),
   },
 };
 

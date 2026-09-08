@@ -15,6 +15,7 @@
     "local:package": "powershell -ExecutionPolicy Bypass -File scripts/package-local.ps1",
     "cms:migrate-operational": "node scripts/migrate-operational-data.mjs",
     "seo:indexnow": "node scripts/submit-indexnow.mjs",
+    "seo:baidu": "node scripts/submit-baidu.mjs",
     "seo:audit": "node scripts/audit-public-seo.mjs",
     "lint": "eslint . --ignore-pattern .next --ignore-pattern .vercel --ignore-pattern dist --ignore-pattern playwright-report --ignore-pattern test-results",
     "test": "node --test tests/rendered-html.test.mjs",

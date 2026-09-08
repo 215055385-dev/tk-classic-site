@@ -22,7 +22,7 @@ const readGuideCopy: Record<Lang, string> = {
   pt: "Ler o guia em inglês",
   fr: "Lire le guide en anglais",
   ar: "قراءة الدليل باللغة الإنجليزية",
-  zh: "阅读英文采购指南",
+  zh: "阅读采购指南",
   ru: "Читать руководство на английском",
 };
 
@@ -40,7 +40,9 @@ export async function generateMetadata({ searchParams }: ResourcesPageProps): Pr
   return {
     title: { absolute: `${t.sectionTitles.blog} | TK Classic` },
     description: t.blogLead,
-    keywords: ["portable coffee machine FAQ", "coffee machine certification documents", "OEM coffee buyer guide", "coffee machine sourcing Europe"],
+    keywords: lang === "zh"
+      ? ["便携式咖啡机厂家", "便携咖啡机 OEM", "便携咖啡机 ODM", "便携式意式咖啡机采购指南", "咖啡机私牌定制"]
+      : ["portable coffee machine FAQ", "coffee machine certification documents", "OEM coffee buyer guide", "coffee machine sourcing Europe"],
     alternates: { canonical: localizedUrl("/resources", lang), languages: languageAlternates("/resources") },
   };
 }
@@ -111,7 +113,10 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         <div className="blog-grid">
           {guideCards.map(([title, summary], index) => {
             const guide = buyerGuides[index];
-            return <RevealArticle key={title} className="resource-guide-card"><BookOpen size={21} aria-hidden="true" /><span>{ui.blog.cardPrefix} 0{index + 1}</span><h3>{title}</h3><p>{summary}</p><Link href={guide ? `/resources/${guide.slug}` : `/contact${query}`}>{readGuideCopy[lang]}<ChevronRight size={16} aria-hidden="true" /></Link></RevealArticle>;
+            const href = lang === "zh" && index === 0
+              ? localizedPath("/china-oem-guide", "zh")
+              : guide ? `/resources/${guide.slug}` : `/contact${query}`;
+            return <RevealArticle key={title} className="resource-guide-card"><BookOpen size={21} aria-hidden="true" /><span>{ui.blog.cardPrefix} 0{index + 1}</span><h3>{title}</h3><p>{summary}</p><Link href={href}>{readGuideCopy[lang]}<ChevronRight size={16} aria-hidden="true" /></Link></RevealArticle>;
           })}
         </div>
       </section>

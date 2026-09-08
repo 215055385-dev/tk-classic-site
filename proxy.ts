@@ -57,5 +57,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|downloads|optimized|hero-products|lifestyle|videos|favicon.svg|robots.txt|sitemap.xml|llms.txt).*)"],
+  matcher: ["/((?!_next|api|downloads|optimized|hero-products|lifestyle|videos|favicon.svg|robots.txt|sitemap.xml|sitemap-zh.xml|llms.txt|llms-zh.txt).*)"],
 };

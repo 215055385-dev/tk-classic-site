@@ -776,3 +776,39 @@ test("customer CRM can safely balance unassigned active customers", async () => 
   assert.match(workspace, /均衡分配未分配客户/);
   assert.match(workspace, /确认均衡分配/);
 });
+
+test("Chinese search discovery has dedicated machine-readable endpoints", async () => {
+  const [layout, robots, proxy, sitemapZh, llmsZh, baiduScript, envExample, chineseGuide, resources] = await Promise.all([
+    readProjectFile("app/layout.tsx"),
+    readProjectFile("app/robots.ts"),
+    readProjectFile("proxy.ts"),
+    readProjectFile("app/sitemap-zh.xml/route.ts"),
+    readProjectFile("app/llms-zh.txt/route.ts"),
+    readProjectFile("scripts/submit-baidu.mjs"),
+    readProjectFile(".env.example"),
+    readProjectFile("app/china-oem-guide/page.tsx"),
+    readProjectFile("app/resources/page.tsx"),
+  ]);
+
+  assert.match(layout, /baidu-site-verification/);
+  assert.match(layout, /360-site-verification/);
+  assert.match(layout, /sogou_site_verification/);
+  assert.match(robots, /sitemap-zh\.xml/);
+  assert.match(proxy, /sitemap-zh\.xml/);
+  assert.match(proxy, /llms-zh\.txt/);
+  assert.match(sitemapZh, /function chineseUrl/);
+  assert.match(sitemapZh, /"\/products"/);
+  assert.match(sitemapZh, /chineseUrl\(`\/products\/\$\{product\.slug\}`\)/);
+  assert.match(sitemapZh, /china-oem-guide/);
+  assert.match(sitemapZh, /getCmsProducts/);
+  assert.match(llmsZh, /事实边界/);
+  assert.match(llmsZh, /不公开统一价格、MOQ、交期或质保承诺/);
+  assert.match(llmsZh, /中文 OEM\/ODM 采购指南/);
+  assert.match(baiduScript, /data\.zz\.baidu\.com/);
+  assert.match(baiduScript, /sitemap-zh\.xml/);
+  assert.match(envExample, /BAIDU_API_ENDPOINT/);
+  assert.match(chineseGuide, /FAQPage/);
+  assert.match(chineseGuide, /inLanguage: "zh-CN"/);
+  assert.match(chineseGuide, /网站不公开统一价格、MOQ、交期和质保承诺/);
+  assert.match(resources, /localizedPath\("\/china-oem-guide", "zh"\)/);
+});
