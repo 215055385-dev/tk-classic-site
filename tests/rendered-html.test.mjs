@@ -232,7 +232,7 @@ test("GEO entity, solution, product FAQ, and question-led content assets are dis
   assert.match(productPage, /FAQPage/);
   assert.match(productPage, /VideoObject/);
   assert.match(productPage, /uploadDate: "2026-07-30T16:46:36\+08:00"/);
-  assert.doesNotMatch(productPage, /"@type": "Product"/);
+  assert.match(productPage, /"@type": "Product"/);
   assert.doesNotMatch(productPage, /"@type": "Offer"/);
   assert.match(productPage, /additionalType: "https:\/\/schema\.org\/Product"/);
   assert.match(productPage, /getProductGeo/);
@@ -778,7 +778,7 @@ test("customer CRM can safely balance unassigned active customers", async () => 
 });
 
 test("Chinese search discovery has dedicated machine-readable endpoints", async () => {
-  const [layout, robots, proxy, sitemapZh, llmsZh, baiduScript, envExample, chineseGuide, resources] = await Promise.all([
+  const [layout, robots, proxy, sitemapZh, llmsZh, baiduScript, envExample, chineseGuide, resources, companyPage, productPage, oemPage, localizedUi, productGeoLocalization] = await Promise.all([
     readProjectFile("app/layout.tsx"),
     readProjectFile("app/robots.ts"),
     readProjectFile("proxy.ts"),
@@ -788,6 +788,11 @@ test("Chinese search discovery has dedicated machine-readable endpoints", async 
     readProjectFile(".env.example"),
     readProjectFile("app/china-oem-guide/page.tsx"),
     readProjectFile("app/resources/page.tsx"),
+    readProjectFile("app/company/page.tsx"),
+    readProjectFile("app/products/[slug]/page.tsx"),
+    readProjectFile("app/oem-odm/page.tsx"),
+    readProjectFile("lib/localized-ui.ts"),
+    readProjectFile("lib/product-geo.ts"),
   ]);
 
   assert.match(layout, /baidu-site-verification/);
@@ -811,4 +816,17 @@ test("Chinese search discovery has dedicated machine-readable endpoints", async 
   assert.match(chineseGuide, /inLanguage: "zh-CN"/);
   assert.match(chineseGuide, /网站不公开统一价格、MOQ、交期和质保承诺/);
   assert.match(resources, /localizedPath\("\/china-oem-guide", "zh"\)/);
+  assert.match(companyPage, /"@type": "AboutPage"/);
+  assert.match(companyPage, /深圳便携式咖啡机厂家/);
+  assert.match(companyPage, /联系销售团队/);
+  assert.match(productPage, /"@type": "Product"/);
+  assert.match(productPage, /category: lang === "zh" \? "便携式咖啡机"/);
+  assert.match(productPage, /schemaLanguage = lang === "zh" \? "zh-CN"/);
+  assert.doesNotMatch(productPage, /"@type": "Offer"/);
+  assert.match(oemPage, /便携式咖啡设备 OEM\/ODM 与私牌定制服务/);
+  assert.match(localizedUi, /适合跨境与品牌采购/);
+  assert.match(localizedUi, /适合注重性价比的私牌产品线/);
+  assert.match(localizedUi, /美式滴滤配件拓展使用场景/);
+  assert.doesNotMatch(localizedUi, /适合欧洲采购/);
+  assert.match(productGeoLocalization, /localizeSpecValue\(product\.spec\.adapter, lang\)/);
 });

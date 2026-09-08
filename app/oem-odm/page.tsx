@@ -98,11 +98,13 @@ export default async function OemOdmPage({ searchParams }: PageProps) {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Portable coffee machine OEM and ODM program",
-    serviceType: "Portable coffee equipment OEM, ODM, private label and packaging support",
+    "@id": `${localizedUrl("/oem-odm", lang)}#service`,
+    name: lang === "zh" ? "便携式咖啡设备 OEM/ODM 与私牌定制服务" : "Portable coffee machine OEM and ODM program",
+    serviceType: lang === "zh" ? "便携式咖啡设备 OEM、ODM、Logo、私牌与包装定制支持" : "Portable coffee equipment OEM, ODM, private label and packaging support",
     provider: { "@type": "Organization", name: company.legalName, url: `${company.siteUrl}/company` },
-    areaServed: "International wholesale markets",
+    areaServed: lang === "zh" ? "全球批发与私牌采购市场" : "International wholesale markets",
     url: localizedUrl("/oem-odm", lang),
+    inLanguage: lang === "zh" ? "zh-CN" : lang,
   };
 
   const terms = [

@@ -7,7 +7,7 @@ import { RevealArticle, RevealSection } from "@/components/MotionPrimitives";
 import { SiteFooter } from "@/components/SiteFooter";
 import { uiCopy } from "@/lib/localized-ui";
 import { commercialCopy } from "@/lib/support-page-data";
-import { copy, languages, type Lang } from "@/lib/site-data";
+import { company, copy, languages, type Lang } from "@/lib/site-data";
 import { languageAlternates, localizedUrl } from "@/lib/seo";
 import { whatsappHref } from "@/lib/contact";
 import { brandTagline } from "@/lib/translation-copy";
@@ -33,7 +33,9 @@ export async function generateMetadata({ searchParams }: CompanyPageProps): Prom
   return {
     title: { absolute: `${t.sectionTitles.about} | TK Classic` },
     description: t.intro,
-    keywords: ["portable coffee machine supplier", "Shenzhen coffee machine factory", "coffee OEM ODM supplier", "private label coffee equipment"],
+    keywords: lang === "zh"
+      ? ["深圳便携式咖啡机厂家", "便携咖啡机 OEM", "咖啡机 ODM 工厂", "便携式意式咖啡机供应商", "咖啡机私牌定制"]
+      : ["portable coffee machine supplier", "Shenzhen coffee machine factory", "coffee OEM ODM supplier", "private label coffee equipment"],
     alternates: { canonical: localizedUrl("/company", lang), languages: languageAlternates("/company") },
   };
 }
@@ -46,9 +48,34 @@ export default async function CompanyPage({ searchParams }: CompanyPageProps) {
   const ui = uiCopy[lang];
   const dir = languages.find((language) => language.code === lang)?.dir ?? "ltr";
   const query = langQuery(lang);
+  const contactLabels = lang === "zh"
+    ? { email: "联系销售团队", whatsapp: "WhatsApp 咨询" }
+    : { email: "Contact sales team", whatsapp: "WhatsApp sales" };
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": `${localizedUrl("/company", lang)}#about`,
+    url: localizedUrl("/company", lang),
+    name: t.sectionTitles.about,
+    description: t.intro,
+    inLanguage: lang === "zh" ? "zh-CN" : lang,
+    about: {
+      "@type": "Organization",
+      "@id": `${company.siteUrl}#organization`,
+      name: company.legalName,
+      alternateName: company.brand,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Shenzhen",
+        addressRegion: "Guangdong",
+        addressCountry: "CN",
+      },
+    },
+  };
 
   return (
     <main className="inner-page" dir={dir} lang={lang}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <header className="site-header detail-header">
         <Link className="brand" href={`/${query}`} aria-label="TK Classic home">
           <span className="brand-mark">TK</span>
@@ -134,8 +161,8 @@ export default async function CompanyPage({ searchParams }: CompanyPageProps) {
           {support.proofItems.map((item) => <article key={item} className="proof-card"><Building2 size={21} aria-hidden="true" /><p>{item}</p></article>)}
         </div>
         <div className="contact-methods company-contact-methods">
-          <Link href={`/contact${langQuery(lang)}#inquiry-form`}><Mail size={19} aria-hidden="true" /><span>Contact sales team</span></Link>
-          <a href={whatsappHref()} target="_blank" rel="noreferrer"><MessageCircle size={19} aria-hidden="true" /><span>WhatsApp sales</span></a>
+          <Link href={`/contact${langQuery(lang)}#inquiry-form`}><Mail size={19} aria-hidden="true" /><span>{contactLabels.email}</span></Link>
+          <a href={whatsappHref()} target="_blank" rel="noreferrer"><MessageCircle size={19} aria-hidden="true" /><span>{contactLabels.whatsapp}</span></a>
         </div>
       </section>
 

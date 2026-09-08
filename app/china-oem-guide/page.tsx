@@ -13,10 +13,11 @@ type PageProps = { searchParams?: Promise<Record<string, string | string[] | und
 
 const path = "/zh/china-oem-guide";
 const url = `${company.siteUrl}${path}`;
+const description = "面向跨境品牌、进口商与批发商的便携式咖啡机 OEM/ODM 采购指南，说明型号筛选、样品确认、Logo 包装定制、认证资料核对与询盘准备。";
 
 export const metadata: Metadata = {
   title: { absolute: "便携式咖啡机 OEM/ODM 采购指南 | TK Classic" },
-  description: "面向跨境品牌、进口商与批发商的便携式咖啡机 OEM/ODM 采购指南，说明型号筛选、样品确认、Logo 包装定制、认证资料核对与询盘准备。",
+  description,
   keywords: ["便携式咖啡机厂家", "便携咖啡机 OEM", "咖啡机 ODM", "便携式意式咖啡机批发", "咖啡机私牌定制"],
   alternates: { canonical: url },
   openGraph: {
@@ -87,8 +88,10 @@ export default async function ChinaOemGuidePage({ searchParams }: PageProps) {
       "@context": "https://schema.org",
       "@type": "Article",
       headline: "便携式咖啡机 OEM/ODM 采购指南",
-      description: metadata.description,
+      description,
       inLanguage: "zh-CN",
+      datePublished: "2026-09-07",
+      dateModified: "2026-09-08",
       mainEntityOfPage: url,
       author: { "@type": "Organization", name: company.brand, url: company.siteUrl },
       publisher: { "@id": `${company.siteUrl}#organization` },

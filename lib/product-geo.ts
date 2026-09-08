@@ -1,5 +1,5 @@
 import type { Lang, Product } from "@/lib/site-data";
-import { localizeFeatureLabel, localizeTerm } from "@/lib/localized-ui";
+import { localizeFeatureLabel, localizeSpecValue, localizeTerm } from "@/lib/localized-ui";
 import { getProductSpecEntries } from "@/lib/product-presentation";
 
 type ProductGeoRecord = {
@@ -102,13 +102,13 @@ export function getProductGeo(product: Product, lang: Lang) {
   };
   const l = labels[lang];
   const uses = product.useCases.map((item) => localizeTerm(item, lang)).join(", ");
-  const publishedFacts = getProductSpecEntries(product).map(([key, value]) => `${key}: ${value}`).join("; ");
+  const publishedFacts = getProductSpecEntries(product).map(([key, value]) => `${key}: ${localizeSpecValue(value, lang)}`).join("; ");
   const displayName = lang === "en" ? record.productName : `${product.model} — ${localizeFeatureLabel(product.featureLabel, lang)}`;
   const faqs = [
     { question: l.whatQ(product.model), answer: l.whatA(product.model, product.summary[lang]) },
     { question: l.whoQ(product.model), answer: l.whoA(product.model, uses) },
     { question: l.specQ(product.model), answer: verifiedRecord ? l.specA(product.model, product.spec.pressure, product.spec.battery, product.spec.cup) : l.publishedSpecsA(product.model, publishedFacts) },
-    ...(product.spec.adapter ? [{ question: l.formatQ(product.model), answer: l.formatA(product.model, product.spec.adapter) }] : []),
+    ...(product.spec.adapter ? [{ question: l.formatQ(product.model), answer: l.formatA(product.model, localizeSpecValue(product.spec.adapter, lang)) }] : []),
     { question: l.quoteQ(product.model), answer: l.quoteA(product.model) },
   ];
 

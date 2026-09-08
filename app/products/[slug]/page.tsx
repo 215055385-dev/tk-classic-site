@@ -77,7 +77,13 @@ export async function generateMetadata({ params, searchParams }: ProductPageProp
   return {
     title: { absolute: managed?.title?.trim() || productSeoTitle || (lang === "en" ? `${geo.seoTitle} | ${company.brand}` : `${geo.displayName} | ${company.brand}`) },
     description: managed?.description?.trim() || productSeo?.description.trim() || product.summary[lang],
-    keywords: managed?.keywords.length ? managed.keywords : productSeo?.keywords.length ? productSeo.keywords : undefined,
+    keywords: managed?.keywords.length
+      ? managed.keywords
+      : productSeo?.keywords.length
+        ? productSeo.keywords
+        : lang === "zh"
+          ? [`${product.model} 便携式咖啡机`, "便携式意式咖啡机", "便携咖啡机 OEM", "咖啡机私牌定制"]
+          : undefined,
     robots: managed?.noIndex ? { index: false, follow: false } : undefined,
     alternates: {
       canonical: managed?.canonicalUrl?.trim() || localizedUrl(`/products/${product.slug}`, lang),
@@ -141,6 +147,8 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const managedVideos = lang === "en" ? await getCmsProductVideos(product.model) : [];
   const productVideos = managedVideos.length ? managedVideos : fallbackVideo ? [fallbackVideo] : [];
   const productUrl = localizedUrl(`/products/${product.slug}`, lang);
+  const schemaLanguage = lang === "zh" ? "zh-CN" : lang;
+  const productSchemaImages = Array.from(new Set([product.hero, ...product.gallery])).map(absoluteAssetUrl);
   const structuredData = [
     {
       "@context": "https://schema.org",
@@ -149,7 +157,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       url: productUrl,
       name: geo.displayName,
       description: product.summary[lang],
-      inLanguage: lang,
+      inLanguage: schemaLanguage,
       isPartOf: { "@id": `${company.siteUrl}#website` },
       about: {
         "@type": "Thing",
@@ -158,7 +166,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         name: geo.displayName,
         alternateName: product.model,
         description: product.summary[lang],
-        image: product.gallery.map(absoluteAssetUrl),
+        image: productSchemaImages,
         identifier: {
           "@type": "PropertyValue",
           propertyID: "Model",
@@ -178,6 +186,28 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           name: "Manual-verified coffee formats",
           value: manual.supportedInputs.join("; "),
         }] : []),
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "@id": `${productUrl}#product`,
+      url: productUrl,
+      name: geo.displayName,
+      model: product.model,
+      description: product.summary[lang],
+      image: productSchemaImages,
+      inLanguage: schemaLanguage,
+      brand: { "@type": "Brand", name: company.brand },
+      manufacturer: { "@id": `${company.siteUrl}#organization` },
+      category: lang === "zh" ? "便携式咖啡机" : "Portable coffee machine",
+      additionalProperty: [
+        ...Object.entries(product.spec).map(([name, value]) => ({
+          "@type": "PropertyValue",
+          name,
+          value: lang === "zh" ? localizeSpecValue(value, lang) : value,
+        })),
+        ...packingProperties(product.model),
       ],
     },
     {
@@ -221,7 +251,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         thumbnailUrl: absoluteAssetUrl(video.poster),
         contentUrl: absoluteAssetUrl(video.src),
         uploadDate: video.schema?.uploadDate,
-        inLanguage: "en",
+        inLanguage: schemaLanguage,
       })),
   ];
 

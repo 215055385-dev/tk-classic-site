@@ -320,11 +320,11 @@ export const uiCopy: Record<
     proof: { extraction: "萃取平台", years: "OEM 年经验", markets: "服务市场", compliance: "合规资料" },
     marquee: ["25 巴萃取", "按项目书面报价", "OEM / ODM 方案", "欧盟合规资料", "礼品级包装", "便携式意式咖啡系统", "工厂直供", "多语言支持"],
     market: {
-      eyebrow: "适合欧洲采购",
-      title: "为零售上架型采购团队打造。",
-      lead: "聚焦经销商、跨境电商品牌、礼品采购和私牌客户，兼顾高端展示感与工厂直供执行力。",
+      eyebrow: "适合跨境与品牌采购",
+      title: "为品牌上新与批发采购团队打造。",
+      lead: "聚焦进口商、批发商、跨境电商品牌、礼品采购和私牌客户，兼顾产品展示与工厂项目执行。",
       cards: [
-        ["欧洲批发商", "便携式意式咖啡机型号、合规资料和可复用的订单规划，适合分销项目。"],
+        ["进口商与批发商", "按具体型号核对便携式咖啡机、合规资料与订单配置，适合分销项目。"],
         ["跨境电商品牌", "紧凑主推款、强视觉素材、配件组合和快速报价流程，适合 marketplace 上新。"],
         ["礼品采购商", "礼品级外观、包装支持、收纳包和零售组合，适合季节性采购项目。"],
         ["OEM / ODM 私牌客户", "支持 Logo、颜色、包装和差异化开发，从样品确认到出口包装。"],
@@ -335,7 +335,7 @@ export const uiCopy: Record<
       title: "让产品在第一杯咖啡之前就显得高级。",
       lead: "借鉴现代咖啡品牌的视觉表达，但结构上更适合 B2B 买家：产品可信、展示高级、出口执行可复制。",
       cards: [
-        ["零售上架", "主推型号外观干净，配套认证资料和包装选项，适合欧洲零售上架项目。", "DQ-001 / DQ-010"],
+        ["零售上架", "主推型号外观干净，认证资料与包装需求按具体型号和目标市场核对。", "DQ-001 / DQ-010"],
         ["礼品套装项目", "便携咖啡机、收纳包、转接器和品牌礼盒，适合企业礼品和高端采购。", "礼品组合"],
         ["电商视觉内容", "紧凑产品形态和清晰卖点，适合 Amazon、Shopify 与跨境落地页展示。", "内容型 SKU"],
       ],
@@ -343,7 +343,7 @@ export const uiCopy: Record<
     blog: {
       cardPrefix: "采购指南",
       cards: [
-        ["欧洲私牌项目如何采购便携式意式咖啡机", "围绕合规、包装、性能和零售陈列规划的采购内容。"],
+        ["如何采购私牌便携式意式咖啡机", "围绕型号、样品、合规资料、包装和零售规划的采购内容。"],
         ["25 巴便携咖啡机：批发下单前要确认什么", "检查压力、电池、转接器、认证资料和稳定复购供货能力。"],
         ["便携咖啡礼品套装的 OEM 包装清单", "适用于零售组合、礼盒和季节性采购项目的包装与品牌建议。"],
       ],
@@ -360,7 +360,7 @@ export const uiCopy: Record<
       success: "询盘已收到，TK Classic 会尽快回复。",
       error: "暂时无法提交，请尝试 WhatsApp 或邮件联系。",
       companyPlaceholder: "批发公司 / 品牌名称",
-      countryPlaceholder: "德国 / 法国 / 欧盟 / 英国",
+      countryPlaceholder: "美国 / 法国 / 中东 / 其他目标市场",
       quantityPlaceholder: "500 / 1000 / 2000 件",
       brandingPlaceholder: "Logo、礼盒、私牌颜色、零售套装等",
       messagePlaceholder: "目标市场、数量、Logo/包装需求和预计时间。",
@@ -602,6 +602,8 @@ const termLabels: Record<string, Partial<Record<Lang, string>>> = {
 };
 
 const highlightLabels: Record<string, Partial<Record<Lang, string>>> = {
+  "Best for value-led private label lines": { zh: "适合注重性价比的私牌产品线" },
+  "American drip accessory broadens the use case": { zh: "美式滴滤配件拓展使用场景" },
   "Best for private label retail launches": { zh: "适合私牌零售上新", es: "Ideal para lanzamientos retail private label", pt: "Ideal para lançamentos retail de marca própria", fr: "Idéal pour lancements retail marque propre", ar: "مناسب لإطلاق علامات خاصة في البيع", ru: "Подходит для retail-запусков private label" },
   "Works as a core product for gift programs": { zh: "可作为礼品项目核心产品", es: "Funciona como producto central para programas de regalo", pt: "Funciona como produto principal para brindes", fr: "Produit central pour programmes cadeaux", ar: "يعمل كمنتج أساسي لبرامج الهدايا", ru: "Может быть основным продуктом подарочных программ" },
   "Deep accessory compatibility": { zh: "配件兼容度高", es: "Alta compatibilidad de accesorios", pt: "Alta compatibilidade de acessórios", fr: "Large compatibilité accessoires", ar: "توافق واسع مع الملحقات", ru: "Широкая совместимость аксессуаров" },
