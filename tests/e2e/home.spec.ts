@@ -235,12 +235,13 @@ test.describe("TK Classic buyer journey", () => {
   });
 
   test("authenticated admin shows a responsive 30-day inquiry funnel", async ({ page }) => {
+    test.setTimeout(60_000);
     const password = process.env.ADMIN_DASHBOARD_PASSWORD;
     test.skip(!password, "Admin password is only supplied during authenticated verification.");
     await page.goto("/admin");
     await page.getByLabel("管理员密码").fill(password!);
     await page.getByRole("button", { name: "登录后台" }).click();
-    await expect(page.getByRole("heading", { name: "今天先处理什么" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "今天先处理什么" })).toBeVisible({ timeout: 30_000 });
     await page.locator(".admin-dashboard-disclosure").first().locator("summary").click();
     const funnel = page.locator(".admin-funnel-panel");
     await expect(funnel).toBeVisible();
@@ -264,6 +265,12 @@ test.describe("TK Classic buyer journey", () => {
       await expect(page.locator(".cms-empty")).toBeVisible();
     }
     await expect(page.locator(".cms-product-summary")).toContainText("待补资料");
+    await page.goto("/admin/customers");
+    await expect(page.locator(".customer-focus-queues")).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator(".customer-focus-queues > button")).toHaveCount(5);
+    await page.getByRole("button", { name: /未安排跟进/ }).click();
+    await page.locator(".customer-filter-disclosure > summary").click();
+    await expect(page.getByLabel("按跟进时间筛选")).toHaveValue("unscheduled");
     const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
   });

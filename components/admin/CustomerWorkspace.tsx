@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Activity, CalendarClock, ChevronDown, Mail, Pencil, RefreshCw, Save, Search, Tags, UserPlus, UserRoundCheck, UsersRound, X } from "lucide-react";
+import { Activity, CalendarClock, ChevronDown, Mail, Pencil, RefreshCw, Save, Search, SlidersHorizontal, Tags, UserPlus, UserRoundCheck, UsersRound, X } from "lucide-react";
 
 type CustomerStatus = "new" | "contacted" | "follow_up" | "qualified" | "won" | "inactive";
 type Customer = {
@@ -34,7 +34,7 @@ export function CustomerWorkspace() {
   const [channel, setChannel] = useState("");
   const [status, setStatus] = useState("");
   const [owner, setOwner] = useState("");
-  const [followUpWindow, setFollowUpWindow] = useState<"" | "due" | "today" | "overdue">("");
+  const [followUpWindow, setFollowUpWindow] = useState<"" | "due" | "today" | "overdue" | "unscheduled">("");
   const [showTests, setShowTests] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -79,6 +79,8 @@ export function CustomerWorkspace() {
   }, [currentTime]);
   const overdueCount = useMemo(() => realRows.filter((row) => row.nextFollowUpAt && new Date(row.nextFollowUpAt).getTime() < todayBounds.start && !["won", "inactive"].includes(row.status)).length, [realRows, todayBounds.start]);
   const todayCount = useMemo(() => realRows.filter((row) => { const time = row.nextFollowUpAt ? new Date(row.nextFollowUpAt).getTime() : 0; return time >= todayBounds.start && time < todayBounds.end && !["won", "inactive"].includes(row.status); }).length, [realRows, todayBounds]);
+  const unscheduledCount = useMemo(() => realRows.filter((row) => !row.nextFollowUpAt && !["won", "inactive"].includes(row.status)).length, [realRows]);
+  const unassignedCount = useMemo(() => realRows.filter((row) => !row.owner && !["won", "inactive"].includes(row.status)).length, [realRows]);
   const visible = useMemo(() => {
     const term = query.trim().toLowerCase();
     return rows.filter((row) => {
@@ -91,6 +93,7 @@ export function CustomerWorkspace() {
       if (followUpWindow === "due" && (!followUpTime || currentTime === null || followUpTime > currentTime || ["won", "inactive"].includes(row.status))) return false;
       if (followUpWindow === "today" && (!followUpTime || followUpTime < todayBounds.start || followUpTime >= todayBounds.end || ["won", "inactive"].includes(row.status))) return false;
       if (followUpWindow === "overdue" && (!followUpTime || followUpTime >= todayBounds.start || ["won", "inactive"].includes(row.status))) return false;
+      if (followUpWindow === "unscheduled" && (followUpTime || ["won", "inactive"].includes(row.status))) return false;
       if (!term) return true;
       return [row.name, row.email, row.firstChannel, row.lastChannel, row.tags, row.owner, row.adminNote].some((value) => value.toLowerCase().includes(term));
     }).sort((a, b) => {
@@ -101,6 +104,17 @@ export function CustomerWorkspace() {
       return aActive - bActive || aTime - bTime || new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime();
     });
   }, [channel, currentTime, followUpWindow, owner, query, rows, showTests, status, todayBounds]);
+
+  function resetFilters() {
+    setChannel(""); setStatus(""); setOwner(""); setFollowUpWindow(""); setShowTests(false);
+  }
+
+  function openFocus(view: "today" | "overdue" | "unscheduled" | "unassigned" | "qualified") {
+    resetFilters();
+    if (view === "unassigned") setOwner("__none");
+    else if (view === "qualified") setStatus("qualified");
+    else setFollowUpWindow(view);
+  }
 
   function openEditor(row: Customer) {
     setEditingId(row.id);
@@ -160,17 +174,27 @@ export function CustomerWorkspace() {
   }
 
   return <section className="customer-workspace">
-    <header className="cms-page-heading"><div><span>邮箱唯一身份</span><h1>客户管理</h1><p>统一管理客户状态、负责人、标签和下一次跟进时间。</p></div><button className="cms-secondary" onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{loading ? "加载中" : "刷新"}</button></header>
+    <header className="cms-page-heading"><div><span>销售任务中心</span><h1>客户管理</h1><p>先处理需要行动的客户，再查看完整档案。</p></div><button className="cms-secondary" onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{loading ? "加载中" : "刷新"}</button></header>
     <div className="customer-summary"><div><UsersRound/><strong>{realRows.length}</strong><span>真实客户</span></div><div><CalendarClock/><strong>{todayCount}</strong><span>今日跟进</span></div><div><CalendarClock/><strong>{overdueCount}</strong><span>已经超期</span></div><div><strong>{realRows.filter((row) => row.status === "won").length}</strong><span>已成交客户</span></div></div>
-    <div className="cms-toolbar customer-toolbar">
-      <label><Search size={16}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索姓名、邮箱、标签或备注"/></label>
-      <select aria-label="按客户状态筛选" value={status} onChange={(event) => setStatus(event.target.value)}><option value="">全部状态</option>{statusOptions.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
-      <select aria-label="按负责人筛选" value={owner} onChange={(event) => setOwner(event.target.value)}><option value="">全部负责人</option><option value="Bowie">Bowie</option><option value="Leo">Leo</option><option value="__none">未分配</option></select>
-      <select aria-label="按渠道筛选" value={channel} onChange={(event) => setChannel(event.target.value)}><option value="">全部渠道</option>{channels.map((value) => <option key={value} value={value}>{channelLabel(value)}</option>)}</select>
-      <select aria-label="按跟进时间筛选" value={followUpWindow} onChange={(event) => setFollowUpWindow(event.target.value as typeof followUpWindow)}><option value="">全部跟进时间</option><option value="today">今天需要跟进</option><option value="overdue">已经超期</option><option value="due">截至现在待跟进</option></select>
-      <label className="customer-test-toggle"><input type="checkbox" checked={showTests} onChange={(event) => setShowTests(event.target.checked)}/>测试数据</label><span>{visible.length} 位客户</span>
+    <div className="customer-focus-queues" aria-label="销售任务快捷视图">
+      <button className={followUpWindow === "overdue" ? "is-active is-urgent" : "is-urgent"} onClick={() => openFocus("overdue")}><span>逾期待跟进</span><strong>{overdueCount}</strong></button>
+      <button className={followUpWindow === "today" ? "is-active" : undefined} onClick={() => openFocus("today")}><span>今日需联系</span><strong>{todayCount}</strong></button>
+      <button className={followUpWindow === "unscheduled" ? "is-active" : undefined} onClick={() => openFocus("unscheduled")}><span>未安排跟进</span><strong>{unscheduledCount}</strong></button>
+      <button className={owner === "__none" ? "is-active" : undefined} onClick={() => openFocus("unassigned")}><span>未分配负责人</span><strong>{unassignedCount}</strong></button>
+      <button className={status === "qualified" ? "is-active" : undefined} onClick={() => openFocus("qualified")}><span>有效客户</span><strong>{realRows.filter((row) => row.status === "qualified").length}</strong></button>
     </div>
-    <div className="customer-owner-queues" aria-label="负责人快捷视图"><button className={owner === "Bowie" ? "is-active" : undefined} onClick={() => setOwner(owner === "Bowie" ? "" : "Bowie")}>Bowie <strong>{realRows.filter((row) => row.owner === "Bowie" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className={owner === "Leo" ? "is-active" : undefined} onClick={() => setOwner(owner === "Leo" ? "" : "Leo")}>Leo <strong>{realRows.filter((row) => row.owner === "Leo" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className={owner === "__none" ? "is-active" : undefined} onClick={() => setOwner(owner === "__none" ? "" : "__none")}>未分配 <strong>{realRows.filter((row) => !row.owner && !["won", "inactive"].includes(row.status)).length}</strong></button><button className="customer-assign-trigger" type="button" disabled={!realRows.some((row) => !row.owner && !["won", "inactive"].includes(row.status)) || assigning} onClick={() => setConfirmingAssignment(true)}><UserPlus size={14}/>均衡分配未分配客户</button></div>
+    <div className="customer-search-bar"><label><Search size={16}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索姓名、邮箱、标签或备注"/></label><span>{visible.length} 位客户</span>{query || channel || status || owner || followUpWindow || showTests ? <button type="button" onClick={() => { setQuery(""); resetFilters(); }}><X size={14}/>清除条件</button> : null}</div>
+    <details className="customer-filter-disclosure">
+      <summary><span><SlidersHorizontal size={16}/>高级筛选与负责人队列</span><ChevronDown size={15}/></summary>
+      <div className="cms-toolbar customer-toolbar">
+        <select aria-label="按客户状态筛选" value={status} onChange={(event) => setStatus(event.target.value)}><option value="">全部状态</option>{statusOptions.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
+        <select aria-label="按负责人筛选" value={owner} onChange={(event) => setOwner(event.target.value)}><option value="">全部负责人</option><option value="Bowie">Bowie</option><option value="Leo">Leo</option><option value="__none">未分配</option></select>
+        <select aria-label="按渠道筛选" value={channel} onChange={(event) => setChannel(event.target.value)}><option value="">全部渠道</option>{channels.map((value) => <option key={value} value={value}>{channelLabel(value)}</option>)}</select>
+        <select aria-label="按跟进时间筛选" value={followUpWindow} onChange={(event) => setFollowUpWindow(event.target.value as typeof followUpWindow)}><option value="">全部跟进时间</option><option value="today">今天需要跟进</option><option value="overdue">已经超期</option><option value="due">截至现在待跟进</option><option value="unscheduled">尚未安排</option></select>
+        <label className="customer-test-toggle"><input type="checkbox" checked={showTests} onChange={(event) => setShowTests(event.target.checked)}/>测试数据</label>
+      </div>
+      <div className="customer-owner-queues" aria-label="负责人快捷视图"><button className={owner === "Bowie" ? "is-active" : undefined} onClick={() => setOwner(owner === "Bowie" ? "" : "Bowie")}>Bowie <strong>{realRows.filter((row) => row.owner === "Bowie" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className={owner === "Leo" ? "is-active" : undefined} onClick={() => setOwner(owner === "Leo" ? "" : "Leo")}>Leo <strong>{realRows.filter((row) => row.owner === "Leo" && !["won", "inactive"].includes(row.status)).length}</strong></button><button className="customer-assign-trigger" type="button" disabled={!unassignedCount || assigning} onClick={() => setConfirmingAssignment(true)}><UserPlus size={14}/>均衡分配未分配客户</button></div>
+    </details>
     {confirmingAssignment ? <div className="customer-bulk-confirm" role="alert"><div><strong>确认均衡分配？</strong><p>仅分配真实、活跃且当前没有负责人的客户；已分配客户、成交客户和测试数据不会改变。</p></div><button type="button" className="cms-secondary" onClick={() => setConfirmingAssignment(false)} disabled={assigning}>取消</button><button type="button" className="cms-primary" onClick={() => void assignUnowned()} disabled={assigning}>{assigning ? "分配中…" : "确认分配"}</button></div> : null}
     {notice ? <p className="cms-notice" role="status">{notice}</p> : null}
     <div className="customer-list">{visible.map((row) => {

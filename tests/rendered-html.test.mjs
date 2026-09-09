@@ -721,10 +721,15 @@ test("Resend delivery webhooks are verified, idempotent, and visible in CRM", as
 
 test("customer CRM separates today and overdue follow-ups", async () => {
   const workspace = await readProjectFile("components/admin/CustomerWorkspace.tsx");
+  const adminCss = await readProjectFile("app/admin/admin.css");
   assert.match(workspace, /今日跟进/);
   assert.match(workspace, /已经超期/);
+  assert.match(workspace, /未安排跟进/);
+  assert.match(workspace, /customer-focus-queues/);
+  assert.match(workspace, /customer-filter-disclosure/);
   assert.match(workspace, /按跟进时间筛选/);
   assert.match(workspace, /todayBounds/);
+  assert.match(adminCss, /\.customer-focus-queues/);
 });
 
 test("customer CRM exposes a unified timeline and audited owner queues", async () => {
