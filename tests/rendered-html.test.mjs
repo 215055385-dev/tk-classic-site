@@ -450,6 +450,8 @@ test("admin dashboard preserves lead ownership and exposes operational shortcuts
     readProjectFile("components/AdminDashboard.tsx"),
     readProjectFile("app/admin/admin.css"),
   ]);
+  const service = await readProjectFile("lib/admin-service.ts");
+  const globalStyles = await readProjectFile("app/globals.css");
   assert.match(dashboard, /assignedTo: row\.assignedTo/);
   assert.match(dashboard, /今日运营中心/);
   assert.match(dashboard, /进入询盘跟进/);
@@ -460,6 +462,11 @@ test("admin dashboard preserves lead ownership and exposes operational shortcuts
   assert.match(styles, /\.admin-task-grid/);
   assert.match(styles, /\.admin-nav-group/);
   assert.match(styles, /\.admin-dashboard-disclosure/);
+  assert.match(service, /leadQualityRows/);
+  assert.match(service, /leadQualificationRate/);
+  assert.match(dashboard, /询盘质量漏斗/);
+  assert.match(dashboard, /询盘成交率/);
+  assert.match(globalStyles, /\.admin-lead-quality-grid/);
 });
 
 test("front-end refinement keeps featured products consistent and buyer paths visible", async () => {

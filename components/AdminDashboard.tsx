@@ -41,6 +41,10 @@ const emptyStats: Stats = {
   formStartsLast30Days: 0,
   leadsLast30Days: 0,
   formCompletionRate: 0,
+  salesReadyLeadsLast30Days: 0,
+  wonLeadsLast30Days: 0,
+  leadQualificationRate: 0,
+  leadWinRate: 0,
   emailDeliveryIssues: 0,
   topProducts: [],
   topPaths: [],
@@ -480,6 +484,19 @@ export function AdminDashboard({
                 按近 30
                 天事件汇总，用于判断页面转化趋势，并非同一访客的逐一追踪。
               </p>
+            </article>
+            <article className="admin-panel admin-lead-quality-panel">
+              <div className="admin-panel-heading">
+                <h2>询盘质量漏斗</h2>
+                <span>近 30 天</span>
+              </div>
+              <div className="admin-lead-quality-grid">
+                <div><span>收到询盘</span><strong>{stats.leadsLast30Days}</strong><small>网站成功提交</small></div>
+                <div><span>进入业务推进</span><strong>{stats.salesReadyLeadsLast30Days}</strong><small>有效、样品、报价或谈判</small></div>
+                <div className="is-result"><span>已成交</span><strong>{stats.wonLeadsLast30Days}</strong><small>已标记成交</small></div>
+              </div>
+              <div className="admin-quality-rates"><div><span>有效推进率</span><strong>{stats.leadQualificationRate}%</strong></div><div><span>询盘成交率</span><strong>{stats.leadWinRate}%</strong></div></div>
+              <p className="admin-funnel-note">按询盘当前状态计算；请及时更新客户阶段，数据才会准确。</p>
             </article>
             <article className="admin-panel">
               <div className="admin-panel-heading">

@@ -250,6 +250,8 @@ test.describe("TK Classic buyer journey", () => {
     await expect(funnel).toContainText("开始填写");
     await expect(funnel).toContainText("成功询盘");
     await expect(funnel).toContainText("表单完成率");
+    await expect(page.getByRole("heading", { name: "询盘质量漏斗" })).toBeVisible();
+    await expect(page.locator(".admin-lead-quality-grid > div")).toHaveCount(3);
     await page.goto("/admin/inquiries");
     await expect(page.locator(".inquiry-crm-summary").first()).toBeVisible({ timeout: 15_000 });
     const inquiryCards = page.locator("details.inquiry-crm-card");
