@@ -3,6 +3,8 @@ import { refreshAdminSession } from "@/lib/supabase/proxy";
 
 const localeCodes = new Set(["en", "es", "pt", "fr", "ar", "zh", "ru"]);
 const publicEdgeCache = "public, s-maxage=60, stale-while-revalidate=300";
+const baiduVerificationPath = "/baidu_verify_codeva-E9efZejrfe.html";
+const baiduVerificationBody = "aa046224176d828d13cff8f16d6dfa77";
 
 function withPublicEdgeCache(response: NextResponse, pathname: string, method: string) {
   if ((method === "GET" || method === "HEAD") && pathname !== "/contact/success") {
@@ -13,6 +15,24 @@ function withPublicEdgeCache(response: NextResponse, pathname: string, method: s
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  if (pathname === baiduVerificationPath || pathname === `${baiduVerificationPath}/`) {
+    return new Response(request.method === "HEAD" ? null : baiduVerificationBody, {
+      status: 200,
+      headers: {
+        "Cache-Control": "public, max-age=0, s-maxage=60, must-revalidate",
+        "Content-Type": "text/html; charset=utf-8",
+      },
+    });
+  }
+
+  // Preserve the site's existing canonical no-trailing-slash behavior now that
+  // framework-level normalization is disabled for the Baidu compatibility path.
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    const canonical = new URL(request.url);
+    canonical.pathname = pathname.slice(0, -1);
+    return NextResponse.redirect(canonical, 308);
+  }
 
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     return refreshAdminSession(request);

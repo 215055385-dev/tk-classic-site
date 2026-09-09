@@ -20,6 +20,9 @@ const contentSecurityPolicy = [
 const nextConfig: NextConfig = {
   output: process.env.DOCKER_BUILD === "1" ? "standalone" : undefined,
   allowedDevOrigins: ["127.0.0.1"],
+  // Baidu's ownership checker may append a slash to its verification file URL.
+  // Let Proxy handle that single compatibility path without a framework 308.
+  skipTrailingSlashRedirect: true,
   images: {
     qualities: [70, 72, 75, 76, 78, 80, 90],
   },

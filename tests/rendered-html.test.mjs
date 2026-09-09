@@ -778,10 +778,11 @@ test("customer CRM can safely balance unassigned active customers", async () => 
 });
 
 test("Chinese search discovery has dedicated machine-readable endpoints", async () => {
-  const [layout, robots, proxy, sitemapZh, llmsZh, baiduScript, envExample, chineseGuide, resources, companyPage, productPage, oemPage, localizedUi, productGeoLocalization, baiduVerificationFile] = await Promise.all([
+  const [layout, robots, proxy, nextConfig, sitemapZh, llmsZh, baiduScript, envExample, chineseGuide, resources, companyPage, productPage, oemPage, localizedUi, productGeoLocalization, baiduVerificationFile] = await Promise.all([
     readProjectFile("app/layout.tsx"),
     readProjectFile("app/robots.ts"),
     readProjectFile("proxy.ts"),
+    readProjectFile("next.config.ts"),
     readProjectFile("app/sitemap-zh.xml/route.ts"),
     readProjectFile("app/llms-zh.txt/route.ts"),
     readProjectFile("scripts/submit-baidu.mjs"),
@@ -802,6 +803,9 @@ test("Chinese search discovery has dedicated machine-readable endpoints", async 
   assert.match(robots, /sitemap-zh\.xml/);
   assert.match(proxy, /sitemap-zh\.xml/);
   assert.match(proxy, /llms-zh\.txt/);
+  assert.match(proxy, /baiduVerificationPath/);
+  assert.match(proxy, /pathname === `\$\{baiduVerificationPath\}\/`/);
+  assert.match(nextConfig, /skipTrailingSlashRedirect: true/);
   assert.match(sitemapZh, /function chineseUrl/);
   assert.match(sitemapZh, /"\/products"/);
   assert.match(sitemapZh, /chineseUrl\(`\/products\/\$\{product\.slug\}`\)/);
