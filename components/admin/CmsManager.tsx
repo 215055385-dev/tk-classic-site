@@ -10,7 +10,7 @@ type Item = Record<string, unknown> & { id: string };
 type MediaOption = { id: string; originalName: string; publicUrl?: string | null };
 
 const labels = {
-  products: { eyebrow: "产品 CMS", title: "产品管理", description: "管理真实产品资料、发布状态、参数、卖点、主图与 SEO。官方型号已锁定。", add: "新增产品" },
+  products: { eyebrow: "产品 CMS", title: "产品管理", description: "管理真实产品资料与发布状态。官方型号已锁定。", add: "新增产品" },
   media: { eyebrow: "资源中心", title: "媒体资源", description: "上传、分类、搜索和安全删除 Supabase Storage 中的真实图片与视频。", add: "上传媒体" },
   homepage: { eyebrow: "页面 CMS", title: "首页内容", description: "管理首页各内容区的标题、正文、按钮、排序和发布状态。", add: "新增板块" },
   articles: { eyebrow: "SEO / GEO 内容资产", title: "文章管理", description: "创建、编辑和发布真实买家指南与行业内容。", add: "新增文章" },
@@ -81,6 +81,12 @@ export function CmsManager({ resource }: { resource: Resource }) {
   }, [resource]);
 
   const filtered = useMemo(() => items.filter((item) => JSON.stringify(item).toLowerCase().includes(query.toLowerCase())), [items, query]);
+  const productSummary = useMemo(() => resource !== "products" ? null : {
+    total: items.length,
+    published: items.filter((item) => item.status === "PUBLISHED").length,
+    draft: items.filter((item) => item.status === "DRAFT").length,
+    incomplete: items.filter((item) => productPublishIssues(item).length).length,
+  }, [items, resource]);
 
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!editing) return; setSaving(true); setMessage("");
@@ -101,6 +107,12 @@ export function CmsManager({ resource }: { resource: Resource }) {
   return <section className="cms-manager" aria-busy={loading}>
     <header className="cms-page-heading"><div><span>{meta.eyebrow}</span><h1>{meta.title}</h1><p>{meta.description}</p></div>{resource !== "media" ? <button className="cms-primary" onClick={() => setEditing(empty(resource))}><Plus size={17}/>{meta.add}</button> : null}</header>
     {resource === "media" ? <MediaUploader onUploaded={load}/> : null}
+    {productSummary ? <div className="cms-product-summary" aria-label="产品发布概览">
+      <div><span>全部产品</span><strong>{productSummary.total}</strong></div>
+      <div><span>已发布</span><strong>{productSummary.published}</strong></div>
+      <div><span>草稿</span><strong>{productSummary.draft}</strong></div>
+      <div className={productSummary.incomplete ? "is-warning" : "is-ready"}><span>待补资料</span><strong>{productSummary.incomplete}</strong></div>
+    </div> : null}
     <div className="cms-toolbar"><label><Search size={17}/><input ref={searchRef} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索当前内容" aria-label="搜索当前内容" /><kbd>Ctrl K</kbd></label><button onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{loading ? "加载中…" : "刷新"}</button><span>共 {filtered.length} 条</span></div>
     {message ? <p className="cms-notice" role="status">{message}</p> : null}
     {resource === "media" ? <MediaGrid items={filtered} onEdit={setEditing} onDelete={remove}/> : <DataTable resource={resource} items={filtered} onEdit={setEditing} onDelete={remove}/>} 
@@ -113,7 +125,8 @@ function DataTable({ resource, items, onEdit, onDelete }: { resource: Resource; 
   return <div className="cms-table-wrap"><table className="cms-table"><thead><tr><th>内容</th><th>状态 / 语言</th><th>路径 / 类型</th><th>排序 / 更新时间</th><th>操作</th></tr></thead><tbody>{items.map((item) => {
     const title = resource === "products" ? `${text(item.model)} · ${text(item.name)}` : resource === "homepage" ? text(item.title) || text(item.key) : text(item.title);
     const detail = resource === "products" ? text(item.summary) : resource === "articles" ? text(item.excerpt) : resource === "seo" ? text(item.description) : text(item.subtitle);
-    return <tr key={item.id}><td><strong>{title || "未命名"}</strong><small>{detail || "—"}</small>{resource === "products" && item.heroUrl ? <Image unoptimized className="cms-row-thumb" src={text(item.heroUrl)} alt="" width={48} height={48}/> : null}</td><td><span className={`cms-status is-${text(item.status || (item.noIndex ? "ARCHIVED" : "PUBLISHED")).toLowerCase()}`}>{statusText[text(item.status)] || (item.noIndex ? "禁止索引" : text(item.locale))}</span></td><td>{text(item.slug || item.path || item.type)}</td><td>{item.sortOrder !== undefined ? String(item.sortOrder) : dateText(item.updatedAt)}</td><td><div className="cms-actions">{resource === "products" && item.slug ? <a href={`/products/${text(item.slug)}`} target="_blank" rel="noreferrer" aria-label="预览前台"><ExternalLink size={16}/></a> : null}<button aria-label="编辑" onClick={() => onEdit(item)}><Edit3 size={16}/></button><button className="is-danger" aria-label="删除" onClick={() => void onDelete(item)}><Trash2 size={16}/></button></div></td></tr>;
+    const publishIssues = resource === "products" ? productPublishIssues(item) : [];
+    return <tr key={item.id}><td><strong>{title || "未命名"}</strong><small>{detail || "—"}</small>{resource === "products" ? <span className={`cms-readiness-chip ${publishIssues.length ? "is-incomplete" : "is-ready"}`} title={publishIssues.join("、")}>{publishIssues.length ? `待补 ${publishIssues.length} 项` : "资料完整"}</span> : null}{resource === "products" && item.heroUrl ? <Image unoptimized className="cms-row-thumb" src={text(item.heroUrl)} alt="" width={48} height={48}/> : null}</td><td><span className={`cms-status is-${text(item.status || (item.noIndex ? "ARCHIVED" : "PUBLISHED")).toLowerCase()}`}>{statusText[text(item.status)] || (item.noIndex ? "禁止索引" : text(item.locale))}</span></td><td>{text(item.slug || item.path || item.type)}</td><td>{item.sortOrder !== undefined ? String(item.sortOrder) : dateText(item.updatedAt)}</td><td><div className="cms-actions">{resource === "products" && item.slug ? <a href={`/products/${text(item.slug)}`} target="_blank" rel="noreferrer" aria-label="预览前台"><ExternalLink size={16}/></a> : null}<button aria-label="编辑" onClick={() => onEdit(item)}><Edit3 size={16}/></button><button className="is-danger" aria-label="删除" onClick={() => void onDelete(item)}><Trash2 size={16}/></button></div></td></tr>;
   })}</tbody></table></div>;
 }
 

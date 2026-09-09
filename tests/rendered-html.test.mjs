@@ -606,6 +606,9 @@ test("inquiries use a recoverable admin-only recycle bin instead of destructive 
   assert.match(workspace, /查看回收站/);
   assert.match(workspace, /确认移除/);
   assert.match(workspace, /恢复询盘/);
+  assert.match(workspace, /inquiry-crm-summary/);
+  assert.match(workspace, /open=\{expandedInquiries\.includes\(row\.id\)\}/);
+  assert.match(workspace, /邮件异常/);
   assert.match(schema, /deletedAt\s+DateTime\?/);
 });
 
@@ -649,6 +652,9 @@ test("product CMS prevents incomplete or duplicate products from being published
   assert.match(route, /INVALID_GALLERY_MEDIA/);
   assert.match(route, /role: "GALLERY"/);
   assert.match(manager, /productPublishIssues/);
+  assert.match(manager, /cms-product-summary/);
+  assert.match(manager, /cms-readiness-chip/);
+  assert.match(manager, /待补资料/);
   assert.match(manager, /发布前还需补充/);
   assert.match(manager, /保存草稿/);
   assert.match(manager, /前往媒体库上传/);

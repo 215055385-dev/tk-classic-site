@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CheckCircle2, CircleAlert, Download, ExternalLink, Mail, MessageCircle, RefreshCw, RotateCcw, Search, Send, Trash2, UserRound } from "lucide-react";
+import { CheckCircle2, ChevronDown, CircleAlert, Download, ExternalLink, Mail, MessageCircle, RefreshCw, RotateCcw, Search, Send, Trash2, UserRound } from "lucide-react";
 
 type Status = "new" | "contacted" | "qualified" | "sample_discussion" | "sample_sent" | "quoted" | "negotiating" | "won" | "closed";
 type Inquiry = {
@@ -63,6 +63,7 @@ export function InquiryWorkspace() {
   const [showArchived, setShowArchived] = useState(false);
   const [confirmingArchive, setConfirmingArchive] = useState("");
   const [archiving, setArchiving] = useState("");
+  const [expandedInquiries, setExpandedInquiries] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState({ status: "", product: "", country: "" });
 
@@ -75,7 +76,9 @@ export function InquiryWorkspace() {
       ]);
       const [body, healthBody] = await Promise.all([response.json(), healthResponse.json()]);
       if (!response.ok || !body.ok) throw new Error(body.message || "询盘数据加载失败。");
-      setRows(body.inquiries || []);
+      const inquiries = (body.inquiries || []) as Inquiry[];
+      setRows(inquiries);
+      setExpandedInquiries((current) => current.length || !inquiries[0] ? current : [inquiries[0].id]);
       if (healthResponse.ok && healthBody.ok) setEmailHealth(healthBody.emailHealth);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "询盘数据加载失败。");
@@ -96,7 +99,9 @@ export function InquiryWorkspace() {
       }))
       .then(({ response, healthResponse, body, healthBody }) => {
         if (!response.ok || !body.ok) throw new Error(body.message || "询盘数据加载失败。");
-        setRows(body.inquiries || []);
+        const inquiries = (body.inquiries || []) as Inquiry[];
+        setRows(inquiries);
+        setExpandedInquiries((current) => current.length || !inquiries[0] ? current : [inquiries[0].id]);
         if (healthResponse.ok && healthBody.ok) setEmailHealth(healthBody.emailHealth);
       })
       .catch((error: unknown) => {
@@ -195,15 +200,25 @@ export function InquiryWorkspace() {
     </div>
     {message ? <p className="cms-notice" role="status">{message}</p> : null}
     <div className="inquiry-crm-list">
-      {visibleRows.map((row) => <article className={`inquiry-crm-card${row.deletedAt ? " is-archived" : ""}`} key={row.id}>
-        <div className="inquiry-crm-head"><div><span className={`cms-status is-${row.status}`}>{row.deletedAt ? "回收站" : statuses.find((x) => x.value === row.status)?.label}</span><time>{formatDate(row.createdAt)}</time></div><strong>{row.product || "未指定产品"} · {row.quantity || "数量待沟通"}</strong></div>
+      {visibleRows.map((row) => <details className={`inquiry-crm-card${row.deletedAt ? " is-archived" : ""}`} key={row.id} open={expandedInquiries.includes(row.id)} onToggle={(event) => {
+        const isOpen = event.currentTarget.open;
+        setExpandedInquiries((current) => isOpen ? current.includes(row.id) ? current : [...current, row.id] : current.filter((id) => id !== row.id));
+      }}>
+        <summary className="inquiry-crm-summary">
+          <div className="inquiry-summary-status"><span className={`cms-status is-${row.status}`}>{row.deletedAt ? "回收站" : statuses.find((x) => x.value === row.status)?.label}</span><time>{formatDate(row.createdAt)}</time></div>
+          <div className="inquiry-summary-customer"><strong>{row.name || "未填写姓名"}</strong><span>{row.company || "未填写公司"} · {row.country || "未填写市场"}</span></div>
+          <div className="inquiry-summary-product"><strong>{row.product || "未指定产品"}</strong><span>{row.quantity || "数量待沟通"}</span></div>
+          <div className="inquiry-summary-owner"><span>负责人</span><strong>{row.assignedTo || "未分配"}</strong></div>
+          {row.salesEmailSent === false || (row.source !== "website-chat" && row.customerEmailSent === false) ? <span className="inquiry-summary-alert"><CircleAlert size={14}/>邮件异常</span> : null}
+          <ChevronDown className="inquiry-summary-chevron" size={18}/>
+        </summary>
         <div className="inquiry-crm-grid">
           <div><small>客户</small><h2>{row.name || "未填写姓名"}</h2><p>{row.company || "未填写公司"} · {row.country || "未填写市场"}</p><div className="inquiry-contact-actions"><a href={`mailto:${row.email.replace(/[\r\n]/g, "")}`}><Mail size={15}/>邮件</a>{row.phone ? <a href={whatsappLink(row.phone)} target="_blank" rel="noreferrer"><MessageCircle size={15}/>WhatsApp</a> : null}<a href={`/admin/customers?email=${encodeURIComponent(row.email)}`}><UserRound size={15}/>客户档案</a>{safeSourceHref(row.sourcePage) ? <a href={safeSourceHref(row.sourcePage)} target="_blank" rel="noreferrer"><ExternalLink size={15}/>来源页面</a> : null}</div></div>
           <div><small>采购需求</small><p>{row.message || "—"}</p>{row.branding ? <p><b>定制：</b>{row.branding}</p> : null}{row.accessories ? <p><b>配件：</b>{row.accessories}</p> : null}</div>
           <div className="inquiry-email-delivery"><small>邮件状态</small><p>销售通知：<b className={deliveryClass(row.salesDeliveryStatus, row.salesEmailSent)}>{deliveryLabel(row.salesDeliveryStatus, row.salesEmailSent)}</b></p><p>客户回执：<b className={row.source === "website-chat" ? "is-muted" : deliveryClass(row.customerDeliveryStatus, row.customerEmailSent)}>{row.source === "website-chat" ? "不适用（站内聊天）" : deliveryLabel(row.customerDeliveryStatus, row.customerEmailSent)}</b></p>{row.salesDeliveredAt || row.customerDeliveredAt ? <time>最近送达：{formatDate(row.customerDeliveredAt || row.salesDeliveredAt)}</time> : row.emailLastAttemptAt ? <time>最后尝试：{formatDate(row.emailLastAttemptAt)}</time> : null}{row.emailError ? <em>{row.emailError}</em> : null}{!row.deletedAt ? <div className="inquiry-email-actions">{row.salesEmailSent !== true ? <button type="button" disabled={Boolean(retrying)} onClick={() => void retryEmail(row, "sales")}><Send size={13}/>{retrying === `${row.id}:sales` ? "发送中…" : "重发销售通知"}</button> : null}{row.source !== "website-chat" && row.customerEmailSent !== true ? <button type="button" disabled={Boolean(retrying)} onClick={() => void retryEmail(row, "customer")}><Send size={13}/>{retrying === `${row.id}:customer` ? "发送中…" : "重发客户回执"}</button> : null}{row.salesEmailSent !== true && row.source !== "website-chat" && row.customerEmailSent !== true ? <button className="is-primary" type="button" disabled={Boolean(retrying)} onClick={() => void retryEmail(row, "failed")}><RefreshCw size={13}/>{retrying === `${row.id}:failed` ? "发送中…" : "全部重发"}</button> : null}</div> : null}</div>
           <div className="inquiry-followup"><label><span>负责人</span><select value={row.assignedTo} disabled={Boolean(row.deletedAt)} onChange={(e) => void update(row, row.status, row.adminNote, e.target.value as Inquiry["assignedTo"])}><option value="">未分配</option><option value="Bowie">Bowie</option><option value="Leo">Leo</option></select></label><label><span>跟进状态</span><select value={row.status} disabled={Boolean(row.deletedAt)} onChange={(e) => void update(row, e.target.value as Status, row.adminNote)}>{statuses.map((x) => <option key={x.value} value={x.value}>{x.label}</option>)}</select></label><label><span>内部备注</span><textarea defaultValue={row.adminNote} disabled={Boolean(row.deletedAt)} placeholder="记录报价、样品、下一次联系时间…" onBlur={(e) => { if (e.target.value !== row.adminNote) void update(row, row.status, e.target.value); }}/></label><div className="inquiry-archive-actions">{row.deletedAt ? <button type="button" className="is-restore" disabled={Boolean(archiving)} onClick={() => void archiveInquiry(row, true)}><RotateCcw size={14}/>{archiving === row.id ? "恢复中…" : "恢复询盘"}</button> : confirmingArchive === row.id ? <div className="inquiry-archive-confirm"><p>确认移入回收站？客户档案和历史记录仍会保留。</p><button type="button" onClick={() => setConfirmingArchive("")}>取消</button><button type="button" className="is-confirm" disabled={Boolean(archiving)} onClick={() => void archiveInquiry(row)}>{archiving === row.id ? "处理中…" : "确认移除"}</button></div> : <button type="button" className="is-archive" onClick={() => setConfirmingArchive(row.id)}><Trash2 size={14}/>移入回收站</button>}</div></div>
         </div>
-      </article>)}
+      </details>)}
       {!loading && !visibleRows.length ? <div className="cms-empty">没有符合条件的询盘。</div> : null}
     </div>
   </section>;

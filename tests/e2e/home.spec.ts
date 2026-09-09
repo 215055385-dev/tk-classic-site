@@ -249,6 +249,21 @@ test.describe("TK Classic buyer journey", () => {
     await expect(funnel).toContainText("开始填写");
     await expect(funnel).toContainText("成功询盘");
     await expect(funnel).toContainText("表单完成率");
+    await page.goto("/admin/inquiries");
+    await expect(page.locator(".inquiry-crm-summary").first()).toBeVisible({ timeout: 15_000 });
+    const inquiryCards = page.locator("details.inquiry-crm-card");
+    expect(await inquiryCards.count()).toBeGreaterThan(0);
+    expect(await inquiryCards.evaluateAll((cards) => cards.filter((card) => card.hasAttribute("open")).length)).toBeLessThanOrEqual(1);
+    await expect(inquiryCards.first().locator(".inquiry-crm-grid")).toBeVisible();
+    await page.goto("/admin/products");
+    await expect(page.locator(".cms-product-summary")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("button", { name: "刷新" })).toBeVisible({ timeout: 15_000 });
+    if (await page.locator(".cms-readiness-chip").count()) {
+      await expect(page.locator(".cms-readiness-chip").first()).toBeVisible();
+    } else {
+      await expect(page.locator(".cms-empty")).toBeVisible();
+    }
+    await expect(page.locator(".cms-product-summary")).toContainText("待补资料");
     const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
   });
