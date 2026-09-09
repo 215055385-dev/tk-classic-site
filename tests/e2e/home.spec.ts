@@ -240,8 +240,10 @@ test.describe("TK Classic buyer journey", () => {
     await page.goto("/admin");
     await page.getByLabel("管理员密码").fill(password!);
     await page.getByRole("button", { name: "登录后台" }).click();
-    await expect(page.getByRole("heading", { name: "询盘与访问数据" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "今天先处理什么" })).toBeVisible({ timeout: 15_000 });
+    await page.locator(".admin-dashboard-disclosure").first().locator("summary").click();
     const funnel = page.locator(".admin-funnel-panel");
+    await expect(funnel).toBeVisible();
     await expect(funnel).toContainText("询盘转化漏斗");
     await expect(funnel).toContainText("报价意向");
     await expect(funnel).toContainText("开始填写");

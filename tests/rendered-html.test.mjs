@@ -433,7 +433,10 @@ test("admin navigation exposes real module labels and uses the unified titanium 
   ]);
   assert.match(shell, /const resolvedTitle/);
   assert.match(shell, /aria-label=\{item\.label\}/);
-  assert.match(shell, /复制后台地址/);
+  assert.match(shell, /navigationGroups/);
+  assert.match(shell, /网站内容/);
+  assert.match(shell, /SEO \/ GEO/);
+  assert.match(shell, /复制地址/);
   assert.match(dashboard, /复制后台网址/);
   assert.match(dashboard, /Ctrl \+ D/);
   assert.doesNotMatch(shell, /<Menu className="admin-cms-menu-icon"/);
@@ -450,12 +453,13 @@ test("admin dashboard preserves lead ownership and exposes operational shortcuts
   assert.match(dashboard, /assignedTo: row\.assignedTo/);
   assert.match(dashboard, /今日运营中心/);
   assert.match(dashboard, /进入询盘跟进/);
-  assert.match(dashboard, /href="\/admin\/products"/);
-  assert.match(dashboard, /href="\/admin\/media"/);
-  assert.match(dashboard, /href="\/admin\/articles"/);
-  assert.match(dashboard, /href="\/admin\/chats"/);
+  assert.match(dashboard, /admin-dashboard-disclosure/);
+  assert.match(dashboard, /今天先处理什么/);
+  assert.match(dashboard, /历史询盘快速查看/);
   assert.match(styles, /\.admin-operations/);
   assert.match(styles, /\.admin-task-grid/);
+  assert.match(styles, /\.admin-nav-group/);
+  assert.match(styles, /\.admin-dashboard-disclosure/);
 });
 
 test("front-end refinement keeps featured products consistent and buyer paths visible", async () => {
