@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BarChart3, CheckCircle2, CircleAlert, DatabaseBackup, ExternalLink, RefreshCw, ScrollText, ShieldCheck } from "lucide-react";
+import { BarChart3, CheckCircle2, CircleAlert, DatabaseBackup, ExternalLink, FileCheck2, RefreshCw, ScrollText, ShieldCheck } from "lucide-react";
 
 type AuditItem = { id: string; action: string; entityType: string; entityId?: string | null; createdAt: string; actor?: { username: string; displayName?: string | null } | null };
 type GrowthReadiness = { ga4: boolean; googleAds: boolean; leadConversion: boolean; usLandingPage: boolean; inquiryTracking: boolean; readyForPaidTraffic: boolean };
 type EmailHealth = { ready: boolean; senderAddress: string; siteDomain: string; domainStatus: string; recipientCount: number; webhookConfigured: boolean; checkedAt: string; error: string };
-type SystemData = { counts: { products: number; media: number; articles: number; inquiries: number; auditLogs: number }; growthReadiness: GrowthReadiness; emailHealth: EmailHealth; logs: AuditItem[] };
+type ContentHealthItem = { total: number; issues: number; duplicateTitles?: number };
+type ContentHealth = { ready: boolean; totalIssues: number; products: ContentHealthItem; articles: ContentHealthItem; media: ContentHealthItem; seo: ContentHealthItem };
+type SystemData = { counts: { products: number; media: number; articles: number; inquiries: number; auditLogs: number }; growthReadiness: GrowthReadiness; contentHealth: ContentHealth; emailHealth: EmailHealth; logs: AuditItem[] };
 const actionLabels: Record<string, string> = { CREATE: "创建", UPDATE: "更新", DELETE: "删除", UPLOAD: "上传", ARCHIVE: "归档", LOGIN: "登录" };
 const entityLabels: Record<string, string> = { products: "产品", product: "产品", homepage: "首页内容", media: "媒体", articles: "文章", seo: "SEO", inquiry: "询盘" };
 
@@ -28,6 +30,18 @@ export function SystemWorkspace() {
     <header className="cms-page-heading"><div><span>系统与安全</span><h1>系统设置</h1><p>后台保持纯中文。这里提供数据概览、操作审计和完整 JSON 备份，不包含多语言管理。</p></div><a className="cms-primary" href="/api/admin/system?mode=backup"><DatabaseBackup size={17}/>下载完整 JSON 备份</a></header>
     <div className="system-security-note"><ShieldCheck size={22}/><div><strong>后台权限保护已启用</strong><p>未登录用户不能访问管理页面或数据接口；写入操作仅允许管理员和编辑角色。</p></div></div>
     {data ? <div className={`system-email-health ${data.emailHealth.ready ? "is-ready" : "is-warning"}`}>{data.emailHealth.ready ? <CheckCircle2 size={22}/> : <CircleAlert size={22}/>}<div><span>询盘邮件基础设施</span><strong>{data.emailHealth.ready ? "Resend 邮件服务正常" : "邮件服务需要处理"}</strong><p>{data.emailHealth.ready ? `${data.emailHealth.siteDomain} 已验证；Webhook 送达追踪已启用，当前配置 ${data.emailHealth.recipientCount} 个销售收件人。` : data.emailHealth.error || (!data.emailHealth.webhookConfigured ? "邮件 Webhook 尚未配置。" : `域名状态：${data.emailHealth.domainStatus}；请检查自定义发件地址。`)}</p><small>发件地址：{data.emailHealth.senderAddress || "未配置"} · 最近检查：{new Date(data.emailHealth.checkedAt).toLocaleString("zh-CN")}</small></div></div> : null}
+    {data ? <section className="content-health-panel" aria-labelledby="content-health-title">
+      <div className="content-health-head"><div><span>发布质量控制</span><h2 id="content-health-title"><FileCheck2 size={20}/>发布前总检查</h2><p>只检查已经发布或允许索引的内容，不会用虚构信息自动补齐。</p></div><strong className={data.contentHealth.ready ? "is-ready" : "is-warning"}>{data.contentHealth.ready ? "全部通过" : `${data.contentHealth.totalIssues} 项待处理`}</strong></div>
+      <div className="content-health-grid">
+        {[
+          { label: "产品资料", health: data.contentHealth.products, href: "/admin/products", detail: "主图、参数、卖点、场景与 SEO" },
+          { label: "文章内容", health: data.contentHealth.articles, href: "/admin/articles", detail: "封面、正文、摘要与 SEO" },
+          { label: "媒体说明", health: data.contentHealth.media, href: "/admin/media", detail: "图片 ALT 与媒体说明" },
+          { label: "SEO / GEO", health: data.contentHealth.seo, href: "/admin/seo", detail: data.contentHealth.seo.duplicateTitles ? `含 ${data.contentHealth.seo.duplicateTitles} 条重复标题记录` : "标题、描述、Canonical 与重复标题" },
+        ].map(({ label, health, href, detail }) => <a className={health.issues ? "is-warning" : "is-ready"} href={href} key={label}><div>{health.issues ? <CircleAlert size={18}/> : <CheckCircle2 size={18}/>}<span>{label}</span></div><strong>{health.issues ? `${health.issues} 项待补` : "已通过"}</strong><small>{detail} · 共 {health.total} 条</small></a>)}
+      </div>
+      <p className="content-health-footnote">点击对应模块可直接处理；媒体和 SEO 页面可使用“待补资料”快捷筛选。</p>
+    </section> : null}
     {data ? <section className="growth-readiness-panel" aria-labelledby="growth-readiness-title">
       <div className="growth-readiness-head">
         <div><span>获客基础设施</span><h2 id="growth-readiness-title"><BarChart3 size={20}/>广告与转化准备度</h2><p>只有统计、广告代码和询盘转化三项全部完成后，才建议小额充值测试。</p></div>

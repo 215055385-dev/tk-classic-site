@@ -279,6 +279,9 @@ test.describe("TK Classic buyer journey", () => {
     await expect(page.locator(".cms-content-overview")).toContainText("允许索引");
     await page.goto("/admin/media");
     await expect(page.locator(".cms-content-overview")).toContainText("使用中");
+    await page.goto("/admin/settings");
+    await expect(page.getByRole("heading", { name: "发布前总检查" })).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator(".content-health-grid > a")).toHaveCount(4);
     const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
   });

@@ -590,6 +590,22 @@ test("admin surfaces Resend domain health before inquiry delivery fails", async 
   assert.match(settings, /询盘邮件基础设施/);
 });
 
+test("admin system workspace audits published content before release", async () => {
+  const systemRoute = await readProjectFile("app/api/admin/system/route.ts");
+  const workspace = await readProjectFile("components/admin/SystemWorkspace.tsx");
+  const adminCss = await readProjectFile("app/admin/admin.css");
+
+  assert.match(systemRoute, /contentHealth/);
+  assert.match(systemRoute, /duplicateSeoTitles/);
+  assert.match(systemRoute, /mediaMissingAlt/);
+  assert.match(systemRoute, /incompleteArticles/);
+  assert.match(workspace, /发布前总检查/);
+  assert.match(workspace, /不会用虚构信息自动补齐/);
+  assert.match(workspace, /重复标题/);
+  assert.match(workspace, /\/admin\/media/);
+  assert.match(adminCss, /\.content-health-panel/);
+});
+
 test("inquiries use a recoverable admin-only recycle bin instead of destructive deletion", async () => {
   const archiveRoute = await readProjectFile("app/api/admin/inquiries/[id]/route.ts");
   const adminService = await readProjectFile("lib/admin-service.ts");

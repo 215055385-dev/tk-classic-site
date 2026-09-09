@@ -52,10 +52,14 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const [logs, counts, emailHealth] = await Promise.all([
+    const [logs, counts, emailHealth, products, articles, media, seo] = await Promise.all([
       db.auditLog.findMany({ take: 100, orderBy: { createdAt: "desc" }, include: { actor: { select: { username: true, displayName: true } } } }),
       Promise.all([db.product.count(), db.mediaAsset.count({ where: { deletedAt: null } }), db.article.count(), db.inquiry.count({ where: { deletedAt: null } }), db.auditLog.count()]),
       getEmailHealth(),
+      db.product.findMany({ where: { status: "PUBLISHED" }, select: { id: true, translations: { where: { locale: "en" }, select: { name: true, summary: true, seoTitle: true, seoDescription: true } }, specs: { select: { id: true } }, features: { where: { locale: "en" }, select: { id: true } }, useCases: { where: { locale: "en" }, select: { id: true } }, media: { where: { role: "HERO" }, select: { id: true } } } }),
+      db.article.findMany({ where: { status: "PUBLISHED" }, select: { id: true, slug: true, coverMediaId: true, translations: { where: { locale: "en" }, select: { title: true, excerpt: true, content: true, seoTitle: true, seoDescription: true } } } }),
+      db.mediaAsset.findMany({ where: { deletedAt: null }, select: { id: true, altText: true } }),
+      db.pageSeo.findMany({ where: { noIndex: false }, select: { id: true, title: true, description: true, canonicalUrl: true } }),
     ]);
     const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() ?? "";
     const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID?.trim() ?? "";
@@ -63,6 +67,22 @@ export async function GET(request: NextRequest) {
     const ga4 = /^G-[A-Z0-9]+$/i.test(gaMeasurementId);
     const googleAds = /^AW-\d+$/i.test(googleAdsId);
     const leadConversion = googleAds && googleAdsConversionLabel.length > 0;
+    const incompleteProducts = products.filter((product) => {
+      const translation = product.translations[0];
+      return !translation?.name.trim() || !translation.summary.trim() || !translation.seoTitle?.trim() || !translation.seoDescription?.trim() || product.specs.length < 3 || !product.features.length || !product.useCases.length || !product.media.length;
+    }).length;
+    const incompleteArticles = articles.filter((article) => {
+      const translation = article.translations[0];
+      const content = translation?.content;
+      const hasContent = typeof content === "string" ? content.trim().length > 0 : Boolean(content && Object.keys(content as object).length);
+      return !article.slug.trim() || !article.coverMediaId || !translation?.title.trim() || !translation.excerpt?.trim() || !hasContent || !translation.seoTitle?.trim() || !translation.seoDescription?.trim();
+    }).length;
+    const mediaMissingAlt = media.filter((asset) => !asset.altText?.trim()).length;
+    const incompleteSeo = seo.filter((entry) => !entry.title.trim() || !entry.description.trim() || !entry.canonicalUrl?.trim()).length;
+    const titleCounts = new Map<string, number>();
+    for (const entry of seo) { const title = entry.title.trim().toLocaleLowerCase(); if (title) titleCounts.set(title, (titleCounts.get(title) ?? 0) + 1); }
+    const duplicateSeoTitles = Array.from(titleCounts.values()).filter((count) => count > 1).reduce((sum, count) => sum + count, 0);
+    const totalContentIssues = incompleteProducts + incompleteArticles + mediaMissingAlt + incompleteSeo + duplicateSeoTitles;
 
     return Response.json({
       ok: true,
@@ -74,6 +94,14 @@ export async function GET(request: NextRequest) {
         usLandingPage: true,
         inquiryTracking: true,
         readyForPaidTraffic: ga4 && googleAds && leadConversion,
+      },
+      contentHealth: {
+        ready: totalContentIssues === 0,
+        totalIssues: totalContentIssues,
+        products: { total: products.length, issues: incompleteProducts },
+        articles: { total: articles.length, issues: incompleteArticles },
+        media: { total: media.length, issues: mediaMissingAlt },
+        seo: { total: seo.length, issues: incompleteSeo + duplicateSeoTitles, duplicateTitles: duplicateSeoTitles },
       },
       emailHealth,
       logs: logs.map((log) => ({ ...log, createdAt: log.createdAt.toISOString() })),
