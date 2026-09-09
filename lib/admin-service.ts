@@ -62,6 +62,10 @@ export type AdminStats = {
   organicInquiriesLast30Days: number;
   organicConversionRate: number;
   eventsLast7Days: number;
+  quoteClicksLast30Days: number;
+  formStartsLast30Days: number;
+  leadsLast30Days: number;
+  formCompletionRate: number;
   emailDeliveryIssues: number;
   topProducts: Array<{ label: string; value: number }>;
   topPaths: Array<{ label: string; value: number }>;
@@ -210,6 +214,7 @@ export async function listAdminData(filters: {
     totalVisitRows,
     sevenDayVisitRows,
     conversionRows,
+    funnelRows,
     sevenDayEventRows,
     organicVisitRows,
     organicInquiryRows,
@@ -248,7 +253,8 @@ export async function listAdminData(filters: {
     sql`SELECT TO_CHAR((visited_at AT TIME ZONE 'UTC')::date, 'YYYY-MM-DD') AS day, COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '14 days' GROUP BY 1 ORDER BY day ASC`,
     sql`SELECT COUNT(*) AS total FROM site_visits`,
     sql`SELECT COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '7 days'`,
-    sql`SELECT name, COUNT(*) AS total FROM site_events GROUP BY name ORDER BY total DESC`,
+    sql`SELECT name, COUNT(*) AS total FROM site_events WHERE occurred_at >= now() - interval '30 days' GROUP BY name ORDER BY total DESC`,
+    sql`SELECT COUNT(*) FILTER (WHERE name = 'quote_click') AS quote_clicks, COUNT(*) FILTER (WHERE name = 'form_start') AS form_starts, COUNT(*) FILTER (WHERE name = 'generate_lead') AS leads FROM site_events WHERE occurred_at >= now() - interval '30 days'`,
     sql`SELECT COUNT(*) AS total FROM site_events WHERE occurred_at >= now() - interval '7 days'`,
     sql`SELECT COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '30 days' AND COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)'`,
     sql`SELECT COUNT(*) AS total FROM inquiries WHERE deleted_at IS NULL AND created_at >= now() - interval '30 days' AND (COALESCE(source, '') ~* '(google|bing|yahoo|duckduckgo|ecosia|yandex|baidu)' OR COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)')`,
@@ -302,6 +308,10 @@ export async function listAdminData(filters: {
   const summary = summaryRows[0] ?? {};
   const organicVisitsLast30Days = toNumber(organicVisitRows[0]?.total);
   const organicInquiriesLast30Days = toNumber(organicInquiryRows[0]?.total);
+  const funnel = funnelRows[0] ?? {};
+  const quoteClicksLast30Days = toNumber(funnel.quote_clicks);
+  const formStartsLast30Days = toNumber(funnel.form_starts);
+  const leadsLast30Days = toNumber(funnel.leads);
 
   const stats: AdminStats = {
     totalInquiries: toNumber(summary.total),
@@ -314,6 +324,10 @@ export async function listAdminData(filters: {
     organicInquiriesLast30Days,
     organicConversionRate: organicVisitsLast30Days ? Number(((organicInquiriesLast30Days / organicVisitsLast30Days) * 100).toFixed(2)) : 0,
     eventsLast7Days: toNumber(sevenDayEventRows[0]?.total),
+    quoteClicksLast30Days,
+    formStartsLast30Days,
+    leadsLast30Days,
+    formCompletionRate: formStartsLast30Days ? Number(((leadsLast30Days / formStartsLast30Days) * 100).toFixed(1)) : 0,
     emailDeliveryIssues: toNumber(summary.email_delivery_issues),
     topProducts: productRows.map((row) => ({ label: String(row.product), value: toNumber(row.total) })),
     topPaths: pathRows.map((row) => ({ label: String(row.path), value: toNumber(row.total) })),

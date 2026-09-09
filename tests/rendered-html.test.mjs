@@ -385,9 +385,10 @@ test("US wholesale acquisition path is factual, private-price, and conversion re
 });
 
 test("organic acquisition reporting and SEO release checks remain available", async () => {
-  const [service, dashboard, articleIndex, auditScript] = await Promise.all([
+  const [service, dashboard, attribution, articleIndex, auditScript] = await Promise.all([
     readProjectFile("lib/admin-service.ts"),
     readProjectFile("components/AdminDashboard.tsx"),
+    readProjectFile("lib/client-analytics.ts"),
     readProjectFile("app/articles/page.tsx"),
     readProjectFile("scripts/audit-public-seo.mjs"),
   ]);
@@ -395,6 +396,14 @@ test("organic acquisition reporting and SEO release checks remain available", as
   assert.match(service, /topSearchEngines/);
   assert.match(dashboard, /自然搜索落地页/);
   assert.match(dashboard, /自然询盘转化率/);
+  assert.match(dashboard, /询盘转化漏斗/);
+  assert.match(dashboard, /表单完成率/);
+  assert.match(service, /occurred_at >= now\(\) - interval '30 days'/);
+  assert.match(service, /quoteClicksLast30Days/);
+  assert.match(attribution, /tk-first-touch-attribution-v2/);
+  assert.match(attribution, /tk-last-touch-attribution-v2/);
+  assert.match(attribution, /90 \* 24 \* 60 \* 60 \* 1000/);
+  assert.match(attribution, /if \(!isInternal\) current\.referrerHost/);
   assert.match(articleIndex, /index: false, follow: true/);
   assert.match(articleIndex, /canonical/);
   assert.match(auditScript, /Expected one H1/);

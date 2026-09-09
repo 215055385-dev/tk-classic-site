@@ -234,6 +234,23 @@ test.describe("TK Classic buyer journey", () => {
     expect(customerUpdate.status()).toBe(401);
   });
 
+  test("authenticated admin shows a responsive 30-day inquiry funnel", async ({ page }) => {
+    const password = process.env.ADMIN_DASHBOARD_PASSWORD;
+    test.skip(!password, "Admin password is only supplied during authenticated verification.");
+    await page.goto("/admin");
+    await page.getByLabel("管理员密码").fill(password!);
+    await page.getByRole("button", { name: "登录后台" }).click();
+    await expect(page.getByRole("heading", { name: "询盘与访问数据" })).toBeVisible({ timeout: 15_000 });
+    const funnel = page.locator(".admin-funnel-panel");
+    await expect(funnel).toContainText("询盘转化漏斗");
+    await expect(funnel).toContainText("报价意向");
+    await expect(funnel).toContainText("开始填写");
+    await expect(funnel).toContainText("成功询盘");
+    await expect(funnel).toContainText("表单完成率");
+    const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+  });
+
   test("long pages expose lightweight reading progress while admin stays distraction free", async ({ page }) => {
     const runtimeErrors: string[] = [];
     page.on("pageerror", (error) => runtimeErrors.push(error.message));
