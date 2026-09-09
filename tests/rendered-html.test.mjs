@@ -653,6 +653,10 @@ test("product CMS prevents incomplete or duplicate products from being published
   assert.match(route, /role: "GALLERY"/);
   assert.match(manager, /productPublishIssues/);
   assert.match(manager, /cms-product-summary/);
+  assert.match(manager, /contentReadinessIssues/);
+  assert.match(manager, /cms-content-overview/);
+  assert.match(manager, /contentView === "incomplete"/);
+  assert.match(manager, /缺少图片说明/);
   assert.match(manager, /cms-readiness-chip/);
   assert.match(manager, /待补资料/);
   assert.match(manager, /发布前还需补充/);
@@ -673,6 +677,7 @@ test("product CMS prevents incomplete or duplicate products from being published
   assert.match(llms, /await getCmsProducts\(\)/);
   assert.match(llms, /Published specifications/);
   assert.match(adminCss, /\.cms-publish-readiness/);
+  assert.match(adminCss, /\.cms-content-overview/);
   assert.match(adminCss, /\.cms-product-gallery-picker/);
 });
 

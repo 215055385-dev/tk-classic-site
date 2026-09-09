@@ -391,6 +391,13 @@
 .cms-product-summary .is-warning strong { color: #9b4d2f; }
 .cms-product-summary .is-ready { border-color: #cbe2d1; background: #f3faf5; }
 .cms-product-summary .is-ready strong { color: #315b3e; }
+.cms-content-overview { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; }
+.cms-content-overview button { display: flex; align-items: center; justify-content: space-between; min-height: 64px; padding: 12px 15px; border: 1px solid var(--admin-line); border-radius: 11px; color: var(--admin-muted); background: #fff; font: inherit; cursor: pointer; }
+.cms-content-overview button span { font-size: 11px; font-weight: 750; }
+.cms-content-overview button strong { display: grid; min-width: 28px; height: 28px; place-items: center; border-radius: 8px; color: #17677d; background: #e6f4f7; font-size: 13px; }
+.cms-content-overview button.is-warning strong { color: #9b4d2f; background: #fff0e8; }
+.cms-content-overview button.is-active { border-color: rgba(20,127,157,.4); color: #0f6178; background: #eef9fb; box-shadow: 0 8px 20px rgba(20,54,68,.06); }
+.cms-content-overview button.is-active.is-warning { border-color: #edc9b4; color: #8b472f; background: #fff8f2; }
 .cms-notice { margin: -8px 0 0; padding: 11px 14px; border: 1px solid #d6c2ae; border-radius: 9px; color: #674126; background: #fff8ed; }
 .cms-table-wrap { overflow: auto; border: 1px solid var(--admin-line); border-radius: 12px; background: white; }
 .cms-table { width: 100%; min-width: 820px; border-collapse: collapse; }
@@ -659,6 +666,7 @@
   .inquiry-toolbar > select,
   .inquiry-toolbar > input { flex: 1 1 calc(50% - 8px); }
   .cms-product-summary { grid-template-columns: 1fr 1fr; }
+  .cms-content-overview { grid-template-columns: 1fr 1fr; }
   .inquiry-crm-summary { grid-template-columns: 1fr auto; gap: 9px 12px; }
   .inquiry-summary-status { display: flex; align-items: center; }
   .inquiry-summary-customer,

@@ -235,7 +235,7 @@ test.describe("TK Classic buyer journey", () => {
   });
 
   test("authenticated admin shows a responsive 30-day inquiry funnel", async ({ page }) => {
-    test.setTimeout(60_000);
+    test.setTimeout(90_000);
     const password = process.env.ADMIN_DASHBOARD_PASSWORD;
     test.skip(!password, "Admin password is only supplied during authenticated verification.");
     await page.goto("/admin");
@@ -271,6 +271,14 @@ test.describe("TK Classic buyer journey", () => {
     await page.getByRole("button", { name: /未安排跟进/ }).click();
     await page.locator(".customer-filter-disclosure > summary").click();
     await expect(page.getByLabel("按跟进时间筛选")).toHaveValue("unscheduled");
+    await page.goto("/admin/articles");
+    await expect(page.locator(".cms-content-overview")).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator(".cms-content-overview > button")).toHaveCount(4);
+    await page.getByRole("button", { name: /待补资料/ }).click();
+    await page.goto("/admin/seo");
+    await expect(page.locator(".cms-content-overview")).toContainText("允许索引");
+    await page.goto("/admin/media");
+    await expect(page.locator(".cms-content-overview")).toContainText("使用中");
     const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
   });

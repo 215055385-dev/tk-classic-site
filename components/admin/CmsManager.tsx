@@ -45,10 +45,35 @@ function productPublishIssues(item: Item) {
   return issues;
 }
 
+function contentReadinessIssues(resource: Resource, item: Item) {
+  if (resource === "products") return productPublishIssues(item);
+  const issues: string[] = [];
+  if (resource === "homepage") {
+    if (!text(item.title).trim() && !text(item.body).trim()) issues.push("标题或正文");
+    if (text(item.ctaLabel).trim() && !text(item.ctaHref).trim()) issues.push("按钮链接");
+  }
+  if (resource === "articles") {
+    if (!text(item.title).trim()) issues.push("标题");
+    if (!text(item.slug).trim()) issues.push("URL 路径");
+    if (!text(item.excerpt).trim()) issues.push("摘要");
+    if (!text(item.content).trim()) issues.push("正文");
+    if (!text(item.seoTitle).trim()) issues.push("SEO 标题");
+    if (!text(item.seoDescription).trim()) issues.push("SEO 描述");
+  }
+  if (resource === "seo") {
+    if (!text(item.title).trim()) issues.push("SEO 标题");
+    if (!text(item.description).trim()) issues.push("SEO 描述");
+    if (!text(item.canonicalUrl).trim()) issues.push("Canonical");
+  }
+  if (resource === "media" && !text(item.altText).trim()) issues.push("图片说明");
+  return issues;
+}
+
 export function CmsManager({ resource }: { resource: Resource }) {
   const meta = labels[resource]; const [items, setItems] = useState<Item[]>([]); const [media, setMedia] = useState<MediaOption[]>([]);
   const [loading, setLoading] = useState(true); const [query, setQuery] = useState(""); const [editing, setEditing] = useState<Item | null>(null);
   const [message, setMessage] = useState(""); const [saving, setSaving] = useState(false);
+  const [contentView, setContentView] = useState<"all" | "primary" | "secondary" | "incomplete">("all");
   const searchRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
@@ -80,12 +105,32 @@ export function CmsManager({ resource }: { resource: Resource }) {
     return () => controller.abort();
   }, [resource]);
 
-  const filtered = useMemo(() => items.filter((item) => JSON.stringify(item).toLowerCase().includes(query.toLowerCase())), [items, query]);
+  const filtered = useMemo(() => items.filter((item) => {
+    if (!JSON.stringify(item).toLowerCase().includes(query.toLowerCase())) return false;
+    if (contentView === "incomplete") return contentReadinessIssues(resource, item).length > 0;
+    if (contentView === "primary") {
+      if (resource === "seo") return !item.noIndex;
+      if (resource === "media") return Number(item.referenceCount) > 0;
+      return item.status === "PUBLISHED";
+    }
+    if (contentView === "secondary") {
+      if (resource === "seo") return Boolean(item.noIndex);
+      if (resource === "media") return Number(item.referenceCount) === 0;
+      return item.status === "DRAFT";
+    }
+    return true;
+  }), [contentView, items, query, resource]);
   const productSummary = useMemo(() => resource !== "products" ? null : {
     total: items.length,
     published: items.filter((item) => item.status === "PUBLISHED").length,
     draft: items.filter((item) => item.status === "DRAFT").length,
     incomplete: items.filter((item) => productPublishIssues(item).length).length,
+  }, [items, resource]);
+  const contentSummary = useMemo(() => resource === "products" ? null : {
+    total: items.length,
+    primary: items.filter((item) => resource === "seo" ? !item.noIndex : resource === "media" ? Number(item.referenceCount) > 0 : item.status === "PUBLISHED").length,
+    secondary: items.filter((item) => resource === "seo" ? Boolean(item.noIndex) : resource === "media" ? Number(item.referenceCount) === 0 : item.status === "DRAFT").length,
+    incomplete: items.filter((item) => contentReadinessIssues(resource, item).length > 0).length,
   }, [items, resource]);
 
   async function save(event: React.FormEvent<HTMLFormElement>) {
@@ -113,6 +158,12 @@ export function CmsManager({ resource }: { resource: Resource }) {
       <div><span>草稿</span><strong>{productSummary.draft}</strong></div>
       <div className={productSummary.incomplete ? "is-warning" : "is-ready"}><span>待补资料</span><strong>{productSummary.incomplete}</strong></div>
     </div> : null}
+    {contentSummary ? <div className="cms-content-overview" aria-label="内容状态概览">
+      <button className={contentView === "all" ? "is-active" : undefined} onClick={() => setContentView("all")}><span>全部</span><strong>{contentSummary.total}</strong></button>
+      <button className={contentView === "primary" ? "is-active" : undefined} onClick={() => setContentView("primary")}><span>{resource === "seo" ? "允许索引" : resource === "media" ? "使用中" : "已发布"}</span><strong>{contentSummary.primary}</strong></button>
+      <button className={contentView === "secondary" ? "is-active" : undefined} onClick={() => setContentView("secondary")}><span>{resource === "seo" ? "禁止索引" : resource === "media" ? "未使用" : "草稿"}</span><strong>{contentSummary.secondary}</strong></button>
+      <button className={`${contentView === "incomplete" ? "is-active " : ""}is-warning`} onClick={() => setContentView("incomplete")}><span>待补资料</span><strong>{contentSummary.incomplete}</strong></button>
+    </div> : null}
     <div className="cms-toolbar"><label><Search size={17}/><input ref={searchRef} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索当前内容" aria-label="搜索当前内容" /><kbd>Ctrl K</kbd></label><button onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{loading ? "加载中…" : "刷新"}</button><span>共 {filtered.length} 条</span></div>
     {message ? <p className="cms-notice" role="status">{message}</p> : null}
     {resource === "media" ? <MediaGrid items={filtered} onEdit={setEditing} onDelete={remove}/> : <DataTable resource={resource} items={filtered} onEdit={setEditing} onDelete={remove}/>} 
@@ -125,13 +176,13 @@ function DataTable({ resource, items, onEdit, onDelete }: { resource: Resource; 
   return <div className="cms-table-wrap"><table className="cms-table"><thead><tr><th>内容</th><th>状态 / 语言</th><th>路径 / 类型</th><th>排序 / 更新时间</th><th>操作</th></tr></thead><tbody>{items.map((item) => {
     const title = resource === "products" ? `${text(item.model)} · ${text(item.name)}` : resource === "homepage" ? text(item.title) || text(item.key) : text(item.title);
     const detail = resource === "products" ? text(item.summary) : resource === "articles" ? text(item.excerpt) : resource === "seo" ? text(item.description) : text(item.subtitle);
-    const publishIssues = resource === "products" ? productPublishIssues(item) : [];
-    return <tr key={item.id}><td><strong>{title || "未命名"}</strong><small>{detail || "—"}</small>{resource === "products" ? <span className={`cms-readiness-chip ${publishIssues.length ? "is-incomplete" : "is-ready"}`} title={publishIssues.join("、")}>{publishIssues.length ? `待补 ${publishIssues.length} 项` : "资料完整"}</span> : null}{resource === "products" && item.heroUrl ? <Image unoptimized className="cms-row-thumb" src={text(item.heroUrl)} alt="" width={48} height={48}/> : null}</td><td><span className={`cms-status is-${text(item.status || (item.noIndex ? "ARCHIVED" : "PUBLISHED")).toLowerCase()}`}>{statusText[text(item.status)] || (item.noIndex ? "禁止索引" : text(item.locale))}</span></td><td>{text(item.slug || item.path || item.type)}</td><td>{item.sortOrder !== undefined ? String(item.sortOrder) : dateText(item.updatedAt)}</td><td><div className="cms-actions">{resource === "products" && item.slug ? <a href={`/products/${text(item.slug)}`} target="_blank" rel="noreferrer" aria-label="预览前台"><ExternalLink size={16}/></a> : null}<button aria-label="编辑" onClick={() => onEdit(item)}><Edit3 size={16}/></button><button className="is-danger" aria-label="删除" onClick={() => void onDelete(item)}><Trash2 size={16}/></button></div></td></tr>;
+    const publishIssues = contentReadinessIssues(resource, item);
+    return <tr key={item.id}><td><strong>{title || "未命名"}</strong><small>{detail || "—"}</small><span className={`cms-readiness-chip ${publishIssues.length ? "is-incomplete" : "is-ready"}`} title={publishIssues.join("、")}>{publishIssues.length ? `待补 ${publishIssues.length} 项` : "资料完整"}</span>{resource === "products" && item.heroUrl ? <Image unoptimized className="cms-row-thumb" src={text(item.heroUrl)} alt="" width={48} height={48}/> : null}</td><td><span className={`cms-status is-${text(item.status || (item.noIndex ? "ARCHIVED" : "PUBLISHED")).toLowerCase()}`}>{statusText[text(item.status)] || (item.noIndex ? "禁止索引" : text(item.locale))}</span></td><td>{text(item.slug || item.path || item.type)}</td><td>{item.sortOrder !== undefined ? String(item.sortOrder) : dateText(item.updatedAt)}</td><td><div className="cms-actions">{resource === "products" && item.slug ? <a href={`/products/${text(item.slug)}`} target="_blank" rel="noreferrer" aria-label="预览前台"><ExternalLink size={16}/></a> : null}<button aria-label="编辑" onClick={() => onEdit(item)}><Edit3 size={16}/></button><button className="is-danger" aria-label="删除" onClick={() => void onDelete(item)}><Trash2 size={16}/></button></div></td></tr>;
   })}</tbody></table></div>;
 }
 
 function MediaGrid({ items, onEdit, onDelete }: { items: Item[]; onEdit: (x: Item) => void; onDelete: (x: Item) => void }) {
-  return <div className="cms-media-grid">{items.map((item) => <article key={item.id} className="cms-media-card"><div className="cms-media-preview">{text(item.type) === "VIDEO" ? <video src={text(item.publicUrl)} muted preload="metadata"/> : item.publicUrl ? <Image unoptimized src={text(item.publicUrl)} alt={text(item.altText)} width={480} height={360}/> : <ImageIcon/>}</div><div><strong>{text(item.originalName)}</strong><small>{text(item.category)} · {Math.max(0, Number(item.bytes) / 1024 / 1024).toFixed(2)} MB</small><span className={Number(item.referenceCount) ? "cms-reference is-used" : "cms-reference"}>{Number(item.referenceCount) ? `已被 ${Number(item.referenceCount)} 处内容使用` : "当前未被引用"}</span></div><div className="cms-actions"><a href={text(item.publicUrl)} target="_blank" rel="noreferrer" aria-label="查看"><ExternalLink size={16}/></a><button onClick={() => onEdit(item)} aria-label="编辑"><Edit3 size={16}/></button><button className="is-danger" onClick={() => void onDelete(item)} aria-label="删除"><Trash2 size={16}/></button></div></article>)}</div>;
+  return <div className="cms-media-grid">{items.map((item) => { const issues = contentReadinessIssues("media", item); return <article key={item.id} className="cms-media-card"><div className="cms-media-preview">{text(item.type) === "VIDEO" ? <video src={text(item.publicUrl)} muted preload="metadata"/> : item.publicUrl ? <Image unoptimized src={text(item.publicUrl)} alt={text(item.altText)} width={480} height={360}/> : <ImageIcon/>}</div><div><strong>{text(item.originalName)}</strong><small>{text(item.category)} · {Math.max(0, Number(item.bytes) / 1024 / 1024).toFixed(2)} MB</small><span className={Number(item.referenceCount) ? "cms-reference is-used" : "cms-reference"}>{Number(item.referenceCount) ? `已被 ${Number(item.referenceCount)} 处内容使用` : "当前未被引用"}</span><span className={`cms-readiness-chip ${issues.length ? "is-incomplete" : "is-ready"}`}>{issues.length ? "缺少图片说明" : "说明完整"}</span></div><div className="cms-actions"><a href={text(item.publicUrl)} target="_blank" rel="noreferrer" aria-label="查看"><ExternalLink size={16}/></a><button onClick={() => onEdit(item)} aria-label="编辑"><Edit3 size={16}/></button><button className="is-danger" onClick={() => void onDelete(item)} aria-label="删除"><Trash2 size={16}/></button></div></article>; })}</div>;
 }
 
 function Field({ label, children, wide = false }: { label: string; children: React.ReactNode; wide?: boolean }) { return <label className={wide ? "cms-field is-wide" : "cms-field"}><span>{label}</span>{children}</label>; }
