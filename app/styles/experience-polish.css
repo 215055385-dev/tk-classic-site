@@ -158,3 +158,196 @@
 @media (prefers-reduced-motion: reduce) {
   .tech-stage-home .tech-series-featured > svg { transition: none; }
 }
+
+/* 21st stepper refinement: turn OEM choices into one calm, guided journey. */
+.oem-page .oem-lab-suite {
+  align-items: center;
+  min-height: 520px;
+}
+
+.oem-page .oem-lab-intro h2 {
+  max-width: 8ch;
+  text-wrap: balance;
+}
+
+.oem-page .oem-lab-capabilities {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+}
+
+.oem-page .oem-lab-capabilities::before {
+  content: "";
+  position: absolute;
+  top: 30px;
+  bottom: 30px;
+  left: 17px;
+  width: 1px;
+  background: linear-gradient(var(--tk-aurora), rgba(101, 203, 232, .1));
+}
+
+.oem-page .oem-lab-capabilities > li {
+  position: relative;
+  min-height: 82px;
+  display: grid;
+  grid-template-columns: 36px 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px 14px 0;
+  border: 0;
+  border-bottom: 1px solid rgba(203, 211, 218, .11);
+  background: transparent;
+  color: var(--tk-copy);
+  transition: background .25s ease, padding-left .3s cubic-bezier(.22, 1, .36, 1);
+}
+
+.oem-page .oem-lab-capabilities > li:first-child {
+  background: linear-gradient(90deg, rgba(101, 203, 232, .09), transparent 86%);
+}
+
+.oem-page .oem-lab-capabilities > li:hover {
+  padding-left: 8px;
+  background: linear-gradient(90deg, rgba(101, 203, 232, .08), transparent 88%);
+}
+
+.oem-page .oem-lab-capabilities > li > svg {
+  z-index: 1;
+  box-sizing: content-box;
+  width: 17px;
+  height: 17px;
+  padding: 9px;
+  border: 1px solid rgba(101, 203, 232, .42);
+  border-radius: 50%;
+  background: #0d151c;
+  color: var(--tk-aurora);
+}
+
+.oem-page .oem-lab-capabilities > li > span {
+  color: rgba(203, 211, 218, .42);
+  font: 700 .68rem/1 var(--font-geist-mono);
+  letter-spacing: .1em;
+}
+
+.oem-page .oem-lab-capabilities > li > strong {
+  color: var(--tk-copy);
+  font-size: clamp(.9rem, 1.15vw, 1.02rem);
+}
+
+.oem-page .oem-lab-disclaimer {
+  margin-top: -34px;
+}
+
+.oem-page .coffee-lab-step-tabs {
+  position: relative;
+  gap: 0;
+  padding: 0 0 26px;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.oem-page .coffee-lab-step-tabs::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  right: 9%;
+  left: 9%;
+  height: 1px;
+  background: rgba(203, 211, 218, .15);
+}
+
+.oem-page .coffee-lab-step-tabs button {
+  position: relative;
+  z-index: 1;
+  min-height: 76px;
+  justify-items: center;
+  align-content: start;
+  gap: 9px;
+  padding: 5px 4px 10px;
+  border: 0 !important;
+  background: transparent !important;
+  color: rgba(203, 211, 218, .48) !important;
+  text-align: center;
+  transform: none !important;
+}
+
+.oem-page .coffee-lab-step-tabs button > span {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  border: 1px solid rgba(203, 211, 218, .22);
+  border-radius: 50%;
+  background: #111820;
+  color: rgba(203, 211, 218, .55);
+  box-shadow: 0 0 0 5px #111820;
+  transition: border-color .25s ease, background .25s ease, color .25s ease, box-shadow .25s ease;
+}
+
+.oem-page .coffee-lab-step-tabs button[data-state="active"] > span {
+  border-color: var(--tk-aurora);
+  background: var(--tk-aurora);
+  color: #071016;
+  box-shadow: 0 0 0 5px #111820, 0 0 24px rgba(101, 203, 232, .3);
+}
+
+.oem-page .coffee-lab-step-tabs button[data-state="complete"] > span {
+  border-color: rgba(101, 203, 232, .72);
+  background: #17313b;
+  color: var(--tk-aurora-soft);
+}
+
+.oem-page .coffee-lab-step-tabs button[data-state="active"] > strong,
+.oem-page .coffee-lab-step-tabs button:hover > strong {
+  color: var(--tk-copy);
+}
+
+.oem-page .coffee-lab-control-step {
+  animation: oemGuidedStepIn .38s cubic-bezier(.22, 1, .36, 1);
+}
+
+@keyframes oemGuidedStepIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+  .oem-page .oem-lab-suite { min-height: auto; }
+  .oem-page .oem-lab-intro h2 { max-width: 12ch; }
+  .oem-page .oem-lab-disclaimer { margin-top: -12px; }
+}
+
+@media (max-width: 720px) {
+  .oem-page .oem-lab-capabilities > li {
+    min-height: 68px;
+    grid-template-columns: 34px 34px minmax(0, 1fr);
+    gap: 10px;
+    padding-block: 9px;
+  }
+
+  .oem-page .oem-lab-capabilities::before { left: 16px; }
+
+  .oem-page .coffee-lab-step-tabs {
+    grid-template-columns: repeat(5, minmax(70px, 1fr));
+    margin-inline: -4px;
+    padding-inline: 4px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+  }
+
+  .oem-page .coffee-lab-step-tabs::before { display: none; }
+  .oem-page .coffee-lab-step-tabs button { scroll-snap-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oem-page .oem-lab-capabilities > li,
+  .oem-page .coffee-lab-step-tabs button > span { transition: none; }
+  .oem-page .coffee-lab-control-step { animation: none; }
+}

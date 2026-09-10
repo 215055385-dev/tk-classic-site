@@ -32,12 +32,12 @@ export async function OemCoffeeLab({ lang }: { lang: Lang }) {
           <p>{copy.subtitle}</p>
           <a href="#configurator">{copy.start}<ArrowDown size={17} aria-hidden="true" /></a>
         </div>
-        <div className="oem-lab-capabilities" aria-label={suite.capabilities}>
-          <article><Layers3 size={21} aria-hidden="true" /><span>01</span><strong>{copy.machine}</strong></article>
-          <article><Palette size={21} aria-hidden="true" /><span>02</span><strong>{copy.color} · {copy.finish}</strong></article>
-          <article><Box size={21} aria-hidden="true" /><span>03</span><strong>{copy.logo} · {copy.accessories}</strong></article>
-          <article><ShieldCheck size={21} aria-hidden="true" /><span>04</span><strong>{copy.verification}</strong></article>
-        </div>
+        <ol className="oem-lab-capabilities" aria-label={suite.capabilities}>
+          <li><Layers3 size={21} aria-hidden="true" /><span>01</span><strong>{copy.machine}</strong></li>
+          <li><Palette size={21} aria-hidden="true" /><span>02</span><strong>{copy.color} · {copy.finish}</strong></li>
+          <li><Box size={21} aria-hidden="true" /><span>03</span><strong>{copy.logo} · {copy.accessories}</strong></li>
+          <li><ShieldCheck size={21} aria-hidden="true" /><span>04</span><strong>{copy.verification}</strong></li>
+        </ol>
         <p className="oem-lab-disclaimer">{copy.concept}</p>
       </section>
       <CoffeeLabConfigurator lang={lang} catalog={catalog} copy={copy} formSeed={formSeed} />

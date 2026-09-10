@@ -371,7 +371,8 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
           <div className="coffee-lab-step-tabs" role="tablist" aria-label="Coffee Lab configuration steps">
             {[copy.machine, copy.color, copy.logo, copy.accessories, copy.configuration].map((label, index) => {
               const complete = index < 2 || (index === 2 && Boolean(logoFile)) || (index === 3 && selectedItems.length > 0) || (index === 4 && Boolean(conceptBoard));
-              return <button type="button" role="tab" aria-label={`${String(index + 1).padStart(2, "0")} ${label}`} aria-selected={activeStep === index + 1} className={`${activeStep === index + 1 ? "is-active" : ""} ${complete ? "is-complete" : ""}`} key={label} onClick={() => setActiveStep(index + 1)}><span>{complete ? <Check size={12} aria-hidden="true" /> : String(index + 1).padStart(2, "0")}</span><strong>{label}</strong></button>;
+              const isActive = activeStep === index + 1;
+              return <button type="button" role="tab" aria-label={`${String(index + 1).padStart(2, "0")} ${label}`} aria-selected={isActive} aria-current={isActive ? "step" : undefined} data-state={isActive ? "active" : complete ? "complete" : "pending"} className={`${isActive ? "is-active" : ""} ${complete ? "is-complete" : ""}`} key={label} onClick={() => setActiveStep(index + 1)}><span>{complete ? <Check size={12} aria-hidden="true" /> : String(index + 1).padStart(2, "0")}</span><strong>{label}</strong></button>;
             })}
           </div>
           <fieldset id="lab-machine" className="coffee-lab-control-step" hidden={activeStep !== 1}>
