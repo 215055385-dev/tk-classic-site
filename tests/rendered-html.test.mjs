@@ -464,9 +464,14 @@ test("admin dashboard preserves lead ownership and exposes operational shortcuts
   assert.match(styles, /\.admin-dashboard-disclosure/);
   assert.match(service, /leadQualityRows/);
   assert.match(service, /leadQualificationRate/);
+  assert.match(service, /dailyPerformanceRows/);
+  assert.match(service, /Asia\/Shanghai/);
   assert.match(dashboard, /询盘质量漏斗/);
   assert.match(dashboard, /询盘成交率/);
+  assert.match(dashboard, /每日数据统计/);
+  assert.match(dashboard, /自然搜索/);
   assert.match(globalStyles, /\.admin-lead-quality-grid/);
+  assert.match(globalStyles, /\.admin-daily-table/);
 });
 
 test("front-end refinement keeps featured products consistent and buyer paths visible", async () => {

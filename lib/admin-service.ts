@@ -78,6 +78,7 @@ export type AdminStats = {
   topSearchEngines: Array<{ label: string; value: number }>;
   topLanguages: Array<{ label: string; value: number }>;
   dailyVisits: Array<{ label: string; value: number }>;
+  dailyPerformance: Array<{ label: string; visits: number; organic: number; quoteClicks: number; formStarts: number; leads: number; completionRate: number }>;
   conversionEvents: Array<{ label: string; value: number }>;
 };
 
@@ -214,7 +215,7 @@ export async function listAdminData(filters: {
     pathRows,
     referrerRows,
     languageRows,
-    dailyVisitRows,
+    dailyPerformanceRows,
     totalVisitRows,
     sevenDayVisitRows,
     conversionRows,
@@ -255,7 +256,7 @@ export async function listAdminData(filters: {
     sql`SELECT path, COUNT(*) AS total FROM site_visits GROUP BY path ORDER BY total DESC LIMIT 8`,
     sql`SELECT COALESCE(NULLIF(referrer, ''), 'Direct / none') AS referrer, COUNT(*) AS total FROM site_visits GROUP BY 1 ORDER BY total DESC LIMIT 8`,
     sql`SELECT COALESCE(NULLIF(lang, ''), 'en') AS lang, COUNT(*) AS total FROM site_visits GROUP BY 1 ORDER BY total DESC LIMIT 8`,
-    sql`SELECT TO_CHAR((visited_at AT TIME ZONE 'UTC')::date, 'YYYY-MM-DD') AS day, COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '14 days' GROUP BY 1 ORDER BY day ASC`,
+    sql`WITH days AS (SELECT generate_series((now() AT TIME ZONE 'Asia/Shanghai')::date - 13, (now() AT TIME ZONE 'Asia/Shanghai')::date, interval '1 day')::date AS day), visits AS (SELECT (visited_at AT TIME ZONE 'Asia/Shanghai')::date AS day, COUNT(*) AS visits, COUNT(*) FILTER (WHERE COALESCE(referrer, '') ~* '(google[.]|bing[.]com|search[.]yahoo[.]com|duckduckgo[.]com|ecosia[.]org|yandex[.]|baidu[.]com)') AS organic FROM site_visits WHERE visited_at >= now() - interval '15 days' GROUP BY 1), events AS (SELECT (occurred_at AT TIME ZONE 'Asia/Shanghai')::date AS day, COUNT(*) FILTER (WHERE name = 'quote_click') AS quote_clicks, COUNT(*) FILTER (WHERE name = 'form_start') AS form_starts, COUNT(*) FILTER (WHERE name = 'generate_lead') AS leads FROM site_events WHERE occurred_at >= now() - interval '15 days' GROUP BY 1) SELECT TO_CHAR(days.day, 'YYYY-MM-DD') AS day, COALESCE(visits.visits, 0) AS visits, COALESCE(visits.organic, 0) AS organic, COALESCE(events.quote_clicks, 0) AS quote_clicks, COALESCE(events.form_starts, 0) AS form_starts, COALESCE(events.leads, 0) AS leads FROM days LEFT JOIN visits USING (day) LEFT JOIN events USING (day) ORDER BY days.day ASC`,
     sql`SELECT COUNT(*) AS total FROM site_visits`,
     sql`SELECT COUNT(*) AS total FROM site_visits WHERE visited_at >= now() - interval '7 days'`,
     sql`SELECT name, COUNT(*) AS total FROM site_events WHERE occurred_at >= now() - interval '30 days' GROUP BY name ORDER BY total DESC`,
@@ -322,6 +323,11 @@ export async function listAdminData(filters: {
   const submittedLeadsLast30Days = toNumber(leadQuality.leads);
   const salesReadyLeadsLast30Days = toNumber(leadQuality.sales_ready);
   const wonLeadsLast30Days = toNumber(leadQuality.won);
+  const dailyPerformance = dailyPerformanceRows.map((row) => {
+    const formStarts = toNumber(row.form_starts);
+    const leads = toNumber(row.leads);
+    return { label: String(row.day), visits: toNumber(row.visits), organic: toNumber(row.organic), quoteClicks: toNumber(row.quote_clicks), formStarts, leads, completionRate: formStarts ? Number(((leads / formStarts) * 100).toFixed(1)) : 0 };
+  });
 
   const stats: AdminStats = {
     totalInquiries: toNumber(summary.total),
@@ -349,7 +355,8 @@ export async function listAdminData(filters: {
     topOrganicPaths: organicPathRows.map((row) => ({ label: String(row.path), value: toNumber(row.total) })),
     topSearchEngines: searchEngineRows.map((row) => ({ label: String(row.engine), value: toNumber(row.total) })),
     topLanguages: languageRows.map((row) => ({ label: String(row.lang), value: toNumber(row.total) })),
-    dailyVisits: dailyVisitRows.map((row) => ({ label: String(row.day), value: toNumber(row.total) })),
+    dailyVisits: dailyPerformance.map((row) => ({ label: row.label, value: row.visits })),
+    dailyPerformance,
     conversionEvents: conversionRows.map((row) => ({ label: String(row.name), value: toNumber(row.total) })),
   };
 

@@ -53,6 +53,7 @@ const emptyStats: Stats = {
   topSearchEngines: [],
   topLanguages: [],
   dailyVisits: [],
+  dailyPerformance: [],
   conversionEvents: [],
 };
 
@@ -626,8 +627,8 @@ export function AdminDashboard({
             </article>
             <article className="admin-panel admin-trend-panel">
               <div className="admin-panel-heading">
-                <h2>近 14 天访问趋势</h2>
-                <span>UTC 日期</span>
+                <h2>每日数据统计</h2>
+                <span>近 14 天 · 北京时间</span>
               </div>
               {stats.dailyVisits.length ? (
                 <div className="admin-trend-list">
@@ -650,6 +651,8 @@ export function AdminDashboard({
                   累计访问后，这里会显示近 14 天趋势。
                 </p>
               )}
+              {stats.dailyPerformance.length ? <div className="admin-daily-table-wrap"><table className="admin-daily-table"><thead><tr><th>日期</th><th>访问</th><th>自然搜索</th><th>报价点击</th><th>开始填写</th><th>成功询盘</th><th>完成率</th></tr></thead><tbody>{[...stats.dailyPerformance].reverse().map((day) => <tr key={day.label}><td>{day.label}</td><td>{day.visits}</td><td>{day.organic}</td><td>{day.quoteClicks}</td><td>{day.formStarts}</td><td><strong>{day.leads}</strong></td><td>{day.completionRate}%</td></tr>)}</tbody></table></div> : null}
+              <p className="admin-funnel-note">当天数据会持续变化；自然搜索按 Google、Bing、Baidu 等搜索来源识别。</p>
             </article>
           </section>
         </details>
