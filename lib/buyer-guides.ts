@@ -220,7 +220,20 @@ const sourcingGuides: BuyerGuide[] = [
     eyebrow: "OEM packaging guide",
     readTime: "6 minute read",
     publishedAt: publicationDate,
-    updatedAt: publicationDate,
+    updatedAt: "2026-09-10",
+    directAnswerTitle: "What should a portable coffee machine packaging brief include?",
+    directAnswer:
+      "Name the exact machine model, approved color, brewing adapters, cup, charging components and optional accessories before artwork begins. Then record the logo method, packaging structure, manual and label requirements, destination market, artwork version and physical-sample approval in one controlled brief. Final quantity, timing, price and shipping terms belong in the formal quotation.",
+    keywords: [
+      "OEM portable coffee machine packaging checklist",
+      "private label portable espresso machine packaging",
+      "portable coffee gift set sourcing guide",
+    ],
+    relatedLinks: [
+      { href: "/resources/portable-espresso-machine-private-label-buying-guide", label: "Plan the complete private label project" },
+      { href: "/resources/portable-espresso-machine-sample-approval-checklist", label: "Create a model-specific sample record" },
+      { href: "/oem-odm", label: "Review the OEM and ODM workflow" },
+    ],
     heroImage: "/optimized/product-scenes/dq-011-1.webp",
     heroAlt: "Official TK Classic DQ-011 portable espresso machine photography for gift programs",
     keyTakeaways: [
@@ -234,6 +247,7 @@ const sourcingGuides: BuyerGuide[] = [
         title: "1. Freeze the bundle architecture",
         paragraphs: [
           "Packaging should start with an exact product list. Identify the machine model, cup, adapters, charging components and every optional accessory included in the set. This determines the insert structure, box size and the claims that can accurately appear on the packaging.",
+          "Keep DQ-001 and DQ-010 briefs separate. Each model has its own published size, cup, charging and coffee-format information, so artwork and inserts should be built from the selected model record rather than a shared visual template.",
         ],
         bullets: [
           "Machine model and approved color",
@@ -283,6 +297,18 @@ const sourcingGuides: BuyerGuide[] = [
       {
         question: "When is the final packaging price confirmed?",
         answer: "It is confirmed in the quotation after the model, accessories, branding, packaging structure, quantity and destination are reviewed.",
+      },
+      {
+        question: "Can the same insert be assumed for DQ-001 and DQ-010?",
+        answer: "No. Their published product dimensions, cup formats and configurations are different. Confirm the insert structure against the exact approved model and accessory list.",
+      },
+      {
+        question: "Does a digital packaging preview approve mass production?",
+        answer: "No. A digital preview communicates the intended layout. The artwork version, colors, labels, included components and physical packaging sample should be confirmed before production approval.",
+      },
+      {
+        question: "Should shipping marks and destination-market labels be included in the first artwork brief?",
+        answer: "List every known label, barcode, importer detail and shipping-mark requirement in the brief, then confirm the final content and placement for the destination and sales channel before approval.",
       },
     ],
   },
