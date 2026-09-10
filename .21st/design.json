@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "project": {
+    "name": "tk-classic-site",
+    "productType": null,
+    "stack": [
+      "nextjs",
+      "react",
+      "tailwind-v4"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "app/globals.css"
+    ],
+    "components": [],
+    "assets": [
+      "public/images"
+    ],
+    "instructions": [
+      "AGENTS.md",
+      "CLAUDE.md"
+    ]
+  },
+  "design": {
+    "colorMode": "light",
+    "colors": {
+      "--background": {
+        "value": "#eee5d8",
+        "source": "app/globals.css"
+      },
+      "--foreground": {
+        "value": "#211713",
+        "source": "app/globals.css"
+      },
+      "--muted": {
+        "value": "#71645c",
+        "source": "app/globals.css"
+      },
+      "--accent": {
+        "value": "#c66743",
+        "source": "app/globals.css"
+      },
+      "--accent-soft": {
+        "value": "#ead3c1",
+        "source": "app/globals.css"
+      },
+      "--accent-strong": {
+        "value": "#91422f",
+        "source": "app/globals.css"
+      },
+      "--color-background": {
+        "value": "var(--background)",
+        "source": "app/globals.css"
+      },
+      "--color-foreground": {
+        "value": "var(--foreground)",
+        "source": "app/globals.css"
+      },
+      "--home-muted": {
+        "value": "#74695e",
+        "source": "app/globals.css"
+      },
+      "--home-accent": {
+        "value": "#b65e3f",
+        "source": "app/globals.css"
+      },
+      "--home-accent-ink": {
+        "value": "#fffaf2",
+        "source": "app/globals.css"
+      },
+      "--tool-muted": {
+        "value": "#74695e",
+        "source": "app/globals.css"
+      },
+      "--tool-accent": {
+        "value": "#b65e3f",
+        "source": "app/globals.css"
+      },
+      "--figma-muted": {
+        "value": "#74695e",
+        "source": "app/globals.css"
+      },
+      "--design-primary": {
+        "value": "#b65e3f",
+        "source": "app/globals.css"
+      },
+      "--design-primary-deep": {
+        "value": "#8f432d",
+        "source": "app/globals.css"
+      },
+      "--design-ink-secondary": {
+        "value": "#372a21",
+        "source": "app/globals.css"
+      },
+      "--design-muted": {
+        "value": "#74695e",
+        "source": "app/globals.css"
+      }
+    },
+    "typography": {
+      "--font-sans": {
+        "value": "\"Geist\", \"Geist Fallback\", ui-sans-serif, system-ui, sans-serif",
+        "source": "app/globals.css"
+      },
+      "--font-mono": {
+        "value": "\"Geist Mono\", \"Geist Mono Fallback\", ui-monospace, monospace",
+        "source": "app/globals.css"
+      },
+      "--home-text": {
+        "value": "#211b16",
+        "source": "app/globals.css"
+      },
+      "--tool-text": {
+        "value": "#211b16",
+        "source": "app/globals.css"
+      }
+    },
+    "spacing": {},
+    "radius": {
+      "--radius-sm": {
+        "value": "12px",
+        "source": "app/globals.css"
+      },
+      "--radius-md": {
+        "value": "18px",
+        "source": "app/globals.css"
+      },
+      "--radius-lg": {
+        "value": "28px",
+        "source": "app/globals.css"
+      },
+      "--design-radius-sm": {
+        "value": "6px",
+        "source": "app/globals.css"
+      },
+      "--design-radius-md": {
+        "value": "8px",
+        "source": "app/globals.css"
+      },
+      "--design-radius-lg": {
+        "value": "12px",
+        "source": "app/globals.css"
+      }
+    },
+    "shadows": {
+      "--shadow-soft": {
+        "value": "0 24px 90px rgba(42, 33, 24, 0.1)",
+        "source": "app/globals.css"
+      },
+      "--shadow-card": {
+        "value": "0 16px 54px rgba(42, 33, 24, 0.08)",
+        "source": "app/globals.css"
+      },
+      "--shadow-card-hover": {
+        "value": "0 26px 80px rgba(42, 33, 24, 0.14)",
+        "source": "app/globals.css"
+      }
+    },
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "Preserve the existing Next.js App Router architecture and multilingual routing.",
+      "Use only verified product models, images, specifications, certifications and commercial terms already present in the project.",
+      "Keep public product pricing private and route wholesale buyers toward quotation and inquiry actions.",
+      "Maintain a unified premium technology-and-coffee visual system across public pages and responsive breakpoints.",
+      "Treat accessibility, mobile usability, performance, SEO and GEO discoverability as release requirements."
+    ],
+    "avoid": [
+      "Do not invent certifications, factory capacity, customer reviews, MOQ, lead time, warranty or product specifications.",
+      "Do not replace model-specific photography or mix images and specifications between DQ models.",
+      "Do not introduce generic ecommerce templates, excessive text, low-contrast controls or decorative effects that obscure content.",
+      "Do not add heavy 3D or animation dependencies without a lightweight fallback and measured performance review."
+    ]
+  },
+  "decisions": [],
+  "evidence": [
+    {
+      "fact": "design.colorMode:light",
+      "source": "app/globals.css"
+    },
+    {
+      "fact": "design.tokens",
+      "source": "app/globals.css"
+    },
+    {
+      "fact": "project.instructions",
+      "source": "AGENTS.md"
+    },
+    {
+      "fact": "project.instructions",
+      "source": "CLAUDE.md"
+    },
+    {
+      "fact": "project.stack:nextjs",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:tailwind-v4",
+      "source": "package.json"
+    }
+  ],
+  "generatedAt": "2026-09-10T02:04:14.196Z"
+}
