@@ -353,7 +353,7 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
           </div>
           <div className="coffee-lab-live-color-readout" aria-label={`${copy.color} preview controls`}>
             {(["body", "lid", "cup"] as LayerName[]).map((layer) => (
-              <button type="button" key={layer} className={activeLayer === layer ? "is-active" : ""} onClick={() => setActiveLayer(layer)}>
+              <button type="button" key={layer} className={activeLayer === layer ? "is-active" : ""} aria-pressed={activeLayer === layer} onClick={() => { setActiveLayer(layer); setActiveStep(2); }}>
                 <span style={{ background: layerColor(layer).value }} aria-hidden="true" />
                 <small>{copy[layer]}</small>
                 <strong>{layerColor(layer).name}</strong>
@@ -434,7 +434,7 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
             </div>
             <div className="coffee-lab-review-actions"><button type="button" onClick={generateConceptBoard}><ImagePlus size={17} />{boardCopy.generate}</button>{conceptBoard ? <button type="button" onClick={downloadConceptBoard}><Download size={17} />{boardCopy.download}</button> : null}</div>
             {conceptBoard ? <div className="coffee-lab-concept-board"><Image src={conceptBoard} alt={`${selectedModel.model} Coffee Lab CMF concept board`} width={800} height={560} unoptimized /></div> : null}
-            {conceptBoard ? <a className="coffee-lab-review-submit" href="#coffee-lab-inquiry"><Send size={17} />{copy.submit}</a> : null}
+            <a className="coffee-lab-review-submit" href="#coffee-lab-inquiry"><Send size={17} />{copy.submit}</a>
           </fieldset>
           <div className="coffee-lab-step-actions"><button type="button" onClick={() => setActiveStep((step) => Math.max(1, step - 1))} disabled={activeStep === 1}>{boardCopy.previous}</button><span>{activeStep} / 5</span><button type="button" onClick={() => setActiveStep((step) => Math.min(5, step + 1))} disabled={activeStep === 5}>{boardCopy.next}</button></div>
         </div>

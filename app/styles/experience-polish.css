@@ -159,6 +159,56 @@
   .tech-stage-home .tech-series-featured > svg { transition: none; }
 }
 
+/* Keep procurement evidence and configuration controls on the shared palette. */
+.inner-page.oem-page .procurement-term-card,
+.inner-page.oem-page .oem-quality-section li {
+  background: var(--tk-graphite);
+  border-color: var(--tk-tech-line);
+  box-shadow: none;
+}
+
+.inner-page.oem-page .oem-quality-section ol {
+  background: var(--tk-tech-line);
+}
+
+.inner-page.oem-page .procurement-term-card svg,
+.inner-page.oem-page .oem-quality-section li svg {
+  color: var(--tk-aurora);
+}
+
+.oem-page .coffee-lab-live-color-readout button {
+  background: var(--tk-graphite);
+  color: var(--tk-copy);
+}
+
+.oem-page .coffee-lab-live-color-readout button:hover,
+.oem-page .coffee-lab-live-color-readout button.is-active {
+  background: var(--tk-titanium);
+  box-shadow: inset 0 -2px var(--tk-aurora);
+}
+
+.oem-page .coffee-lab-live-color-readout small {
+  color: var(--tk-copy-muted);
+}
+
+.oem-page .coffee-lab-review-submit {
+  background: var(--tk-aurora);
+  color: var(--tk-space);
+  scroll-margin-top: 110px;
+}
+
+.oem-page #coffee-lab-inquiry { scroll-margin-top: 110px; }
+
+.inner-page.oem-page .oem-guide-callout > a {
+  background: var(--tk-titanium);
+  color: var(--tk-copy);
+  border: 1px solid var(--tk-tech-line);
+}
+
+.inner-page.oem-page .oem-qc-copy > a {
+  color: var(--tk-aurora);
+}
+
 /* 21st stepper refinement: turn OEM choices into one calm, guided journey. */
 .oem-page .oem-lab-suite {
   align-items: center;
