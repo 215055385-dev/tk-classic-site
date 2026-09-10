@@ -62,3 +62,99 @@
   .front-page-progress > span { will-change: auto; }
   :where(.home-shell, .inner-page) :where(.primary-action, .secondary-action)::after { display: none; }
 }
+
+/* 21st editorial refinement: one continuous product stage instead of stacked UI cards. */
+.tech-stage-home .tech-product-stage {
+  isolation: isolate;
+}
+
+.tech-stage-home .tech-product-stage::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background:
+    linear-gradient(90deg, #05090d 0%, rgba(5, 9, 13, .62) 9%, transparent 24%),
+    linear-gradient(0deg, #05090d 0%, transparent 18%);
+  pointer-events: none;
+}
+
+.tech-stage-home .tech-product-stage img {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
+}
+
+.tech-stage-home .tech-hero-console {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(177, 197, 211, .18);
+  background: linear-gradient(135deg, rgba(17, 25, 32, .9), rgba(7, 12, 17, .82));
+  box-shadow: 0 28px 70px rgba(0, 0, 0, .27);
+  backdrop-filter: blur(20px) saturate(125%);
+}
+
+.tech-stage-home .tech-series-list,
+.tech-stage-home .tech-capability-strip {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.tech-stage-home .tech-series-list {
+  padding: 20px 24px 16px;
+}
+
+.tech-stage-home .tech-series-featured {
+  grid-template-columns: 1fr auto;
+  min-height: 56px;
+  border-bottom: 1px solid rgba(177, 197, 211, .13);
+  transition: border-color .25s ease, color .25s ease;
+}
+
+.tech-stage-home .tech-series-featured:hover {
+  border-color: rgba(37, 189, 242, .52);
+}
+
+.tech-stage-home .tech-series-featured > svg {
+  color: var(--stage-cyan-soft);
+  transition: transform .35s cubic-bezier(.22, 1, .36, 1);
+}
+
+.tech-stage-home .tech-series-featured:hover > svg {
+  transform: translateX(4px);
+}
+
+.tech-stage-home .tech-capability-strip {
+  border-left: 1px solid rgba(177, 197, 211, .16);
+}
+
+@media (max-width: 1120px) {
+  .tech-stage-home .tech-hero-console {
+    grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  }
+}
+
+@media (max-width: 820px) {
+  .tech-stage-home .tech-product-stage::after {
+    background: linear-gradient(0deg, #05090d 0%, transparent 22%);
+  }
+
+  .tech-stage-home .tech-product-stage img {
+    -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 18%, #000 100%);
+    mask-image: linear-gradient(0deg, transparent 0%, #000 18%, #000 100%);
+  }
+
+  .tech-stage-home .tech-hero-console {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-stage-home .tech-capability-strip {
+    border-top: 1px solid rgba(177, 197, 211, .16);
+    border-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-stage-home .tech-series-featured > svg { transition: none; }
+}
