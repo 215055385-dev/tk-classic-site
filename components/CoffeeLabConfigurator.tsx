@@ -28,6 +28,16 @@ type SavedDesign = {
 
 const storageKey = "tk-coffee-lab-design-v1";
 
+const studioActions: Record<Lang, { applyAll: string; edit: string; selected: string }> = {
+  en: { applyAll: "Apply to all parts", edit: "Edit", selected: "Selected accessories" },
+  zh: { applyAll: "应用到全部部位", edit: "修改", selected: "已选配件" },
+  fr: { applyAll: "Appliquer à toutes les pièces", edit: "Modifier", selected: "Accessoires sélectionnés" },
+  es: { applyAll: "Aplicar a todas las piezas", edit: "Editar", selected: "Accesorios seleccionados" },
+  pt: { applyAll: "Aplicar a todas as peças", edit: "Editar", selected: "Acessórios selecionados" },
+  ar: { applyAll: "تطبيق على جميع الأجزاء", edit: "تعديل", selected: "الملحقات المختارة" },
+  ru: { applyAll: "Применить ко всем частям", edit: "Изменить", selected: "Выбранные аксессуары" },
+};
+
 function makeId() {
   return `LAB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 }
@@ -75,6 +85,19 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
   };
   const activeColor = layerColor(activeLayer);
   const boardCopy = conceptBoardCopy[lang];
+  const actions = studioActions[lang];
+
+  function editStep(step: number, layer?: LayerName) {
+    if (layer) setActiveLayer(layer);
+    setActiveStep(step);
+    requestAnimationFrame(() => document.querySelector(".coffee-lab-controls")?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
+  }
+
+  function applyToAllParts() {
+    setColors({ body: colors[activeLayer], lid: colors[activeLayer], cup: colors[activeLayer] });
+    setCustomColors({ body: customColors[activeLayer], lid: customColors[activeLayer], cup: customColors[activeLayer] });
+    setFinishes({ body: finishes[activeLayer], lid: finishes[activeLayer], cup: finishes[activeLayer] });
+  }
 
   useEffect(() => {
     try {
@@ -348,12 +371,12 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
             <div className="coffee-lab-real-variant-board is-cmf-reference" style={{ position: "absolute" }}>
               <Image src={selectedModel.variantBoard} alt={`${selectedModel.model} real product color references`} fill loading="eager" fetchPriority="high" sizes="(max-width: 900px) 92vw, 620px" />
               <span className="coffee-lab-photo-badge">{boardCopy.photo}</span>
-              {logoUrl ? <div className="coffee-lab-board-logo" aria-label="Customer logo concept reference" style={{ backgroundImage: `url(${logoUrl})` }} /> : null}
+              {logoUrl ? <div className="coffee-lab-board-logo" aria-label={copy.logo} style={{ backgroundImage: `url(${logoUrl})`, width: `${logoScale}px`, left: `${logoX}%`, top: `${logoY}%`, right: "auto", transform: "translate(-50%, -50%)" }} /> : null}
             </div>
           </div>
           <div className="coffee-lab-live-color-readout" aria-label={`${copy.color} preview controls`}>
             {(["body", "lid", "cup"] as LayerName[]).map((layer) => (
-              <button type="button" key={layer} className={activeLayer === layer ? "is-active" : ""} aria-pressed={activeLayer === layer} onClick={() => { setActiveLayer(layer); setActiveStep(2); }}>
+              <button type="button" key={layer} className={activeLayer === layer ? "is-active" : ""} aria-pressed={activeLayer === layer} onClick={() => editStep(2, layer)}>
                 <span style={{ background: layerColor(layer).value }} aria-hidden="true" />
                 <small>{copy[layer]}</small>
                 <strong>{layerColor(layer).name}</strong>
@@ -364,6 +387,10 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
             <div><span>{copy.machine}</span><strong>{selectedModel.model}</strong></div>
             <div><span>{copy.accessories}</span><strong>{selectedItems.length}</strong></div>
             <div><span>{copy.project}</span><strong>{projectType}</strong></div>
+          </div>
+          <div className="lab-selected-tray" aria-label={actions.selected}>
+            <div><strong>{actions.selected}</strong><button type="button" onClick={() => editStep(4)}>{actions.edit} <Plus size={14} /></button></div>
+            {selectedItems.length ? <ul>{selectedItems.map((item) => <li key={item.slug}><Image src={item.image} alt={item.alt} width={52} height={52} /><span>{item.title}</span><button type="button" aria-label={`${copy.remove}: ${item.title}`} onClick={() => toggleAccessory(item.slug)}><Trash2 size={15} /></button></li>)}</ul> : <p>{copy.noAccessory}</p>}
           </div>
         </div>
 
@@ -402,6 +429,7 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
             <div className="coffee-lab-finish-row">
               {coffeeLabFinishes.map((finish) => <button type="button" key={finish} className={finishes[activeLayer] === finish ? "is-active" : ""} onClick={() => setFinishes((current) => ({ ...current, [activeLayer]: finish }))}>{finish}</button>)}
             </div>
+            <button type="button" className="lab-apply-all" onClick={applyToAllParts}>{actions.applyAll}</button>
           </fieldset>
 
           <fieldset id="lab-logo" className="coffee-lab-control-step" hidden={activeStep !== 3}>
@@ -444,7 +472,13 @@ export function CoffeeLabConfigurator({ lang, catalog, copy, formSeed }: { lang:
         <div className="coffee-lab-configuration-card">
           <p className="eyebrow">04 / REVIEW</p><h3>{copy.configuration}</h3>
           {designId ? <p><strong>{copy.configId}:</strong> {designId}</p> : null}
-          <pre>{englishSummary}</pre>
+          <dl className="lab-editable-summary">
+            <div><dt>{copy.machine}</dt><dd>{selectedModel.model}</dd><button type="button" onClick={() => editStep(1)} aria-label={`${actions.edit}: ${copy.machine}`}>{actions.edit}</button></div>
+            {(["body", "lid", "cup"] as LayerName[]).map((layer) => <div key={layer}><dt>{copy[layer]}</dt><dd><i style={{ background: layerColor(layer).value }} />{layerColor(layer).name} · {finishes[layer]}</dd><button type="button" onClick={() => editStep(2, layer)} aria-label={`${actions.edit}: ${copy[layer]}`}>{actions.edit}</button></div>)}
+            <div><dt>{copy.logo}</dt><dd>{logoFile?.name || "—"}</dd><button type="button" onClick={() => editStep(3)} aria-label={`${actions.edit}: ${copy.logo}`}>{actions.edit}</button></div>
+            <div><dt>{copy.accessories}</dt><dd>{selectedItems.map((item) => item.title).join(", ") || copy.noAccessory}</dd><button type="button" onClick={() => editStep(4)} aria-label={`${actions.edit}: ${copy.accessories}`}>{actions.edit}</button></div>
+          </dl>
+          <p className="coffee-lab-field-help">{copy.concept}</p>
           <div className="coffee-lab-save-actions"><button type="button" onClick={saveDesign}><Save size={17} />{copy.save}</button><button type="button" onClick={copySummary}><Clipboard size={17} />{copy.copy}</button></div>
           {notice ? <p className="coffee-lab-notice" role="status"><Check size={16} />{notice}</p> : null}
         </div>

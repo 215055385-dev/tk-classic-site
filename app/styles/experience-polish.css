@@ -159,6 +159,33 @@
   .tech-stage-home .tech-series-featured > svg { transition: none; }
 }
 
+.oem-page .lab-selected-tray { padding: 18px 24px; border-top: 1px solid var(--tk-tech-line); }
+.oem-page .lab-selected-tray > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.oem-page .lab-selected-tray strong { color: var(--tk-copy); font-size: .85rem; }
+.oem-page .lab-selected-tray button,
+.oem-page .lab-editable-summary button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 44px; border: 0; background: transparent; color: var(--tk-aurora); cursor: pointer; padding: 8px; }
+.oem-page .lab-selected-tray > p { color: var(--tk-copy-muted); font-size: .8rem; }
+.oem-page .lab-selected-tray ul { list-style: none; padding: 0; margin: 10px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.oem-page .lab-selected-tray li { display: grid; grid-template-columns: 44px minmax(0, 1fr) 32px; gap: 8px; align-items: center; border-radius: 10px; background: var(--tk-titanium); padding: 6px; }
+.oem-page .lab-selected-tray li img { width: 44px; height: 44px; object-fit: contain; border-radius: 6px; }
+.oem-page .lab-selected-tray li span { color: var(--tk-copy); font-size: .75rem; line-height: 1.4; overflow-wrap: anywhere; }
+.oem-page .lab-apply-all { margin-top: 20px; min-height: 44px; padding: 10px 18px; border: 1px solid var(--tk-tech-line); border-radius: 22px; cursor: pointer; }
+.oem-page .lab-editable-summary { margin-block: 24px; }
+.oem-page .lab-editable-summary > div { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 14px 0; border-bottom: 1px solid var(--tk-tech-line); }
+.oem-page .lab-editable-summary dt { color: var(--tk-copy-muted); font-size: .76rem; }
+.oem-page .lab-editable-summary dd { grid-column: 1; margin: 0; color: var(--tk-copy); font-size: .9rem; line-height: 1.5; overflow-wrap: anywhere; }
+.oem-page .lab-editable-summary dd i { display: inline-block; width: 16px; height: 16px; border: 1px solid var(--tk-silver); border-radius: 50%; margin-inline-end: 8px; vertical-align: middle; }
+.oem-page .lab-editable-summary button { grid-column: 2; grid-row: 1 / 3; align-self: center; font-size: .78rem; }
+@media (min-width: 901px) {
+  .oem-page .coffee-lab-workbench { align-items: start; overflow: visible; }
+  .oem-page .coffee-lab-preview-panel { position: sticky; top: 96px; border-radius: 22px; overflow: hidden; }
+  .oem-page .coffee-lab-controls { max-height: none; min-height: 820px; border-radius: 0 22px 22px 0; }
+}
+@media (max-width: 600px) {
+  .oem-page .lab-selected-tray { padding: 12px 16px; }
+  .oem-page .lab-selected-tray ul { grid-template-columns: 1fr; }
+}
+
 /* Keep procurement evidence and configuration controls on the shared palette. */
 .inner-page.oem-page .procurement-term-card,
 .inner-page.oem-page .oem-quality-section li {
