@@ -320,7 +320,7 @@ const sourcingGuides: BuyerGuide[] = [
     eyebrow: "US importer sample checklist",
     readTime: "7 minute read",
     publishedAt: "2026-08-31",
-    updatedAt: "2026-08-31",
+    updatedAt: "2026-09-11",
     heroImage: "/optimized/product-scenes/dq-010-1.webp",
     heroAlt: "Official TK Classic DQ-010 portable coffee machine photograph for the sample approval checklist",
     keyTakeaways: [
@@ -339,12 +339,15 @@ const sourcingGuides: BuyerGuide[] = [
       "DQ-001 sample",
       "DQ-010 sample",
       "portable coffee machine US importer",
+      "private label coffee machine sample sign-off",
+      "portable espresso pre-production sample checklist",
     ],
     relatedLinks: [
       { href: "/wholesale/usa", label: "US wholesale sourcing path" },
       { href: "/products/dq-001", label: "Review DQ-001 published data" },
       { href: "/products/dq-010", label: "Review DQ-010 published data" },
       { href: "/tools/inquiry-builder", label: "Prepare a sourcing brief" },
+      { href: "/oem-odm#configurator", label: "Build a configuration brief for sample review" },
     ],
     sections: [
       {
@@ -385,6 +388,19 @@ const sourcingGuides: BuyerGuide[] = [
         paragraphs: [
           "Keep dated photographs, the configuration list, test notes, artwork versions and requested document list together. This creates a practical reference for the quotation and reduces ambiguity when the project moves from the sample to a bulk order.",
           "The formal quotation should confirm the selected model, quantity, destination, branding, packaging, accessories, MOQ, payment and production arrangements. The sample checklist supports that quotation; it does not replace it.",
+        ],
+        bullets: [
+          "Sample identity: model, sample reference, received date and reviewer.",
+          "Test record: coffee format, adapter, starting water temperature, charging setup, observed result and supporting photo or video.",
+          "Decision for each check: approved, revision requested or not yet tested. Record unresolved items rather than treating them as passed.",
+          "Change control: list any differences between the reviewed sample and the proposed bulk configuration, then request written confirmation before sign-off.",
+        ],
+      },
+      {
+        title: "5. Keep a digital concept separate from sample sign-off",
+        paragraphs: [
+          "Use the OEM/ODM configuration studio to collect the selected model, color direction, logo and accessories into a project brief. A configuration summary helps communicate the request, but the reference photograph or concept board does not establish the final finish, logo application or engineering feasibility.",
+          "For DQ-001 and DQ-010 projects, compare the resulting physical sample with that brief and record any changes. Approve the actual sample and the written order configuration together; a saved online design alone is not production approval.",
         ],
       },
     ],
